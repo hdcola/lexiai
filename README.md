@@ -1,4 +1,8 @@
-# lexiai
+![Lexi AI banner](public/banner.png)
+
+# Lexi AI
+
+AI-powered language learning app that helps users improve their speaking skills.
 
 This template should help get you started developing with Vue 3 in Vite.
 
