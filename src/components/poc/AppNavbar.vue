@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import IconMD from './IconMD.vue';
+import IconMD from './icons/IconMD.vue';
 import { mdiMenu } from '@mdi/js'
 import logo from '@/assets/img/logo-horizontal.png'
 
