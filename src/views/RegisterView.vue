@@ -108,7 +108,7 @@ const register = async () => {
 
             <p class="mt-4">
                 Already have an account?
-                <RouterLink to="/login" class="text-purple-600 ms-3">Login</RouterLink>
+                <RouterLink to="/login" class="text-blue-600 ms-3">Login</RouterLink>
             </p>
         </div>
     </div>
