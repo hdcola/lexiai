@@ -9,6 +9,12 @@ const logout = () => {
   window.location.reload();
   console.log('User logged out');
 };
+
+const path = mdiMenu
+// Debugging to check mdiMenu path
+console.log('mdiMenu path:', path)
+
+
 // State for toggling the menu
 const isMenuOpen = ref<boolean>(false)
 </script>
