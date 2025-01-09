@@ -4,12 +4,9 @@ import AudioRecord from '@/components/poc/AudioRecord.vue';
 
 <template>
     <main>
-    <div class="container">
-        <AudioRecord />
-    </div>
-    <div class="container">
-        <AudioRecord />
-    </div>
+        <div class="container">
+            <AudioRecord />
+        </div>
     </main>
 </template>
 
