@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import IconMD from './IconMD.vue';
 import { mdiMenu } from '@mdi/js'
 import logo from '@/assets/img/logo-horizontal.png'
 
@@ -59,20 +60,22 @@ const isMenuOpen = ref<boolean>(false)
     </div>
 
     <!-- Mobile Menu -->
-    <div v-show="isMenuOpen" class="md:hidden bg-blue-500 px-4 space-y-2 pb-4 transition-all">
+    <div v-show="isMenuOpen" class="md:hidden bg-blue-500 px-4 space-y-2 pb-4 transition-all text-base">
       <RouterLink to="/" 
-      class="text-white px-3 py-2 rounded-md hover:bg-blue-700"   active-class="bg-blue-600">Home</RouterLink>
+      class="block text-white px-3 py-2 rounded-md hover:bg-blue-700"   active-class="bg-blue-600">Home</RouterLink>
 
            <span v-if="!isLoggedIn">
               <RouterLink to="/login" 
-              class="text-white px-3 py-2 rounded-md hover:bg-blue-700"   active-class="bg-blue-600">Login</RouterLink>
+              class="block text-white px-3 py-2 rounded-md hover:bg-blue-700"   active-class="bg-blue-600">Login</RouterLink>
             </span>
             <span v-else>
               <button @click="logout"
-              class="text-white px-3 py-2 rounded-md hover:bg-blue-700"   active-class="bg-blue-600">Logout</button>
+              class="block text-white px-3 py-2 rounded-md hover:bg-blue-700"   active-class="bg-blue-600">Logout</button>
 
             </span>
 
     </div>
+
+    
   </nav>
 </template>
