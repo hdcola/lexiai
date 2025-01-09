@@ -2,14 +2,8 @@
 import { ref } from 'vue'
 import { mdiMenu } from '@mdi/js'
 import logo from '@/assets/img/logo-horizontal.png'
-import { useRoute } from 'vue-router'
 
 const isLoggedIn = ref<boolean>(!!localStorage.getItem('accessToken'));
-
-const isActiveLink = (routePath: string) => { 
-  const route = useRoute();
-  return route.path === routePath;
-} 
 
 const logout = () => {
   localStorage.removeItem('accessToken');
@@ -45,15 +39,15 @@ const isMenuOpen = ref<boolean>(false)
       <!-- Desktop Menu -->
       <div class="hidden md:flex space-x-4 items-center">
           <RouterLink to="/" 
-          :class="[isActiveLink('/') ? 'bg-blue-600' : 'hover:bg-blue-700 hover: text-white', 'text-white', 'px-3', 'py-2', 'rounded-md']">Home</RouterLink>
+            class="text-white px-3 py-2 rounded-md hover:bg-blue-700"   active-class="bg-blue-600">Home</RouterLink>
 
             <span v-if="!isLoggedIn">
               <RouterLink to="/login" 
-              :class="[isActiveLink('/login') ? 'bg-blue-600' : 'hover:bg-blue-700 hover: text-white', 'text-white', 'px-3', 'py-2', 'rounded-md']">Login</RouterLink>
+              class="text-white px-3 py-2 rounded-md hover:bg-blue-700"   active-class="bg-blue-600">Login</RouterLink>
             </span>
             <span v-else  class="flex space-x-4">
               <button @click="logout"
-              :class="[isActiveLink('/logout') ? 'bg-blue-600' : 'hover:bg-blue-700 hover: text-white', 'block', 'text-white', 'px-3', 'py-2', 'rounded-md']">Logout</button>
+              class="text-white px-3 py-2 rounded-md hover:bg-blue-700"   active-class="bg-blue-600">Logout</button>
               
             </span>
 
@@ -64,15 +58,15 @@ const isMenuOpen = ref<boolean>(false)
     <!-- Mobile Menu -->
     <div v-show="isMenuOpen" class="md:hidden bg-blue-500 px-4 space-y-2 pb-4 transition-all">
       <RouterLink to="/" 
-          :class="[isActiveLink('/') ? 'bg-blue-600' : 'hover:bg-blue-700 hover: text-white', 'block', 'text-white', 'px-3', 'py-2', 'rounded-md']">Home</RouterLink>
+      class="text-white px-3 py-2 rounded-md hover:bg-blue-700"   active-class="bg-blue-600">Home</RouterLink>
           
            <span v-if="!isLoggedIn">
               <RouterLink to="/login" 
-                :class="[isActiveLink('/login') ? 'bg-blue-600' : 'hover:bg-blue-700 hover: text-white', 'block', 'text-white', 'px-3', 'py-2', 'rounded-md']">Login</RouterLink>
+              class="text-white px-3 py-2 rounded-md hover:bg-blue-700"   active-class="bg-blue-600">Login</RouterLink>
             </span>
             <span v-else>
               <button @click="logout"
-              :class="[isActiveLink('/logout') ? 'bg-blue-600' : 'hover:bg-blue-700 hover: text-white', 'block', 'text-white', 'px-3', 'py-2', 'rounded-md']">Logout</button>
+              class="text-white px-3 py-2 rounded-md hover:bg-blue-700"   active-class="bg-blue-600">Logout</button>
               
             </span>
 
