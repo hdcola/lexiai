@@ -3,11 +3,11 @@ import { ref } from 'vue';
 /* import axios from 'axios'; */
 import { useRouter } from 'vue-router';
 
-/* const email = ref('');
-const password = ref('');
-const confirmPassword = ref(''); */
-const errorMessage = ref('');
-const successMessage = ref('');
+/* const email = ref<string>('');
+const password = ref<string>('');
+const confirmPassword = ref<string>(''); */
+const errorMessage = ref<string>('');
+const successMessage = ref<string>('');
 const router = useRouter();
 
 /* const apiPORT = import.meta.env.VITE_PORT; */
