@@ -16,11 +16,8 @@
           <p class="my-5 text-lg">
             Transform the way you improve your speaking skills with our advanced AI app. Get real-time feedback on pronunciation, intonation, and fluency. Enjoy personalized content and practice immersive conversations that simulate real-life scenarios to boost your confidence in any language!
           </p>
-          <button
-            class="mt-5 px-6 py-3 text-lg font-semibold text-blue-500 bg-white rounded-md hover:bg-gray-100"
-          >
-            Get Started
-          </button>
+          <RouterLink to="/login" 
+          class="mt-5 px-6 py-3 text-lg font-semibold text-blue-500 bg-white rounded-md hover:bg-gray-100">Get Started</RouterLink>
         </div>
       </div>
     </section>
