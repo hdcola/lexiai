@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-/* import axios from 'axios'; */
-import { useRouter } from 'vue-router'
+/* import axios from 'axios';
+import { useRouter } from 'vue-router' */
 
 /* const email = ref<string>('');
 const password = ref<string>('');
 const confirmPassword = ref<string>(''); */
 const errorMessage = ref<string>('')
 const successMessage = ref<string>('')
-const router = useRouter()
-
+/* const router = useRouter()
+ */
 /* const apiPORT = import.meta.env.VITE_PORT; */
 
-const register = async () => {
+    /* 
+    const register = async () => {
     errorMessage.value = ''
     successMessage.value = ''
-    /* 
+
   if (!username || !email.value || !password.value || !confirmPassword.value) {
     errorMessage.value = 'All fields are required.';
     return;
@@ -25,23 +26,23 @@ const register = async () => {
     errorMessage.value = 'Passwords do not match.';
     return;
   }
- */
+
     try {
-        /* const response = await axios.post(`http://localhost:${apiPORT}/api/register`, {
+      const response = await axios.post(`http://localhost:${apiPORT}/api/register`, {
       username: username.value,
       email: email.value,
       password: password.value,
     }); 
 
     console.log('Registration successful:', response.data);
-*/
+
         successMessage.value = 'Registration successful. Please log in.'
         setTimeout(() => router.push('/login'), 2000) // Redirect after 3 seconds
     } catch (error) {
         console.log('Registration error:', error)
-        /* errorMessage.value = error.response?.data?.error || 'Registration failed. Please try again.'; */
+         errorMessage.value = error.response?.data?.error || 'Registration failed. Please try again.'; 
     }
-}
+}*/
 </script>
 
 <template>
@@ -53,7 +54,8 @@ const register = async () => {
             <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
             <p v-if="successMessage" class="text-green-500">{{ successMessage }}</p>
 
-            <form @submit.prevent="register" class="space-y-4">
+            <!-- @submit.prevent="register" --> 
+            <form class="space-y-4">
                 <div>
                     <label for="username" class="block text-gray-600 mb-1">Username</label>
 
