@@ -1,6 +1,8 @@
-<script setup lang="ts">
+<script setup>
 import AudioRecord from '@/components/poc/AudioRecord.vue';
 import { useGenAI } from '@/composables/useGenAI';
+import { MultimodalLiveClient } from '@/lib/core/websocket-client';
+
 
 useGenAI("string")
 
