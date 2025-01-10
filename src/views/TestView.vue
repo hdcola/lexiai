@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import AudioRecord from '@/components/poc/AudioRecord.vue';
+import { useGenAI } from '@/composables/useGenAI';
+
+useGenAI("string")
+
 </script>
 
 <template>
