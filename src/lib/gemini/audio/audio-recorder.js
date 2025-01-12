@@ -1,6 +1,8 @@
 import { Logger } from '../utils/logger.js';
 import { ApplicationError, ErrorCodes } from '../utils/error-boundary.js';
-import { CONFIG } from '../config/config.js';
+import CONFIG from '../config/config.example.js';
+import AudioRecordingWorklet from './worklets/audio-processing';
+import { createWorketFromSrc } from '../utils/worklet-registry.js';
 
 /**
  * @class AudioRecorder
@@ -51,8 +53,11 @@ export class AudioRecorder {
             this.source = this.audioContext.createMediaStreamSource(this.stream);
 
             // Load and initialize audio worklet
-            await this.audioContext.audioWorklet.addModule('js/audio/worklets/audio-processing.js');
-            this.processor = new AudioWorkletNode(this.audioContext, 'audio-recorder-worklet');
+            const workletName = 'audio-recorder-worklet';
+            const src = createWorketFromSrc(workletName, AudioRecordingWorklet);
+
+            await this.audioContext.audioWorklet.addModule(src);
+            this.processor = new AudioWorkletNode(this.audioContext, workletName);
             
             // Handle processed audio data
             this.processor.port.onmessage = (event) => {

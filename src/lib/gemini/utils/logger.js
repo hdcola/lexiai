@@ -1,4 +1,4 @@
-import { EventEmitter } from 'https://cdn.skypack.dev/eventemitter3';
+import EventEmitter from "eventemitter3";
 
 /**
  * @fileoverview A simple logger that logs messages to the console and emits events.

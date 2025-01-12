@@ -1,5 +1,4 @@
-import { registeredWorklets } from '../core/worklet-registry.js';
-import { CONFIG } from '../config/config.js';
+import { registeredWorklets } from '../utils/worklet-registry.js';
 
 /**
  * @class AudioStreamer
@@ -87,7 +86,7 @@ export class AudioStreamer {
     /**
      * @method addPCM16
      * @description Adds a chunk of PCM16 audio data to the streaming queue.
-     * @param {Int16Array} chunk - The audio data chunk.
+     * @param {Uint8Array} chunk - The audio data chunk.
      */
     addPCM16(chunk) {
 

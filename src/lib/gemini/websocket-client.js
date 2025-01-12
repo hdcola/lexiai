@@ -1,8 +1,8 @@
 import EventEmitter from 'eventemitter3';
-import { blobToJSON, base64ToArrayBuffer } from '../utils/utils.js';
-import { ApplicationError, ErrorCodes } from '../utils/error-boundary.js';
-import { Logger } from '../utils/logger.js';
-import { ToolManager } from '../tools/tool-manager.js';
+import { blobToJSON, base64ToArrayBuffer } from './utils/utils';
+import { ApplicationError, ErrorCodes } from './utils/error-boundary.js';
+import { Logger } from './utils/logger.js';
+import { ToolManager } from './tools/tool-manager.js';
 
 /**
  * Client for interacting with the Gemini 2.0 Flash Multimodal Live API via WebSockets.
@@ -144,6 +144,7 @@ export class MultimodalLiveClient extends EventEmitter {
      */
     async receive(blob) {
         const response = await blobToJSON(blob);
+
         if (response.toolCall) {
             this.log('server.toolCall', response);
             await this.handleToolCall(response.toolCall);
