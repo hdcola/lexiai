@@ -1,11 +1,15 @@
-<script setup lang="ts">
-import AudioRecord from '@/components/poc/AudioRecord.vue';
+<script setup>
+import { AudioRecorder } from '@/lib/gemini/audio/audio-recorder';
+import { AudioStreamer } from '@/lib/gemini/audio/audio-streamer';
+import GeminiClient from '@/components/GeminiClient.vue';
+
 </script>
 
 <template>
     <main>
         <div class="container">
-            <AudioRecord />
+           <!--<AudioRecord />-->
+            <GeminiClient />
         </div>
     </main>
 </template>
