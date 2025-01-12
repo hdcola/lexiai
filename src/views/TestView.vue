@@ -1,17 +1,15 @@
 <script setup>
-import AudioRecord from '@/components/poc/AudioRecord.vue';
-import { useGenAI } from '@/composables/useGenAI';
-import { MultimodalLiveClient } from '@/lib/core/websocket-client';
-
-
-useGenAI("string")
+import { AudioRecorder } from '@/lib/gemini/audio/audio-recorder';
+import { AudioStreamer } from '@/lib/gemini/audio/audio-streamer';
+import GeminiClient from '@/components/GeminiClient.vue';
 
 </script>
 
 <template>
     <main>
         <div class="container">
-            <AudioRecord />
+           <!--<AudioRecord />-->
+            <GeminiClient />
         </div>
     </main>
 </template>

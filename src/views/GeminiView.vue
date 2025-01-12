@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+import GeminiClient from '@/components/GeminiClient.vue';
 import { ref } from "vue";
 const topics = ref([
   {
@@ -59,12 +60,13 @@ const topics = ref([
                 >
                     Send
                 </button>
-                <button 
+                <GeminiClient />
+                <!--<button 
                     id="mic-button" 
                     class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
                 >
                     <span id="mic-icon" class="material-symbols-outlined">mic</span>
-                </button>
+                </button>-->
             </div>
         </div>
     </div>
