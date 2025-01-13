@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import GeminiClient from '@/components/GeminiClient.vue';
-import { ref } from "vue";
+import { ref, useTemplateRef } from "vue";
 const topics = ref([
   {
     name: "Small Talk",
@@ -17,7 +17,18 @@ const topics = ref([
   },
 ]);
 
+const geminiref = useTemplateRef("gemini");
 
+const language = ref<string>("French")
+const style = ref<string>("Professional")
+const topic = ref<string>("Introductions")
+
+function changeTopic() {
+    const gemini = geminiref.value
+    if (gemini) {
+        gemini.updatePrompt(`Help me practice ${topic.value} in ${language.value} in a ${style.value} style. Focus on practicing vocabulary, grammar and pronounciation. Do not change the topic, the style or language.`)
+    }
+}
 </script>
 
 <template>
@@ -54,13 +65,16 @@ const topics = ref([
                 placeholder="Enter message..." 
             />
             <div class="flex gap-3 justify-end">
+                <button @click="changeTopic">
+                    Prompt
+                </button>
                 <button 
                     id="send-button" 
                     class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition"
                 >
                     Send
                 </button>
-                <GeminiClient />
+                <GeminiClient ref="gemini" />
                 <!--<button 
                     id="mic-button" 
                     class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
