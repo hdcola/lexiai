@@ -98,6 +98,14 @@ async function toggleRecording() {
     }
 }
 
+function updatePrompt(newPrompt: string) {
+    client.send([
+        {
+            "text": newPrompt
+        }
+    ])
+}
+
 client.on("open", () => {
     console.log("Opened WebSocket")
 })
@@ -140,6 +148,7 @@ defineExpose({
     client,
     isConnected,
     isRecording,
+    updatePrompt,
 })
 
 </script>
