@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import GeminiClient from '@/components/GeminiClient.vue';
+import type { ResponseModalities } from '@/lib/gemini/config/config-types';
 import { ref, useTemplateRef } from "vue";
 const topics = ref([
   {
@@ -17,7 +18,8 @@ const topics = ref([
   },
 ]);
 
-const geminiref = useTemplateRef("gemini");
+const responseType = ref<ResponseModalities>("audio")
+const geminiref = useTemplateRef("gemini")
 
 const language = ref<string>("French")
 const style = ref<string>("Professional")
@@ -29,6 +31,7 @@ function changeTopic() {
         gemini.updatePrompt(`Help me practice ${topic.value} in ${language.value} in a ${style.value} style. Focus on practicing vocabulary, grammar and pronounciation. Do not change the topic, the style or language.`)
     }
 }
+
 </script>
 
 <template>
@@ -74,7 +77,7 @@ function changeTopic() {
                 >
                     Send
                 </button>
-                <GeminiClient ref="gemini" />
+                <GeminiClient ref="gemini" :responseModalities="responseType" />
                 <!--<button 
                     id="mic-button" 
                     class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
