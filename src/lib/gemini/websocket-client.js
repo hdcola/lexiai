@@ -4,6 +4,7 @@ import { ApplicationError, ErrorCodes } from './utils/error-boundary.js';
 import { Logger } from './utils/logger.js';
 import { ToolManager } from './tools/tool-manager.js';
 
+
 /**
  * Client for interacting with the Gemini 2.0 Flash Multimodal Live API via WebSockets.
  * This class handles the connection, sending and receiving messages, and processing responses.
@@ -42,7 +43,7 @@ export class MultimodalLiveClient extends EventEmitter {
      * Connects to the WebSocket server with the given configuration.
      * The configuration can include model settings, generation config, system instructions, and tools.
      *
-     * @param {Object} config - The configuration for the connection.
+     * @param {import('./config/config-types.ts').LiveConfig} config - The configuration for the connection.
      * @param {string} config.model - The model to use (e.g., 'gemini-2.0-flash-exp').
      * @param {Object} config.generationConfig - Configuration for content generation.
      * @param {string[]} config.generationConfig.responseModalities - The modalities for the response (e.g., "audio", "text").

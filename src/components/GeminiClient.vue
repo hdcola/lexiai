@@ -9,7 +9,8 @@ import CONFIG from '@/lib/gemini/config/config.example'
 import IconMicrophoneFull from './poc/icons/IconMicrophoneFull.vue'
 import IconMicrophoneEmpty from './poc/icons/IconMicrophoneEmpty.vue'
 
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import type { LiveConfig, ResponseModalities, VoiceName } from '@/lib/gemini/config/config-types'
 
 const GOOGLE_AI_STUDIO_API_KEY = ref<string>(import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY)
 
@@ -20,35 +21,52 @@ const isRecording = ref<boolean>(false)
 const audioRecorder = ref<AudioRecorder | null>(null)
 const audioStreamer = ref<AudioStreamer | null>(null)
 
+const voiceName = ref<VoiceName>("Aoede")
+const systemInstruction = ref<string>(CONFIG.SYSTEM_INSTRUCTION.TEXT)
+
+const props = defineProps<{responseModalities: ResponseModalities}>()
+const responseModalities = ref<ResponseModalities>(props.responseModalities)
+const updateResponseModalities = computed(() => {
+    console.log(`Update responseModalities to ${props.responseModalities}`)
+    responseModalities.value = props.responseModalities;
+    updateConfig()
+})
+
 onMounted(async () => {
-    // Connect the websocket
-    const config = {
-        model: CONFIG.API.MODEL_NAME,
+    connect()
+})
+
+onUnmounted(() => {
+    disconnect()
+})
+
+function connect() {
+    const config: LiveConfig = {
+        model: "models/gemini-2.0-flash-exp",
         generationConfig: {
-            responseModalities: ["audio"],
+            responseModalities: responseModalities.value,
             speechConfig: {
                 voiceConfig: { 
                     prebuiltVoiceConfig: { 
-                        voiceName: CONFIG.VOICE.NAME    // You can change voice in the config.js file
+                        voiceName: voiceName.value
                     }
                 }
             },
         },
         systemInstruction: {
             parts: [{
-                text: CONFIG.SYSTEM_INSTRUCTION.TEXT     // You can change system instruction in the config.js file
+                text: systemInstruction.value
             }],
         }
-    };
-
+    }
     client.connect(config)
     isConnected.value = true
 
     // Initialize AudioStream
     //initAudioStream()
-})
+}
 
-onUnmounted(() => {
+function disconnect() {
     // Disconnect the websocket
     client.disconnect()
     isConnected.value = false
@@ -60,7 +78,7 @@ onUnmounted(() => {
     // Close recording
     audioRecorder.value?.stop()
     audioRecorder.value = null
-})
+}
 
 async function initAudioStream() {
     if (audioStreamer.value == null) {
@@ -96,6 +114,31 @@ async function toggleRecording() {
         audioRecorder.value?.stop()
         isRecording.value = false
     }
+}
+
+function updateConfig() {
+    disconnect()
+    connect()
+}
+
+function updateVoiceName(newVoiceName: VoiceName) {
+    console.log(`Update voice to ${newVoiceName}`)
+    voiceName.value = newVoiceName;
+    updateConfig()
+}
+
+/*
+function updateResponseModalities(newResponseModalities: ResponseModalities) {
+    console.log(`Update responseModalities to ${newResponseModalities}`)
+    responseModalities.value = newResponseModalities;
+    updateConfig()
+}*/
+
+
+function updateSystemInstructions(newSystemInstruction: string) {
+    console.log(`Update system instructions to ${newSystemInstruction}`)
+    systemInstruction.value = newSystemInstruction;
+    updateConfig()
 }
 
 function updatePrompt(newPrompt: string) {
@@ -148,7 +191,11 @@ defineExpose({
     client,
     isConnected,
     isRecording,
+    connect,
+    disconnect,
+    updateVoiceName,
     updatePrompt,
+    updateSystemInstructions,
 })
 
 </script>
