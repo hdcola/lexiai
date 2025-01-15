@@ -12,7 +12,6 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { LiveConfig, ResponseModalities, VoiceName } from '@/lib/gemini/config/config-types'
 import VolMeterWorket from '@/lib/gemini/audio/worklets/vol-meter'
 import IconAudioPulseBars from './images/icons/IconAudioPulseBars.vue'
-import IconAudioPulseDots from './images/icons/IconAudioPulseDots.vue'
 
 const GOOGLE_AI_STUDIO_API_KEY = ref<string>(import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY)
 
