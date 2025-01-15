@@ -222,7 +222,7 @@ export class MultimodalLiveClient extends EventEmitter {
         }
 
         const message = hasAudio && hasVideo ? 'audio + video' : hasAudio ? 'audio' : hasVideo ? 'video' : 'unknown';
-        Logger.debug(`Sending realtime input: ${message} (${Math.round(totalSize/1024)}KB)`);
+        /* Logger.debug(`Sending realtime input: ${message} (${Math.round(totalSize/1024)}KB)`); */
 
         const data = { realtimeInput: { mediaChunks: chunks } };
         this._sendDirect(data);

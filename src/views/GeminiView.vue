@@ -62,8 +62,9 @@ type ITopic = {
 const languages = ref<ILanguage[]>([])
 const styles = ref<IStyle[]>([])
 const topics = ref<ITopic[]>([])
-const levels = ref(['Beginner', 'Intermediate', 'Advanced'])
+const levels = ref(['Beginner', 'Advanced'])
 
+// to read from MongoDb for logged user 
 const selectedLanguage = ref<string>(userLanguage)
 const selectedStyle = ref<string>(userStyle)
 const selectedLevel = ref<string>(userLevel)
@@ -254,7 +255,7 @@ onMounted(async () => {
                                             :key="topic._id"
                                             :value="topic.title"
                                         >
-                                            {{ topic.title }} ({{ topic.level }})
+                                            {{ topic.title }} 
                                         </option>
                                     </select>
                                 </div>
