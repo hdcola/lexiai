@@ -6,8 +6,8 @@ import { AudioRecorder } from '@/lib/gemini/audio/audio-recorder'
 import { AudioStreamer } from '@/lib/gemini/audio/audio-streamer'
 import CONFIG from '@/lib/gemini/config/config.example'
 
-import IconMicrophoneFull from './poc/icons/IconMicrophoneFull.vue'
-import IconMicrophoneEmpty from './poc/icons/IconMicrophoneEmpty.vue'
+import IconMicrophoneFull from './images/icons/IconMicrophoneFull.vue'
+import IconMicrophoneEmpty from './images/icons/IconMicrophoneEmpty.vue'
 
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { LiveConfig, ResponseModalities, VoiceName } from '@/lib/gemini/config/config-types'
