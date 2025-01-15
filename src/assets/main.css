@@ -3,6 +3,63 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --primary: #9368ef;
+    --secondary: #f1a146;
+    --light-blue: #d0f3fc;
+    --light-purple: #d0f3fc;
+    --light-orange: #d0f3fc;
+    --gradient-purple: linear-gradient(to right, #ae97f8, #8184f8);
+    --gradient-blue: linear-gradient(to right, #80defb, #3accfd);
+    --gradient-orange: linear-gradient(to right, #fdc990, #f2a247);
+}
+
 * {
     font-family: "Nunito", sans-serif;
+}
+
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #3accfd #dbeafe;
+}
+
+/*
+    Fake highlight on clickables
+*/
+
+button:hover,
+button:active,
+a[role='button']:hover,
+a[role='button']:active,
+input[type='submit']:hover,
+input[type='submit']:active,
+input[type='reset']:hover,
+input[type='reset']:active,
+.highlight {
+    cursor: pointer;
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
+}
+
+section {
+    padding: 30px;
+}
+
+
+.background.home {
+    background-attachment: fixed;
+    background-image: url('../assets/img/background.svg');
+    background-repeat: repeat;
+    background-size: contain;
+}
+
+@media (min-width: 768px) { /* Tablet */
+    section {
+        padding: 30px 50px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .background.home {
+        background-size: 50%;
+    }
 }

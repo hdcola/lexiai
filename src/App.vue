@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import AppNavbar from './components/poc/AppNavbar.vue';
-import { RouterView } from 'vue-router'
+import AppNavbar from './components/AppNavbar.vue'
+import { RouterView, useRoute } from 'vue-router'
+
+const route = useRoute()
 </script>
 
 <template>
-  <AppNavbar />
-  <RouterView />
+    <div class="background w-full" :class="route.name">
+        <AppNavbar />
+        <RouterView />
+    </div>
 </template>
