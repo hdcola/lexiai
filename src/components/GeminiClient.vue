@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { type GenerativeContentBlob } from '@google/generative-ai'
 import { MultimodalLiveClient } from '@/lib/gemini/websocket-client'
 import { AudioRecorder } from '@/lib/gemini/audio/audio-recorder'
@@ -11,24 +10,26 @@ import IconMicrophoneEmpty from './images/icons/IconMicrophoneEmpty.vue'
 
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { LiveConfig, ResponseModalities, VoiceName } from '@/lib/gemini/config/config-types'
+import VolMeterWorket from '@/lib/gemini/audio/worklets/vol-meter'
 
 const GOOGLE_AI_STUDIO_API_KEY = ref<string>(import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY)
 
-const client = new MultimodalLiveClient({apiKey: GOOGLE_AI_STUDIO_API_KEY.value})
+const client = new MultimodalLiveClient({ apiKey: GOOGLE_AI_STUDIO_API_KEY.value })
 const isConnected = ref<boolean>(false)
 const isRecording = ref<boolean>(false)
+const volume = ref<number>(0)
 
 const audioRecorder = ref<AudioRecorder | null>(null)
 const audioStreamer = ref<AudioStreamer | null>(null)
 
-const voiceName = ref<VoiceName>("Aoede")
+const voiceName = ref<VoiceName>('Aoede')
 const systemInstruction = ref<string>(CONFIG.SYSTEM_INSTRUCTION.TEXT)
 
-const props = defineProps<{responseModalities: ResponseModalities}>()
+const props = defineProps<{ responseModalities: ResponseModalities }>()
 const responseModalities = ref<ResponseModalities>(props.responseModalities)
 const updateResponseModalities = computed(() => {
     console.log(`Update responseModalities to ${props.responseModalities}`)
-    responseModalities.value = props.responseModalities;
+    responseModalities.value = props.responseModalities
     updateConfig()
 })
 
@@ -42,22 +43,24 @@ onUnmounted(() => {
 
 function connect() {
     const config: LiveConfig = {
-        model: "models/gemini-2.0-flash-exp",
+        model: 'models/gemini-2.0-flash-exp',
         generationConfig: {
             responseModalities: responseModalities.value,
             speechConfig: {
-                voiceConfig: { 
-                    prebuiltVoiceConfig: { 
-                        voiceName: voiceName.value
-                    }
-                }
+                voiceConfig: {
+                    prebuiltVoiceConfig: {
+                        voiceName: voiceName.value,
+                    },
+                },
             },
         },
         systemInstruction: {
-            parts: [{
-                text: systemInstruction.value
-            }],
-        }
+            parts: [
+                {
+                    text: systemInstruction.value,
+                },
+            ],
+        },
     }
     client.connect(config)
     isConnected.value = true
@@ -84,29 +87,32 @@ async function initAudioStream() {
     if (audioStreamer.value == null) {
         audioStreamer.value = new AudioStreamer(new AudioContext())
         audioStreamer.value.sampleRate = CONFIG.AUDIO.OUTPUT_SAMPLE_RATE
+        audioStreamer.value.addWorklet('vumeter-out', VolMeterWorket, (ev: any) => {
+            volume.value = ev.data.volume
+        })
 
         await audioStreamer.value.initialize()
     }
 }
 
 async function toggleRecording() {
-    
     if (!isRecording.value) {
         try {
             audioRecorder.value = new AudioRecorder()
 
             await audioRecorder.value.start((base64Data: GenerativeContentBlob[]) => {
-                client.sendRealtimeInput([{
-                    mimeType: "audio/pcm;rate=16000",
-                    data: base64Data
-                }])
+                client.sendRealtimeInput([
+                    {
+                        mimeType: 'audio/pcm;rate=16000',
+                        data: base64Data,
+                    },
+                ])
             })
 
             isRecording.value = true
-            console.log("Microphone started")
-        }
-        catch (error) {
-            console.error("Recording Error", error)
+            console.log('Microphone started')
+        } catch (error) {
+            console.error('Recording Error', error)
         }
     }
     // Stop recording
@@ -123,7 +129,7 @@ function updateConfig() {
 
 function updateVoiceName(newVoiceName: VoiceName) {
     console.log(`Update voice to ${newVoiceName}`)
-    voiceName.value = newVoiceName;
+    voiceName.value = newVoiceName
     updateConfig()
 }
 
@@ -134,56 +140,54 @@ function updateResponseModalities(newResponseModalities: ResponseModalities) {
     updateConfig()
 }*/
 
-
 function updateSystemInstructions(newSystemInstruction: string) {
     console.log(`Update system instructions to ${newSystemInstruction}`)
-    systemInstruction.value = newSystemInstruction;
+    systemInstruction.value = newSystemInstruction
     updateConfig()
 }
 
 function updatePrompt(newPrompt: string) {
     client.send([
         {
-            "text": newPrompt
-        }
+            text: newPrompt,
+        },
     ])
 }
 
-client.on("open", () => {
-    console.log("Opened WebSocket")
+client.on('open', () => {
+    console.log('Opened WebSocket')
 })
 
-client.on("close", () => {
-    console.log("Closed WebSocket")
+client.on('close', () => {
+    console.log('Closed WebSocket')
 })
 
-client.on("setupcomplete", () => {
-    console.log("Setup Completed")
+client.on('setupcomplete', () => {
+    console.log('Setup Completed')
 })
 
-client.on("audio", async (data: ArrayBuffer) => {
-    console.log("Audio Received")
+client.on('audio', async (data: ArrayBuffer) => {
+    console.log('Audio Received')
     try {
         await initAudioStream()
         audioStreamer.value?.addPCM16(new Uint8Array(data))
-    }
-    catch (error) {
-        console.error("Audio Error", error)
+    } catch (error) {
+        console.error('Audio Error', error)
     }
 })
 
-client.on("content", () => {
+client.on('content', () => {
     // TODO
-    console.log("Text Received")
+    console.log('Text Received')
 })
 
-client.on("interrupted", () => {
-    console.log("Interrupted")
+client.on('interrupted', () => {
+    console.log('Interrupted')
     audioStreamer.value?.stop()
 })
 
-client.on("turncomplete", () => {
-    console.log("Turn Completed")
+client.on('turncomplete', () => {
+    console.log('Turn Completed')
 })
 
 // Allow access to parent
@@ -191,17 +195,22 @@ defineExpose({
     client,
     isConnected,
     isRecording,
+    volume,
     connect,
     disconnect,
     updateVoiceName,
     updatePrompt,
     updateSystemInstructions,
 })
-
 </script>
 
 <template>
-    <button class="p-3 rounded-lg" :class="{'bg-blue-600': isRecording, 'bg-gray-800': !isRecording}" type="button" @click="toggleRecording">
+    <button
+        class="p-3 rounded-lg"
+        :class="{ 'bg-blue-600': isRecording, 'bg-gray-800': !isRecording }"
+        type="button"
+        @click="toggleRecording"
+    >
         <IconMicrophoneFull v-if="isRecording" />
         <IconMicrophoneEmpty v-else />
     </button>

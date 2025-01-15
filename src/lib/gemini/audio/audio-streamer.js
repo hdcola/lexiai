@@ -1,4 +1,4 @@
-import { registeredWorklets } from '../utils/worklet-registry.js';
+import { registeredWorklets, createWorketFromSrc } from '../utils/worklet-registry.js';
 
 /**
  * @class AudioStreamer
@@ -70,8 +70,8 @@ export class AudioStreamer {
         workletsRecord[workletName] = { handlers: [handler] };
 
         try {
-            const absolutePath = `/${workletSrc}`;
-            await this.context.audioWorklet.addModule(absolutePath);
+            const src = createWorketFromSrc(workletName, workletSrc);
+            await this.context.audioWorklet.addModule(src);
         } catch (error) {
             console.error('Error loading worklet:', error);
             throw error;
