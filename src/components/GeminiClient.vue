@@ -218,12 +218,8 @@ defineExpose({
         <IconMicrophoneEmpty v-else />
     </button>
     <button
-        class="p-3 rounded-lg"
-        :class="{ 'bg-blue-600': isRecording, 'bg-gray-800': !isRecording }"
-        type="button"
-        @click="toggleRecording"
+        class="p-3 rounded-lg bg-gray-800" type="button"
     >
-        <IconAudioPulseBars :active="true" :hover="true" :volume="volume" v-if="isRecording" />
-        <IconAudioPulseDots v-else />
+        <IconAudioPulseBars :active="true" :hover="true" :volume="volume" />
     </button>
 </template>

@@ -54,7 +54,7 @@ onMounted(updateLines)
     /* border-radius: 1000px; */
     width: 3px;
     min-height: 4px;
-    background-color: #000;
+    background-color: #fff;
     margin: 0 2px; /* added */
     border-radius: 1000px;
     transition: height 0.1s ease;
@@ -68,7 +68,7 @@ onMounted(updateLines)
     opacity: 1;
 }
 .audioPulse.active > div {
-    background-color: #000;
+    background-color: #fff;
 }
 @keyframes pulse {
     0%,
