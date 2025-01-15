@@ -66,7 +66,7 @@ const route = useRoute()
                         </button>
                     </span>
                     <RouterLink
-                        to="/signup"
+                        to="/register"
                         v-if="!isLoggedIn"
                         class="menu-btn action highlight"
                         active-class="active"
