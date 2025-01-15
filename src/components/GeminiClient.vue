@@ -11,6 +11,7 @@ import IconMicrophoneEmpty from './images/icons/IconMicrophoneEmpty.vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { LiveConfig, ResponseModalities, VoiceName } from '@/lib/gemini/config/config-types'
 import VolMeterWorket from '@/lib/gemini/audio/worklets/vol-meter'
+import IconAudioPulseBars from './images/icons/IconAudioPulseBars.vue'
 
 const GOOGLE_AI_STUDIO_API_KEY = ref<string>(import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY)
 
@@ -88,7 +89,8 @@ async function initAudioStream() {
         audioStreamer.value = new AudioStreamer(new AudioContext())
         audioStreamer.value.sampleRate = CONFIG.AUDIO.OUTPUT_SAMPLE_RATE
         audioStreamer.value.addWorklet('vumeter-out', VolMeterWorket, (ev: any) => {
-            volume.value = ev.data.volume
+            /* console.log("real-time volume:", ev.data.volume) */
+            volume.value = ev.data.volume*10 // multiplied to see a visible change
         })
 
         await audioStreamer.value.initialize()
@@ -213,5 +215,10 @@ defineExpose({
     >
         <IconMicrophoneFull v-if="isRecording" />
         <IconMicrophoneEmpty v-else />
+    </button>
+    <button
+        class="p-3 rounded-lg bg-gray-800" type="button"
+    >
+        <IconAudioPulseBars :active="true" :hover="true" :volume="volume" />
     </button>
 </template>

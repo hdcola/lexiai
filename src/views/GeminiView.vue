@@ -62,8 +62,9 @@ type ITopic = {
 const languages = ref<ILanguage[]>([])
 const styles = ref<IStyle[]>([])
 const topics = ref<ITopic[]>([])
-const levels = ref(['Beginner', 'Intermediate', 'Advanced'])
+const levels = ref(['Beginner', 'Advanced'])
 
+// to read from MongoDb for logged user 
 const selectedLanguage = ref<string>(userLanguage)
 const selectedStyle = ref<string>(userStyle)
 const selectedLevel = ref<string>(userLevel)
@@ -156,12 +157,12 @@ onMounted(async () => {
     <div class="flex flex-row gap-6 mt-8 mx-auto max-w-6xl">
         <!-- Topics List -->
         <div class="bg-gray-100 p-4 rounded-lg shadow-lg w-1/4 h-auto">
-            <p class="text-lg font-semibold mb-4">French Topics</p>
-            <ul class v-for="(topic0, index) in topics0" :key="index">
+            <p class="text-lg font-semibold mb-4 ms-2">{{ selectedLanguage }}</p>
+            <ul >
                 <li
                     class="bg-gray-100 p-2 border-2 border-gray-200 hover:border-gray-400 rounded-lg max-w-xs mx-auto mb my-2"
                 >
-                    <a href="#" class="text-gray-600">{{ topic0.name }}</a>
+                    <a href="#" class="text-gray-600">{{ selectedTopic }}</a>
                 </li>
             </ul>
         </div>
@@ -254,7 +255,7 @@ onMounted(async () => {
                                             :key="topic._id"
                                             :value="topic.title"
                                         >
-                                            {{ topic.title }} ({{ topic.level }})
+                                            {{ topic.title }} 
                                         </option>
                                     </select>
                                 </div>
