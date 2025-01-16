@@ -19,7 +19,9 @@ const client = new MultimodalLiveClient({ apiKey: GOOGLE_AI_STUDIO_API_KEY.value
 const isConnected = ref<boolean>(false)
 const isRecording = ref<boolean>(false)
 const volume = ref<number>(0)
+const inputVolume = ref<number>(0)
 
+const audioContext = ref<AudioContext | null>(null)
 const audioRecorder = ref<AudioRecorder | null>(null)
 const audioStreamer = ref<AudioStreamer | null>(null)
 
@@ -82,15 +84,20 @@ function disconnect() {
     // Close recording
     audioRecorder.value?.stop()
     audioRecorder.value = null
+    isRecording.value = false
 }
 
 async function initAudioStream() {
+    if (audioContext.value == null) {
+        audioContext.value = new AudioContext()
+    }
+
     if (audioStreamer.value == null) {
-        audioStreamer.value = new AudioStreamer(new AudioContext())
+        audioStreamer.value = new AudioStreamer(audioContext.value)
         audioStreamer.value.sampleRate = CONFIG.AUDIO.OUTPUT_SAMPLE_RATE
         audioStreamer.value.addWorklet('vumeter-out', VolMeterWorket, (ev: any) => {
             /* console.log("real-time volume:", ev.data.volume) */
-            volume.value = ev.data.volume*10 // multiplied to see a visible change
+            volume.value = ev.data.volume * 10 // multiplied to see a visible change
         })
 
         await audioStreamer.value.initialize()
@@ -100,7 +107,15 @@ async function initAudioStream() {
 async function toggleRecording() {
     if (!isRecording.value) {
         try {
+            await initAudioStream()
             audioRecorder.value = new AudioRecorder()
+
+            let inputDataArray: Uint8Array<ArrayBufferLike>
+            const inputAnalyser = audioContext.value?.createAnalyser()
+            if (inputAnalyser) {
+                inputAnalyser.fftSize = 256
+                inputDataArray = new Uint8Array(inputAnalyser.frequencyBinCount)
+            }
 
             await audioRecorder.value.start((base64Data: GenerativeContentBlob[]) => {
                 client.sendRealtimeInput([
@@ -109,6 +124,11 @@ async function toggleRecording() {
                         data: base64Data,
                     },
                 ])
+
+                if (inputAnalyser && inputDataArray) {
+                    inputAnalyser.getByteFrequencyData(inputDataArray)
+                    inputVolume.value = Math.max(...inputDataArray) / 255
+                }
             })
 
             isRecording.value = true
@@ -198,6 +218,7 @@ defineExpose({
     isConnected,
     isRecording,
     volume,
+    inputVolume,
     connect,
     disconnect,
     updateVoiceName,
@@ -216,9 +237,7 @@ defineExpose({
         <IconMicrophoneFull v-if="isRecording" />
         <IconMicrophoneEmpty v-else />
     </button>
-    <button
-        class="p-3 rounded-lg bg-gray-800" type="button"
-    >
+    <button class="p-3 rounded-lg bg-gray-800" type="button">
         <IconAudioPulseBars :active="true" :hover="true" :volume="volume" />
     </button>
 </template>
