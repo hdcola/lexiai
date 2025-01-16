@@ -1,33 +1,45 @@
 <script setup lang="ts">
 import ImgLogin from '@/components/images/ImgLogin.vue'
 import { ref } from 'vue'
+import axios from 'axios'
+import router from '@/router'
 
-// import axios from 'axios';
 const email = ref<string>('')
 const password = ref<string>('')
 const errorMessage = ref<string>('')
+const successMessage = ref<string>('')
 
-console.log(import.meta.env)
-const apiPORT = import.meta.env.VITE_PORT
-console.log('apiPORT:', apiPORT)
+const apiUrl = import.meta.env.VITE_API_URL
+const apiPORT = import.meta.env.VITE_API_PORT
+
 const login = async () => {
     errorMessage.value = '' // clear previous errors
+    successMessage.value = ''
     if (!email.value || !password.value) {
         errorMessage.value = 'Email and password are required.'
         return
     }
     try {
-        /* const response = await axios.post(`http://localhost:${apiPORT}/api/login`, {
-      email: email.value,
-      password: password.value,
-    });
-	@@ -33,54 +33,50 @@ const login = async () => {
-      // Optionally redirect to home
-      window.location.href = '/';
-    } */
+        const response = await axios.post(`${apiUrl}:${apiPORT}/api/users/login`, {
+            email: email.value,
+            password: password.value,
+        })
+
+        if (response.data.accessToken) {
+            const token = response.data.accessToken
+
+            // Store token in localStorage
+            localStorage.setItem('accessToken', token)
+
+            console.log('Login successful, token stored')
+
+            successMessage.value = 'Login successful'
+            // redirect to home
+            setTimeout(() => router.push('/'), 2000)
+        }
     } catch (error) {
         console.log('Login error:', error)
-        /* errorMessage.value = error.response?.data?.error || 'Login failed. Please try again.';*/
+        errorMessage.value = error.response?.data?.error || 'Login failed. Please try again.'
     }
 }
 </script>
@@ -53,6 +65,13 @@ const login = async () => {
                         class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center"
                     >
                         {{ errorMessage }}
+                    </div>
+                    <div
+                        v-if="successMessage"
+                        role="alert"
+                        class="bg-green-50 border-green-400 text-green-700 px-4 py-3 rounded relative text-center"
+                    >
+                        {{ successMessage }}
                     </div>
                     <div>
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900"

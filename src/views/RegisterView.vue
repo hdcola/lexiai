@@ -42,7 +42,7 @@ const register = async () => {
         setTimeout(() => router.push('/login'), 2000) // Redirect after 3 seconds
     } catch (error) {
         console.log('Registration error:', error)
-        /* errorMessage.value = error.response?.data?.error || 'Registration failed. Please try again.'; */
+        errorMessage.value = error.response?.data?.error || 'Registration failed. Please try again.'; 
     }
 }
 </script>
