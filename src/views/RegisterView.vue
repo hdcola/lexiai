@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ImgRegister from '@/components/images/ImgRegister.vue'
 import { ref } from 'vue'
-import axios from 'axios';
+import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 const username = ref<string>('')
@@ -13,37 +13,36 @@ const successMessage = ref<string>('')
 const router = useRouter()
 
 const apiUrl = import.meta.env.VITE_API_URL
-const apiPORT = import.meta.env.VITE_API_PORT; 
+const apiPORT = import.meta.env.VITE_API_PORT
 
- 
-    const register = async () => {
+const register = async () => {
     errorMessage.value = ''
     successMessage.value = ''
 
-  if (!username.value || !email.value || !password.value || !confirmPassword.value) {
-    errorMessage.value = 'All fields are required.';
-    return;
-  }
+    if (!username.value || !email.value || !password.value || !confirmPassword.value) {
+        errorMessage.value = 'All fields are required.'
+        return
+    }
 
-  if (password.value !== confirmPassword.value) {
-    errorMessage.value = 'Passwords do not match.';
-    return;
-  }
+    if (password.value !== confirmPassword.value) {
+        errorMessage.value = 'Passwords do not match.'
+        return
+    }
 
     try {
-      const response = await axios.post(`${apiUrl}:${apiPORT}/api/users/register`, {
-      username: username.value,
-      email: email.value,
-      password: password.value,
-    }); 
+        const response = await axios.post(`${apiUrl}:${apiPORT}/api/users/register`, {
+            username: username.value,
+            email: email.value,
+            password: password.value,
+        })
 
-    console.log('Registration successful:', response.data);
+        console.log('Registration successful:', response.data)
 
         successMessage.value = 'Registration successful. Please log in.'
         setTimeout(() => router.push('/login'), 2000) // Redirect after 3 seconds
     } catch (error) {
         console.log('Registration error:', error)
-        /* errorMessage.value = error.response?.data?.error || 'Registration failed. Please try again.'; */ 
+        /* errorMessage.value = error.response?.data?.error || 'Registration failed. Please try again.'; */
     }
 }
 </script>
@@ -57,9 +56,12 @@ const apiPORT = import.meta.env.VITE_API_PORT;
         </div>
         <div class="w-full lg:w-1/2 flex items-center justify-center lg:justify-start lg:ps-10">
             <div class="flex flex-col w-full md:w-2/3">
-                <h2 class="mt-5 text-center text-3xl font-bold text-gray-900">Sign Up</h2>
+                <h2 class="mt-5 text-center text-2xl font-bold text-gray-900">Sign Up</h2>
 
-                <form @submit.prevent="register" class="space-y-8 mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                <form
+                    @submit.prevent="register"
+                    class="space-y-8 mt-10 sm:mx-auto sm:w-full sm:max-w-sm"
+                >
                     <div
                         v-if="errorMessage"
                         role="alert"
