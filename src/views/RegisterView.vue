@@ -60,12 +60,10 @@ const successMessage = ref<string>('')
         </div>
         <div class="w-full lg:w-1/2 flex items-center justify-center lg:justify-start lg:ps-10">
             <div class="flex flex-col w-full md:w-2/3">
-                <h2 class="mt-5 text-center text-3xl font-bold text-gray-900">Sign Up</h2>
-
-                <p v-if="successMessage" class="text-green-500">{{ successMessage }}</p>
+                <h2 class="mt-5 text-center text-2xl font-bold text-gray-900">Sign Up</h2>
 
                 <!-- @submit.prevent="register" -->
-                <form class="space-y-8 mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                <form class="space-y-6 mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <!-- Flash Messages -->
                     <div
                         v-if="errorMessage"
@@ -73,6 +71,13 @@ const successMessage = ref<string>('')
                         class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center"
                     >
                         {{ errorMessage }}
+                    </div>
+                    <div
+                        v-if="successMessage"
+                        role="alert"
+                        class="bg-green-50 border-green-400 text-green-700 px-4 py-3 rounded relative text-center"
+                    >
+                        {{ successMessage }}
                     </div>
                     <div>
                         <label for="username" class="block mb-2 text-sm font-medium text-gray-900"
