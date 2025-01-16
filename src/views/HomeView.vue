@@ -48,9 +48,15 @@ onUnmounted(() => {
                         <p class="my-2 text-lg">
                             Boost your confidence in any language with personalized content.
                         </p>
-                        <button class="action-btn mt-5 text-lg font-semibold">
-                            <span>Get Started</span>
-                        </button>
+                        <RouterLink to="/register" v-slot="{ href, navigate }">
+                            <button
+                                :href="href"
+                                @click="navigate"
+                                class="action-btn mt-5 text-lg font-semibold"
+                            >
+                                Get Started
+                            </button>
+                        </RouterLink>
                     </div>
                 </div>
             </div>
@@ -95,11 +101,15 @@ onUnmounted(() => {
             <h1 class="text-4xl font-bold text-white mb-5 text-balance">
                 Start using Lexi AI now!
             </h1>
-            <button
-                class="action-btn mt-5 px-6 py-3 text-lg font-semibold text-white bg-blue-500 rounded-md hover:bg-gray-100"
-            >
-                Get Started
-            </button>
+            <RouterLink to="/register" v-slot="{ href, navigate }">
+                <button
+                    :href="href"
+                    @click="navigate"
+                    class="action-btn mt-5 px-6 py-3 text-lg font-semibold"
+                >
+                    Get Started
+                </button>
+            </RouterLink>
         </section>
     </main>
     <footer class="flex flex-col h-52 p-6 text-white bg-gray-700">
