@@ -59,7 +59,7 @@ onUnmounted(() => {
         <section
             class="flex flex-col md:flex-row-reverse bg-fade md:h-52 justify-center items-center animate"
         >
-            <ImgRobotAI class="h-44 md:h-72 lg:h-96 horizontal-flip" />
+            <ImgRobotAI class="h-44 md:h-72 lg:h-96" />
             <h2 class="text-4xl font-bold text-white text-center">Powered by Gemini</h2>
         </section>
 
@@ -78,7 +78,7 @@ onUnmounted(() => {
         <section class="flex flex-col lg:flex-row-reverse bg-purple-100 animate audio-text">
             <div class="flex w-full lg:w-1/2 justify-center lg:justify-start lg:ps-10">
                 <div class="w-full md:w-3/4 fade-in">
-                    <ImgAudioAI class="horizontal-flip" />
+                    <ImgAudioAI />
                 </div>
             </div>
             <div class="flex flex-col justify-center desc fade-in my-7">
@@ -115,9 +115,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.horizontal-flip {
-    transform: scaleX(-1);
-}
 .bg-fade {
     background-color: rgba(14, 157, 204, 0.85);
 }
@@ -128,17 +125,6 @@ onUnmounted(() => {
 .logo {
     padding: 5px;
     animation: bounce 1.5s ease-in-out infinite;
-}
-@keyframes bounce {
-    0% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-15px);
-    }
-    100% {
-        transform: translateY(0px);
-    }
 }
 
 hr {

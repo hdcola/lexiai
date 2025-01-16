@@ -1037,7 +1037,7 @@
 				C2618.74,2167.942,2675.443,2087.138,2675.443,2087.138z"
                     />
                 </g>
-                <g>
+                <g id="bubble">
                     <linearGradient
                         id="SVGID_00000179610963863433865050000002418744325454069920_"
                         gradientUnits="userSpaceOnUse"
@@ -1100,5 +1100,8 @@
 svg {
     clip-path: inset(10% 0 0 0);
     margin-top: -5%;
+}
+#bubble {
+    animation: bounce 1.5s infinite;
 }
 </style>

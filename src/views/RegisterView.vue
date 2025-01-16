@@ -1,7 +1,13 @@
 <script setup lang="ts">
+import ImgRegister from '@/components/images/ImgRegister.vue'
 import { ref } from 'vue'
 /* import axios from 'axios';
 import { useRouter } from 'vue-router' */
+
+const username = ref<string>('')
+const email = ref<string>('')
+const password = ref<string>('')
+const passwordConfirm = ref<string>('')
 
 /* const email = ref<string>('');
 const password = ref<string>('');
@@ -12,7 +18,7 @@ const successMessage = ref<string>('')
  */
 /* const apiPORT = import.meta.env.VITE_PORT; */
 
-    /* 
+/* 
     const register = async () => {
     errorMessage.value = ''
     successMessage.value = ''
@@ -46,110 +52,96 @@ const successMessage = ref<string>('')
 </script>
 
 <template>
-    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-            <img
-                class="mx-auto h-14 w-auto"
-                src="../assets/img/small-logo-image.png"
-                alt="Lexi AI"
-            />
-            <h2 class="mt-5 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-                Register
-            </h2>
+    <section class="flex flex-col-reverse lg:flex-row">
+        <div class="w-full lg:w-1/2 flex justify-center lg:justify-end lg:pe-10">
+            <div class="w-full md:w-1/2 lg:w-4/5">
+                <ImgRegister class="scale-75" />
+            </div>
         </div>
+        <div class="w-full lg:w-1/2 flex items-center justify-center lg:justify-start lg:ps-10">
+            <div class="flex flex-col w-full md:w-2/3">
+                <h2 class="mt-5 text-center text-3xl font-bold text-gray-900">Sign Up</h2>
 
-        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                <p v-if="successMessage" class="text-green-500">{{ successMessage }}</p>
 
-            
-            <!-- Flash Messages -->
-            <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
-            <p v-if="successMessage" class="text-green-500">{{ successMessage }}</p>
-
-            <!-- @submit.prevent="register" -->
-            <form class="space-y-4">
-                <div>
-                    <label for="username" class="block text-sm/6 font-medium text-gray-900"
-                        >Username</label
+                <!-- @submit.prevent="register" -->
+                <form class="space-y-8 mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                    <!-- Flash Messages -->
+                    <div
+                        v-if="errorMessage"
+                        role="alert"
+                        class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center"
                     >
-                    <div class="mt-2">
+                        {{ errorMessage }}
+                    </div>
+                    <div>
+                        <label for="username" class="block mb-2 text-sm font-medium text-gray-900"
+                            >Username</label
+                        >
                         <input
                             type="username"
                             name="username"
                             id="username"
+                            v-model="username"
                             required
-                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                            class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
                         />
                     </div>
-                </div>
 
-                
-                <div>
-                    <label for="email" class="block text-sm/6 font-medium text-gray-900"
-                        >Email address</label
-                    >
-                    <div class="mt-2">
+                    <div>
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900"
+                            >Email address</label
+                        >
                         <input
                             type="email"
                             name="email"
                             id="email"
+                            v-model="email"
                             required
-                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                            class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
                         />
                     </div>
-                </div>
 
-                <div>
-                    <div class="flex items-center justify-between">
-                        <label for="password" class="block text-sm/6 font-medium text-gray-900"
+                    <div>
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900"
                             >Password</label
                         >
-                    </div>
-                    <div class="mt-2">
                         <input
                             type="password"
                             name="password"
                             id="password"
+                            v-model="password"
                             required
-                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                            class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
                         />
                     </div>
-                </div>
 
-                <div>
-                    <div class="flex items-center justify-between">
-                        <label for="password" class="block text-sm/6 font-medium text-gray-900"
-                            >Confirm Password</label
+                    <div>
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900"
+                            >Confirm password</label
                         >
-                    </div>
-                    <div class="mt-2">
                         <input
                             type="password"
                             name="confirmPassword"
                             id="confirmPassword"
+                            v-model="passwordConfirm"
                             required
-                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                            class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
                         />
                     </div>
-                </div>
 
-                <div>
-                    
-                    <button
-                        type="submit"
-                        class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                    <button type="submit" class="w-full lexi-btn">Register</button>
+                </form>
+
+                <p class="mt-5 text-center text-gray-900">
+                    Already have an account?
+                    <RouterLink
+                        to="/login"
+                        class="ms-1 font-semibold text-blue-600 hover:text-blue-500"
+                        >Log In.</RouterLink
                     >
-                    Register
-                    </button>
-                </div>
-            </form>
-
-            <p class="mt-10 text-center text-sm/6 text-gray-500">
-                Already have an account?
-                <RouterLink to="/login" class="ms-3 font-semibold text-blue-600 hover:text-blue-500"
-                    >Login</RouterLink>
-            </p>
+                </p>
+            </div>
         </div>
-    </div>
-
-
+    </section>
 </template>
