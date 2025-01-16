@@ -611,6 +611,6 @@ svg {
     top: 12%;
 }
 #logo.animate {
-    animation: bounce 1.5s infinite;
+    animation: bounce 1.5s ease-in-out infinite;
 }
 </style>

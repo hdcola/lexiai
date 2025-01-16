@@ -779,3 +779,9 @@
         </g>
     </svg>
 </template>
+
+<style scoped>
+svg {
+    transform: scaleX(-1);
+}
+</style>

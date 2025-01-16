@@ -769,7 +769,7 @@
 				C2824.323,1803.626,2803.667,1743.776,2835.395,1695.651z"
                     />
                 </g>
-                <g>
+                <g id="robot">
                     <linearGradient
                         id="SVGID_00000002345831303073416920000001604093139803988898_"
                         gradientUnits="userSpaceOnUse"
@@ -998,3 +998,12 @@
         </g>
     </svg>
 </template>
+
+<style scoped>
+svg {
+    transform: scaleX(-1);
+}
+#robot {
+    animation: bounce 1.5s infinite;
+}
+</style>
