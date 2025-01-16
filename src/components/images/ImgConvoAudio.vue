@@ -1102,6 +1102,7 @@ svg {
     margin-top: -5%;
 }
 #bubble {
+    --bounce-distance: -50px;
     animation: bounce 1.5s infinite;
 }
 </style>

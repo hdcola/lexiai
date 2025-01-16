@@ -12,6 +12,7 @@
     --gradient-purple: linear-gradient(to right, #ae97f8, #8184f8);
     --gradient-blue: linear-gradient(to right, #72d2ff, #00b7ff);
     --gradient-orange: linear-gradient(to right, #fdc990, #f2a247);
+    --bounce-distance: -15px;
 }
 
 * {
@@ -73,7 +74,7 @@ section {
         transform: scaleX(1) translateY(0px);
     }
     50% {
-        transform: scaleX(1) translateY(-15px);
+        transform: scaleX(1) translateY(var(--bounce-distance));
     }
     100% {
         transform: scaleX(1) translateY(0px);

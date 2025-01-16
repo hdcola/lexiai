@@ -89,7 +89,7 @@ const login = async () => {
                 </form>
 
                 <p class="mt-5 text-center text-gray-900">
-                    Don't have account?
+                    Don't have an account?
                     <RouterLink
                         to="/register"
                         class="ms-1 font-semibold text-blue-600 hover:text-blue-500 underline"
