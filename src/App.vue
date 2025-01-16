@@ -6,7 +6,7 @@ const route = useRoute()
 </script>
 
 <template>
-    <div class="background w-full" :class="route.name">
+    <div class="background w-full min-h-screen" :class="route.name">
         <AppNavbar />
         <RouterView />
     </div>

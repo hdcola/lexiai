@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import ImgLogin from '@/components/images/ImgLogin.vue'
 import { ref } from 'vue'
+
 // import axios from 'axios';
 const email = ref<string>('')
 const password = ref<string>('')
 const errorMessage = ref<string>('')
+
 console.log(import.meta.env)
 const apiPORT = import.meta.env.VITE_PORT
 console.log('apiPORT:', apiPORT)
@@ -30,72 +33,73 @@ const login = async () => {
 </script>
 
 <template>
-    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-            <img
-                class="mx-auto h-20 w-auto"
-                src="../assets/img/small-logo-image.png"
-                alt="Lexi AI"
-            />
-            <h2 class="mt-5 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-                Log into your account
-            </h2>
+    <section class="flex flex-col-reverse lg:flex-row">
+        <div class="w-full lg:w-1/2 flex justify-center lg:justify-end lg:pe-10">
+            <div class="w-full md:w-1/2 lg:w-4/5">
+                <ImgLogin />
+            </div>
         </div>
+        <div class="w-full lg:w-1/2 flex items-center justify-center lg:justify-start lg:ps-10">
+            <div class="flex flex-col w-full md:w-2/3">
+                <h2 class="text-center text-2xl font-bold text-gray-900">Log into your account</h2>
 
-        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form @submit.prevent="login" class="space-y-4">
-                <div>
-                    <label for="email" class="block text-sm/6 font-medium text-gray-900"
-                        >Email address</label
+                <form
+                    @submit.prevent="login"
+                    class="space-y-8 mt-10 sm:mx-auto sm:w-full sm:max-w-sm"
+                >
+                    <div
+                        v-if="errorMessage"
+                        role="alert"
+                        class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center"
                     >
-                    <div class="mt-2">
+                        {{ errorMessage }}
+                    </div>
+                    <div>
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900"
+                            >Your email</label
+                        >
                         <input
                             type="email"
                             name="email"
                             id="email"
+                            v-model="email"
                             autocomplete="email"
                             required
-                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                            class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
                         />
                     </div>
-                </div>
 
-                <div>
-                    <div class="flex items-center justify-between">
-                        <label for="password" class="block text-sm/6 font-medium text-gray-900"
-                            >Password</label
+                    <div>
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900"
+                            >Your password</label
                         >
-                    </div>
-                    <div class="mt-2">
+
                         <input
                             type="password"
                             name="password"
                             id="password"
+                            v-model="password"
                             autocomplete="current-password"
                             required
-                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                            class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
                         />
                     </div>
-                </div>
 
-                <div>
-                    
-                <p v-if="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
-                    <button
-                        type="submit"
-                        class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                    <button type="submit" class="w-full lexi-btn">Log In</button>
+                </form>
+
+                <p class="mt-5 text-center text-gray-900">
+                    Don't have account?
+                    <RouterLink
+                        to="/register"
+                        class="ms-1 font-semibold text-blue-600 hover:text-blue-500 underline"
                     >
-                        Sign in
-                    </button>
-                </div>
-            </form>
-
-            <p class="mt-10 text-center text-sm/6 text-gray-500">
-                Don't have account, 
-                <RouterLink to="/register" class="ms-3 font-semibold text-blue-600 hover:text-blue-500"
-                    >Register</RouterLink>
-            </p>
+                        Sign Up.</RouterLink
+                    >
+                </p>
+            </div>
         </div>
-    </div>
-
+    </section>
 </template>
+
+<style scoped></style>

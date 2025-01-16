@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import IconMD from './images/icons/IconMD.vue'
 import { mdiMenu } from '@mdi/js'
-import logo from '@/assets/img/logo-horizontal-black.png'
+/*import logo from '@/assets/img/logo-horizontal-black.png'*/
 import { useRoute } from 'vue-router'
 
 const isLoggedIn = ref<boolean>(!!localStorage.getItem('accessToken'))
@@ -28,14 +28,17 @@ const route = useRoute()
             <div class="flex h-16 items-center justify-between">
                 <!-- Logo -->
                 <RouterLink to="/" class="flex items-center">
-                    <img class="h-9 w-auto" :src="logo" alt="Lexi AI Logo" />
+                    <img
+                        class="h-9 w-auto"
+                        src="@/assets/img/logo-horizontal-black.png"
+                        alt="Lexi AI Logo"
+                    />
                 </RouterLink>
 
                 <!-- Hamburger menu button -->
                 <button
-                    id="hamburger"
                     @click="isMenuOpen = !isMenuOpen"
-                    class="inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-blue-600 focus:outline-none md:hidden overflow-hidden"
+                    class="inline-flex items-center justify-center p-2 rounded-md text-blue-500 hover:bg-blue-600 focus:outline-none md:hidden overflow-hidden"
                 >
                     <span class="sr-only">Open main menu</span>
                     <IconMD :path="mdiMenu" class="inline-block" width="28px" />
@@ -113,14 +116,13 @@ const route = useRoute()
 nav {
     z-index: 20;
 }
-nav.home {
+nav.home,
+nav.login,
+nav.register {
     @apply bg-blue-100 py-1 md:py-3;
 }
-nav:not(.home) {
+nav.gemini {
     @apply bg-blue-500;
-}
-nav.home #hamburger {
-    @apply text-blue-500;
 }
 
 .menu-btn {
