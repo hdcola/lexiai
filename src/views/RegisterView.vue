@@ -1,29 +1,26 @@
 <script setup lang="ts">
 import ImgRegister from '@/components/images/ImgRegister.vue'
 import { ref } from 'vue'
-/* import axios from 'axios';
-import { useRouter } from 'vue-router' */
+import axios from 'axios';
+import { useRouter } from 'vue-router'
 
 const username = ref<string>('')
 const email = ref<string>('')
 const password = ref<string>('')
-const passwordConfirm = ref<string>('')
-
-/* const email = ref<string>('');
-const password = ref<string>('');
-const confirmPassword = ref<string>(''); */
+const confirmPassword = ref<string>('')
 const errorMessage = ref<string>('')
 const successMessage = ref<string>('')
-/* const router = useRouter()
- */
-/* const apiPORT = import.meta.env.VITE_PORT; */
+const router = useRouter()
 
-/* 
+const apiUrl = import.meta.env.VITE_API_URL
+const apiPORT = import.meta.env.VITE_API_PORT; 
+
+ 
     const register = async () => {
     errorMessage.value = ''
     successMessage.value = ''
 
-  if (!username || !email.value || !password.value || !confirmPassword.value) {
+  if (!username.value || !email.value || !password.value || !confirmPassword.value) {
     errorMessage.value = 'All fields are required.';
     return;
   }
@@ -34,7 +31,7 @@ const successMessage = ref<string>('')
   }
 
     try {
-      const response = await axios.post(`http://localhost:${apiPORT}/api/register`, {
+      const response = await axios.post(`${apiUrl}:${apiPORT}/api/users/register`, {
       username: username.value,
       email: email.value,
       password: password.value,
@@ -46,9 +43,9 @@ const successMessage = ref<string>('')
         setTimeout(() => router.push('/login'), 2000) // Redirect after 3 seconds
     } catch (error) {
         console.log('Registration error:', error)
-         errorMessage.value = error.response?.data?.error || 'Registration failed. Please try again.'; 
+        /* errorMessage.value = error.response?.data?.error || 'Registration failed. Please try again.'; */ 
     }
-}*/
+}
 </script>
 
 <template>
@@ -62,11 +59,9 @@ const successMessage = ref<string>('')
             <div class="flex flex-col w-full md:w-2/3">
                 <h2 class="mt-5 text-center text-3xl font-bold text-gray-900">Sign Up</h2>
 
-                <p v-if="successMessage" class="text-green-500">{{ successMessage }}</p>
+                <p v-if="successMessage" class="text-green-500 text-center mt-3">{{ successMessage }}</p>
 
-                <!-- @submit.prevent="register" -->
-                <form class="space-y-8 mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    <!-- Flash Messages -->
+                <form @submit.prevent="register" class="space-y-8 mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <div
                         v-if="errorMessage"
                         role="alert"
@@ -83,6 +78,7 @@ const successMessage = ref<string>('')
                             name="username"
                             id="username"
                             v-model="username"
+                            minlength="4"
                             required
                             class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
                         />
@@ -112,6 +108,8 @@ const successMessage = ref<string>('')
                             id="password"
                             v-model="password"
                             required
+                            minlength="6"
+                            maxlength="50"
                             class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
                         />
                     </div>
@@ -124,7 +122,7 @@ const successMessage = ref<string>('')
                             type="password"
                             name="confirmPassword"
                             id="confirmPassword"
-                            v-model="passwordConfirm"
+                            v-model="confirmPassword"
                             required
                             class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
                         />
