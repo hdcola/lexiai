@@ -1004,6 +1004,7 @@ svg {
     transform: scaleX(-1);
 }
 #robot {
+    --bounce-distance: -50px;
     animation: bounce 1.5s infinite;
 }
 </style>
