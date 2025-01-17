@@ -6,6 +6,7 @@ import { mdiCog } from '@mdi/js'
 import axios from 'axios'
 
 import type { ResponseModalities } from '@/lib/gemini/config/config-types'
+import GeminiSelection from '@/components/GeminiSelection.vue'
 const responseType = ref<ResponseModalities>('audio')
 const topics0 = ref([
     {
@@ -64,7 +65,7 @@ const styles = ref<IStyle[]>([])
 const topics = ref<ITopic[]>([])
 const levels = ref(['Beginner', 'Advanced'])
 
-// to read from MongoDb for logged user 
+// to read from MongoDb for logged user
 const selectedLanguage = ref<string>(userLanguage)
 const selectedStyle = ref<string>(userStyle)
 const selectedLevel = ref<string>(userLevel)
@@ -148,23 +149,38 @@ onMounted(async () => {
     await fetchOptions()
     saveSettings()
 })
+
+function handleSelection(selection: {
+    language: string
+    style: string
+    topic: string
+    level: string
+}) {
+    const gemini = geminiref.value
+    if (gemini) {
+        gemini.updatePrompt(
+            `Help me practice ${selection.topic} in ${selection.language} in a ${selection.style} style. I am ${selection.level}, focus on practicing vocabulary, grammar and pronounciation. Do not change the topic, the style or language.`,
+        )
+    }
+}
 </script>
 
 <template>
-    <p class="text-xl font-bold text-center mt-6">Gemini AI Implementation</p>
+    <!--<p class="text-xl font-bold text-center mt-6">Gemini AI Implementation</p>-->
 
     <!-- Main Interface -->
-    <div class="flex flex-row gap-6 mt-8 mx-auto max-w-6xl">
+    <div class="flex flex-col md:flex-row gap-6 mx-auto max-w-6xl">
         <!-- Topics List -->
-        <div class="bg-gray-100 p-4 rounded-lg shadow-lg w-1/4 h-auto">
-            <p class="text-lg font-semibold mb-4 ms-2">{{ selectedLanguage }}</p>
+        <div class="bg-gray-100 rounded-lg shadow-lg w-full md:w-2/5 flex h-[calc(100vh-6rem)]">
+            <!--<p class="text-lg font-semibold mb-4 ms-2">{{ selectedLanguage }}</p>
             <ul >
                 <li
                     class="bg-gray-100 p-2 border-2 border-gray-200 hover:border-gray-400 rounded-lg max-w-xs mx-auto mb my-2"
                 >
                     <a href="#" class="text-gray-600">{{ selectedTopic }}</a>
                 </li>
-            </ul>
+            </ul>-->
+            <GeminiSelection @selection="handleSelection" />
         </div>
 
         <!-- Chat Interface -->
@@ -255,7 +271,7 @@ onMounted(async () => {
                                             :key="topic._id"
                                             :value="topic.title"
                                         >
-                                            {{ topic.title }} 
+                                            {{ topic.title }}
                                         </option>
                                     </select>
                                 </div>
