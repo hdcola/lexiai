@@ -39,7 +39,7 @@ const login = async () => {
         }
     } catch (error) {
         console.log('Login error:', error)
-        errorMessage.value = error.response?.data?.error || 'Login failed. Please try again.'
+        errorMessage.value = error.response?.data?.message || 'Login failed. Please try again.'
     }
 }
 </script>
