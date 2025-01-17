@@ -64,7 +64,8 @@ section {
     background-size: contain;
 }
 .background.login,
-.background.register {
+.background.register,
+.background.gemini {
     @apply bg-blue-100;
 }
 

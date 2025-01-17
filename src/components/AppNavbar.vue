@@ -114,15 +114,8 @@ const route = useRoute()
 
 <style scoped>
 nav {
-    z-index: 20;
-}
-nav.home,
-nav.login,
-nav.register {
     @apply bg-blue-100 py-1 md:py-3;
-}
-nav.gemini {
-    @apply bg-blue-500;
+    z-index: 20;
 }
 
 .menu-btn {
