@@ -41,8 +41,8 @@ const register = async () => {
         successMessage.value = 'Registration successful. Please log in.'
         setTimeout(() => router.push('/login'), 2000) // Redirect after 3 seconds
     } catch (error) {
-        console.log('Registration error:', error)
-        /* errorMessage.value = error.response?.data?.error || 'Registration failed. Please try again.'; */
+        console.log('Registration error:', error.response?.data?.message || error)
+        errorMessage.value = error.response?.data?.message || 'Registration failed. Please try again.';
     }
 }
 </script>
