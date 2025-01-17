@@ -152,7 +152,7 @@ function handlePlay(topic: ITopic) {
                         <div>
                             <button type="button" class="topic-play" @click="handlePlay(topic)">
                                 <div
-                                    class="flex justify-center items-center rounded-full bg-orange-100 p-1"
+                                    class="flex justify-center items-center rounded-full p-1"
                                     :class="[
                                         topic.isSelected
                                             ? 'bg-green-100 selected'
