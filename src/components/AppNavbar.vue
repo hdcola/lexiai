@@ -4,6 +4,10 @@ import IconMD from './images/icons/IconMD.vue'
 import { mdiMenu } from '@mdi/js'
 /*import logo from '@/assets/img/logo-horizontal-black.png'*/
 import { useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import IconConfig from './images/icons/IconConfig.vue'
+
+const authStore = useAuthStore()
 
 const isLoggedIn = ref<boolean>(!!localStorage.getItem('accessToken'))
 const logout = () => {
@@ -46,33 +50,33 @@ const route = useRoute()
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-4 items-center">
-                    <!--<RouterLink to="/" v-slot="{ href, navigate }">
-                        <button :href="href" @click="navigate" class="menu-btn">Home</button>
-                    </RouterLink>-->
-                    <RouterLink to="/" class="menu-btn" active-class="active">Home</RouterLink>
+                    <RouterLink to="/" class="outline-btn" active-class="active">Home</RouterLink>
                     <RouterLink
-                        v-if="isLoggedIn"
-                        to="/gemini"
-                        class="menu-btn action"
+                        v-if="authStore.isLoggedIn"
+                        to="/lexiai"
+                        class="orange-btn"
                         active-class="active highlight"
                         >Practice</RouterLink
                     >
 
                     <RouterLink
                         to="/login"
-                        v-if="!isLoggedIn"
-                        class="menu-btn"
+                        v-if="!authStore.isLoggedIn"
+                        class="outline-btn"
                         active-class="active"
                         >Log In</RouterLink
                     >
 
                     <span v-else class="flex space-x-4">
-                        <button @click="logout" class="menu-btn">Logout</button>
+                        <RouterLink to="/settings" class="!px-3 outline-btn" active-class="active"
+                            ><IconConfig
+                        /></RouterLink>
+                        <button @click="authStore.logout()" class="outline-btn">Logout</button>
                     </span>
                     <RouterLink
                         to="/register"
-                        v-if="!isLoggedIn"
-                        class="menu-btn action"
+                        v-if="!authStore.isLoggedIn"
+                        class="orange-btn"
                         active-class="active highlight"
                         >Sign Up</RouterLink
                     >
@@ -119,23 +123,7 @@ nav {
     z-index: 20;
 }
 
-.menu-btn {
-    @apply font-medium rounded-md px-7 py-2 outline outline-2 -outline-offset-1 outline-purple-400 text-purple-400;
-    background-color: transparent;
-}
-
-.menu-btn:hover,
-.menu-btn.active {
-    @apply outline-none text-white;
-    background: var(--gradient-purple);
-}
-
-.menu-btn.action {
-    @apply outline-none text-white;
-    background: var(--gradient-orange);
-}
-.menu-btn.action:hover,
-.menu-btn.action.active {
+.orange-btn.active {
     box-shadow: 0 0 50px rgba(255, 166, 0, 0.5);
 }
 </style>

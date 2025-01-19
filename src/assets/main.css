@@ -41,14 +41,34 @@ input[type='reset']:active,
     box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
 }
 
-.lexi-btn {
+.lexi-btn,
+.orange-btn,
+.purple-btn {
     @apply font-medium rounded-md px-7 py-2 text-white;
     background: var(--gradient-blue);
 }
+.orange-btn {
+    background: var(--gradient-orange);
+}
+.purple-btn {
+    background: var(--gradient-purple);
+}
+
+.outline-btn {
+    @apply font-medium rounded-md px-7 py-2 outline outline-2 -outline-offset-1 outline-purple-400 text-purple-400;
+    background-color: transparent;
+}
+.outline-btn:hover,
+.outline-btn.active {
+    @apply outline-none text-white;
+    background: var(--gradient-purple);
+}
+
+/*
 .lexi-btn:hover,
 .lexi-btn.active {
     background: var(--gradient-blue);
-}
+}*/
 
 
 
@@ -65,7 +85,9 @@ section {
 }
 .background.login,
 .background.register,
-.background.gemini {
+.background.gemini,
+.background.lexiai,
+.background.settings {
     @apply bg-blue-100;
 }
 

@@ -10,6 +10,9 @@ export const useJWTStore = defineStore('jwt', {
         },
         getToken() {
             return this.jwtToken;
+        },
+        deleteToken() {
+            this.jwtToken = "";
         }
     },
     persist: true

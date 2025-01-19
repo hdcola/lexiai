@@ -3,6 +3,9 @@ import ImgLogin from '@/components/images/ImgLogin.vue'
 import { ref } from 'vue'
 import axios from 'axios'
 import router from '@/router'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
 
 const email = ref<string>('')
 const password = ref<string>('')
@@ -34,8 +37,11 @@ const login = async () => {
             console.log('Login successful, token stored')
 
             successMessage.value = 'Login successful'
+
+            authStore.login()
+
             // redirect to home
-            setTimeout(() => router.push('/'), 2000)
+            setTimeout(() => router.push('/lexiai'), 2000)
         }
     } catch (error) {
         console.log('Login error:', error)
