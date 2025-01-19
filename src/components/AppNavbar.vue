@@ -68,7 +68,7 @@ const route = useRoute()
                     >
 
                     <span v-else class="flex space-x-4">
-                        <RouterLink to="/settings" class="lexi-btn px-2" active-class="active"
+                        <RouterLink to="/settings" class="!px-3 outline-btn" active-class="active"
                             ><IconConfig
                         /></RouterLink>
                         <button @click="authStore.logout()" class="outline-btn">Logout</button>
