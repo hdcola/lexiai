@@ -19,7 +19,7 @@ function handleSelection(selection: {
     const gemini = geminiref.value
     if (gemini) {
         gemini.updatePrompt(
-            `Help me practice ${selection.topic} in ${selection.language} in a ${selection.style} style. I am ${selection.level}, focus on practicing vocabulary, grammar and pronounciation. Do not change the topic, the style or language.`,
+            `Help me practice ${selection.topic} in ${selection.language} in a ${selection.style} style. I am ${selection.level}. Do not change the topic, the style or language.`,
         )
     }
 }
