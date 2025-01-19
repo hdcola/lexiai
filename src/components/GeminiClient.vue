@@ -110,13 +110,6 @@ async function toggleRecording() {
             await initAudioStream()
             audioRecorder.value = new AudioRecorder()
 
-            let inputDataArray: Uint8Array<ArrayBufferLike>
-            const inputAnalyser = audioContext.value?.createAnalyser()
-            if (inputAnalyser) {
-                inputAnalyser.fftSize = 256
-                inputDataArray = new Uint8Array(inputAnalyser.frequencyBinCount)
-            }
-
             await audioRecorder.value.start((base64Data: GenerativeContentBlob[]) => {
                 client.sendRealtimeInput([
                     {
@@ -125,10 +118,9 @@ async function toggleRecording() {
                     },
                 ])
 
-                if (inputAnalyser && inputDataArray) {
-                    inputAnalyser.getByteFrequencyData(inputDataArray)
-                    inputVolume.value = Math.max(...inputDataArray) / 255
-                }
+                audioRecorder.value?.on('inputVolume', (volume: number) => {
+                    inputVolume.value = volume
+                })
             })
 
             isRecording.value = true
@@ -141,6 +133,7 @@ async function toggleRecording() {
     else {
         audioRecorder.value?.stop()
         isRecording.value = false
+        audioRecorder.value?.off('inputVolume')
     }
 }
 

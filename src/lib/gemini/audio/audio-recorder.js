@@ -3,18 +3,21 @@ import { ApplicationError, ErrorCodes } from '../utils/error-boundary.js';
 import CONFIG from '../config/config.example.js';
 import AudioRecordingWorklet from './worklets/audio-processing';
 import { createWorketFromSrc } from '../utils/worklet-registry.js';
+import VolMeterWorket from './worklets/vol-meter';
+import EventEmitter from 'eventemitter3';
 
 /**
  * @class AudioRecorder
  * @description Handles audio recording functionality with configurable sample rate
  * and real-time audio processing through WebAudio API.
  */
-export class AudioRecorder {
+export class AudioRecorder extends EventEmitter {
     /**
      * @constructor
      * @param {number} sampleRate - The sample rate for audio recording (default: 16000)
      */
     constructor(sampleRate = CONFIG.AUDIO.INPUT_SAMPLE_RATE) {
+        super();
         this.sampleRate = sampleRate;
         this.stream = null;
         this.mediaRecorder = null;
@@ -22,6 +25,7 @@ export class AudioRecorder {
         this.source = null;
         this.processor = null;
         this.onAudioData = null;
+        this.vuWorklet = null;
         
         // Bind methods to preserve context
         this.start = this.start.bind(this);
@@ -71,6 +75,16 @@ export class AudioRecorder {
             this.source.connect(this.processor);
             this.processor.connect(this.audioContext.destination);
             this.isRecording = true;
+
+            // Connect vu-meter worklet
+            const vuWorkletName = "vu-meter";
+            await this.audioContext.audioWorklet.addModule(createWorketFromSrc(vuWorkletName, VolMeterWorket));
+            this.vuWorklet = new AudioWorkletNode(this.audioContext, vuWorkletName);
+            this.vuWorklet.port.onmessage = (event) => {
+                this.emit("inputVolume", event.data.volume);
+            }
+            this.source.connect(this.vuWorklet);
+
         } catch (error) {
             console.error('Error starting audio recording:', error);
             throw error;
