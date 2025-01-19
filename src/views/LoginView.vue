@@ -55,6 +55,8 @@ const onSubmit = async () => {
         <div class="flex flex-col w-full md:w-2/3">
           <h2 class="text-center text-2xl font-bold text-gray-900">Log into your account</h2>
   
+          <!-- Login Form -->
+          <form @submit.prevent="onSubmit" class="space-y-8 mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <!-- Success and Error Messages -->
           <div
             v-if="authStore.errorMessage"
@@ -73,8 +75,6 @@ const onSubmit = async () => {
             {{ authStore.successMessage }}
           </div>
   
-          <!-- Login Form -->
-          <form @submit.prevent="onSubmit" class="space-y-8 mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <div class="form-group">
               <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Your email</label>
               <input
