@@ -85,7 +85,9 @@ section {
 }
 .background.login,
 .background.register,
-.background.gemini {
+.background.gemini,
+.background.lexiai,
+.background.settings {
     @apply bg-blue-100;
 }
 

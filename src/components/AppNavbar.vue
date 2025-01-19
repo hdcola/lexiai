@@ -5,6 +5,7 @@ import { mdiMenu } from '@mdi/js'
 /*import logo from '@/assets/img/logo-horizontal-black.png'*/
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import IconConfig from './images/icons/IconConfig.vue'
 
 const authStore = useAuthStore()
 
@@ -67,6 +68,9 @@ const route = useRoute()
                     >
 
                     <span v-else class="flex space-x-4">
+                        <RouterLink to="/settings" class="lexi-btn px-2" active-class="active"
+                            ><IconConfig
+                        /></RouterLink>
                         <button @click="authStore.logout()" class="outline-btn">Logout</button>
                     </span>
                     <RouterLink
