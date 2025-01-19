@@ -177,34 +177,6 @@ function toggleCustomPanel() {
                     </div>
                 </div>
             </li>
-            <li
-                v-for="topic in topics"
-                :key="topic._id"
-                class="bg-white p-3 px-4 border-2 border-gray-200 rounded-lg mx-auto mb my-2"
-            >
-                <div class="flex flex-row gap-4 items-center">
-                    <div class="flex-grow">
-                        {{ topic.title }}
-                    </div>
-                    <!--<div><ButtonFavorite :isFavorite="false" @favorite="" /></div>-->
-                    <div>
-                        <button type="button" class="topic-play" @click="handlePlay(topic)">
-                            <div
-                                class="flex justify-center items-center rounded-full p-1"
-                                :class="[
-                                    topic.isSelected ? 'bg-green-100 selected' : 'bg-orange-100',
-                                ]"
-                            >
-                                <IconPlay
-                                    :class="[
-                                        topic.isSelected ? 'text-green-500' : 'text-orange-500',
-                                    ]"
-                                />
-                            </div>
-                        </button>
-                    </div>
-                </div>
-            </li>
         </ul>
 
         <div class="my-4 px-4">
