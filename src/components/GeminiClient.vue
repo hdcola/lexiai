@@ -5,19 +5,20 @@ import { AudioRecorder } from '@/lib/gemini/audio/audio-recorder'
 import { AudioStreamer } from '@/lib/gemini/audio/audio-streamer'
 import CONFIG from '@/lib/gemini/config/config.example'
 
-import IconMicrophoneFull from './images/icons/IconMicrophoneFull.vue'
-import IconMicrophoneEmpty from './images/icons/IconMicrophoneEmpty.vue'
-
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { LiveConfig, ResponseModalities, VoiceName } from '@/lib/gemini/config/config-types'
 import VolMeterWorket from '@/lib/gemini/audio/worklets/vol-meter'
-import IconAudioPulseBars from './images/icons/IconAudioPulseBars.vue'
+import ButtonMicrophone from './ButtonMicrophone.vue'
+import ButtonGeminiSpeaker from './ButtonGeminiSpeaker.vue'
+import ImgLearningBooks from './images/ImgLearningBooks.vue'
 
 const GOOGLE_AI_STUDIO_API_KEY = ref<string>(import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY)
 
 const client = new MultimodalLiveClient({ apiKey: GOOGLE_AI_STUDIO_API_KEY.value })
 const isConnected = ref<boolean>(false)
 const isRecording = ref<boolean>(false)
+const isResponding = ref<boolean>(false)
+const isPromptInitialized = ref<boolean>(false)
 const volume = ref<number>(0)
 const inputVolume = ref<number>(0)
 
@@ -28,7 +29,11 @@ const audioStreamer = ref<AudioStreamer | null>(null)
 const voiceName = ref<VoiceName>('Aoede')
 const systemInstruction = ref<string>(CONFIG.SYSTEM_INSTRUCTION.TEXT)
 
-const props = defineProps<{ responseModalities: ResponseModalities }>()
+const props = defineProps<{
+    responseModalities: ResponseModalities
+    topic?: string
+    language?: string
+}>()
 const responseModalities = ref<ResponseModalities>(props.responseModalities)
 const updateResponseModalities = computed(() => {
     console.log(`Update responseModalities to ${props.responseModalities}`)
@@ -75,16 +80,6 @@ function connect() {
 function disconnect() {
     // Disconnect the websocket
     client.disconnect()
-    isConnected.value = false
-
-    // Close audio stream
-    audioStreamer.value?.stop()
-    audioStreamer.value = null
-
-    // Close recording
-    audioRecorder.value?.stop()
-    audioRecorder.value = null
-    isRecording.value = false
 }
 
 async function initAudioStream() {
@@ -105,17 +100,15 @@ async function initAudioStream() {
 }
 
 async function toggleRecording() {
+    // Verify if the websocket is still running
+    if (!isConnected.value) {
+        connect()
+    }
+
     if (!isRecording.value) {
         try {
             await initAudioStream()
             audioRecorder.value = new AudioRecorder()
-
-            let inputDataArray: Uint8Array<ArrayBufferLike>
-            const inputAnalyser = audioContext.value?.createAnalyser()
-            if (inputAnalyser) {
-                inputAnalyser.fftSize = 256
-                inputDataArray = new Uint8Array(inputAnalyser.frequencyBinCount)
-            }
 
             await audioRecorder.value.start((base64Data: GenerativeContentBlob[]) => {
                 client.sendRealtimeInput([
@@ -125,10 +118,9 @@ async function toggleRecording() {
                     },
                 ])
 
-                if (inputAnalyser && inputDataArray) {
-                    inputAnalyser.getByteFrequencyData(inputDataArray)
-                    inputVolume.value = Math.max(...inputDataArray) / 255
-                }
+                audioRecorder.value?.on('inputVolume', (volume: number) => {
+                    inputVolume.value = volume
+                })
             })
 
             isRecording.value = true
@@ -141,6 +133,7 @@ async function toggleRecording() {
     else {
         audioRecorder.value?.stop()
         isRecording.value = false
+        audioRecorder.value?.off('inputVolume')
     }
 }
 
@@ -169,11 +162,22 @@ function updateSystemInstructions(newSystemInstruction: string) {
 }
 
 function updatePrompt(newPrompt: string) {
+    // Verify if the websocket is still running
+    if (!isConnected.value) {
+        connect()
+    }
+
+    isPromptInitialized.value = true
+
     client.send([
         {
             text: newPrompt,
         },
     ])
+}
+
+function handleInterrupt() {
+    updatePrompt('Gemini, stop.')
 }
 
 client.on('open', () => {
@@ -182,6 +186,19 @@ client.on('open', () => {
 
 client.on('close', () => {
     console.log('Closed WebSocket')
+    isConnected.value = false
+    isRecording.value = false
+    isResponding.value = false
+
+    // Close audio stream
+    audioStreamer.value?.stop()
+    audioStreamer.value = null
+
+    // Close recording
+    audioRecorder.value?.stop()
+    audioRecorder.value = null
+    isRecording.value = false
+    isResponding.value = false
 })
 
 client.on('setupcomplete', () => {
@@ -193,6 +210,7 @@ client.on('audio', async (data: ArrayBuffer) => {
     try {
         await initAudioStream()
         audioStreamer.value?.addPCM16(new Uint8Array(data))
+        isResponding.value = true
     } catch (error) {
         console.error('Audio Error', error)
     }
@@ -206,10 +224,12 @@ client.on('content', () => {
 client.on('interrupted', () => {
     console.log('Interrupted')
     audioStreamer.value?.stop()
+    isResponding.value = false
 })
 
 client.on('turncomplete', () => {
     console.log('Turn Completed')
+    isResponding.value = false
 })
 
 // Allow access to parent
@@ -217,6 +237,7 @@ defineExpose({
     client,
     isConnected,
     isRecording,
+    isResponding,
     volume,
     inputVolume,
     connect,
@@ -228,16 +249,37 @@ defineExpose({
 </script>
 
 <template>
-    <button
-        class="p-3 rounded-lg"
-        :class="{ 'bg-blue-600': isRecording, 'bg-gray-800': !isRecording }"
-        type="button"
-        @click="toggleRecording"
-    >
-        <IconMicrophoneFull v-if="isRecording" />
-        <IconMicrophoneEmpty v-else />
-    </button>
-    <button class="p-3 rounded-lg bg-gray-800" type="button">
-        <IconAudioPulseBars :active="true" :hover="true" :volume="volume" />
-    </button>
+    <div class="flex flex-col flex-1">
+        <div
+            v-if="!isPromptInitialized"
+            class="flex flex-col justify-center items-center size-full px-10 text-center"
+        >
+            <div class="w-full mb-5 mt-14">
+                <h2 class="text-2xl font-bold">Select a topic</h2>
+                <hr class="my-3 border-black opacity-40 w-3/4 mx-auto" />
+                <p>Start practicing your speaking skills</p>
+            </div>
+            <ImgLearningBooks class="scale-90" />
+        </div>
+        <div v-else class="flex flex-col flex-1">
+            <div class="flex-1 flex flex-col text-center">
+                <h1></h1>
+                <h3></h3>
+            </div>
+            <div class="flex justify-center items-center gap-10 py-10 px-4">
+                <ButtonMicrophone
+                    class="z-[2]"
+                    :isRecording="isRecording"
+                    :inputVolume="inputVolume"
+                    @click="toggleRecording"
+                />
+                <ButtonGeminiSpeaker
+                    :volume="volume"
+                    :isResponding="isResponding"
+                    :isAudio="true"
+                    @interrupt="handleInterrupt"
+                />
+            </div>
+        </div>
+    </div>
 </template>

@@ -50,6 +50,13 @@ const route = useRoute()
                         <button :href="href" @click="navigate" class="menu-btn">Home</button>
                     </RouterLink>-->
                     <RouterLink to="/" class="menu-btn" active-class="active">Home</RouterLink>
+                    <RouterLink
+                        v-if="isLoggedIn"
+                        to="/gemini"
+                        class="menu-btn action"
+                        active-class="active highlight"
+                        >Practice</RouterLink
+                    >
 
                     <RouterLink
                         to="/login"
@@ -60,19 +67,13 @@ const route = useRoute()
                     >
 
                     <span v-else class="flex space-x-4">
-                        <button
-                            @click="logout"
-                            class="text-white hover:bg-blue-700"
-                            active-class="bg-blue-600"
-                        >
-                            Logout
-                        </button>
+                        <button @click="logout" class="menu-btn">Logout</button>
                     </span>
                     <RouterLink
                         to="/register"
                         v-if="!isLoggedIn"
-                        class="menu-btn action highlight"
-                        active-class="active"
+                        class="menu-btn action"
+                        active-class="active highlight"
                         >Sign Up</RouterLink
                     >
                 </div>
