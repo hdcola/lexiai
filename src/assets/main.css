@@ -9,6 +9,7 @@
     --light-blue: #d0f3fc;
     --light-purple: #d0f3fc;
     --light-orange: #d0f3fc;
+    --dark-orange: #d23d02;
     --gradient-purple: linear-gradient(to right, #ae97f8, #8184f8);
     --gradient-blue: linear-gradient(to right, #72d2ff, #00b7ff);
     --gradient-orange: linear-gradient(to right, #fdc990, #f2a247);
@@ -89,6 +90,11 @@ section {
 .background.lexiai,
 .background.settings {
     @apply bg-blue-100;
+}
+
+.invalid-feedback{
+    color: var(--dark-orange);
+
 }
 
 /* Used for bouncing elements */
