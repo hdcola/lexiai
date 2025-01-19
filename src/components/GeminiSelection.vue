@@ -118,65 +118,102 @@ function handlePlay(topic: ITopic) {
         level: selectedLevel.value == 'Beginner' ? 'a beginner, tell me what to say' : 'advanced',
     })
 }
+
+const isCustom = ref<boolean>(false)
+function toggleCustomPanel() {
+    isCustom.value = !isCustom.value
+}
 </script>
 
 <template>
     <div class="flex flex-col flex-1">
-        <div class="flex flex-col h-[calc(100%-64px)] py-10 gap-5">
-            <label class="text-2xl font-medium text-center">Section</label>
-            <div class="px-2">
-                <select
-                    v-model="selectedLevel"
-                    class="w-full p-2 border rounded"
-                    @change="fetchNewTopics"
-                >
-                    <option disabled>Select a section</option>
-                    <option v-for="level in levels" :key="level">
-                        {{ level }}
-                    </option>
-                </select>
+        <div v-if="isCustom" class="flex-1">
+            <div class="flex flex-col my-16 px-4 mt-6">
+                <label class="text-xl font-medium text-center my-3">Custom prompt</label>
             </div>
-
-            <label class="text-2xl font-medium text-center">Topic</label>
-            <ul class="flex-1 overflow-y-auto px-2">
-                <li
-                    v-for="topic in topics"
-                    :key="topic._id"
-                    class="bg-white p-3 px-4 border-2 border-gray-200 rounded-lg mx-auto mb my-2"
-                >
-                    <div class="flex flex-row gap-4 items-center">
-                        <div class="flex-grow">
-                            {{ topic.title }}
-                        </div>
-                        <!--<div><ButtonFavorite :isFavorite="false" @favorite="" /></div>-->
-                        <div>
-                            <button type="button" class="topic-play" @click="handlePlay(topic)">
-                                <div
-                                    class="flex justify-center items-center rounded-full p-1"
-                                    :class="[
-                                        topic.isSelected
-                                            ? 'bg-green-100 selected'
-                                            : 'bg-orange-100',
-                                    ]"
-                                >
-                                    <IconPlay
-                                        :class="[
-                                            topic.isSelected ? 'text-green-500' : 'text-orange-500',
-                                        ]"
-                                    />
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                </li>
-            </ul>
         </div>
-        <div class="h-16 flex flex-row justify-center items-center px-2 gap-2">
-            <!--<div class="w-1/2 flex gap-2">
-                <button class="lexi-btn">Audio</button>
-                <button class="lexi-btn">Chat</button>
-            </div>-->
 
+        <div v-if="!isCustom" class="flex flex-col px-4 mt-6">
+            <label class="text-xl font-medium text-center my-3">Section</label>
+            <select
+                v-model="selectedLevel"
+                class="w-full p-2 border rounded"
+                @change="fetchNewTopics"
+            >
+                <option disabled>Select a section</option>
+                <option v-for="level in levels" :key="level">
+                    {{ level }}
+                </option>
+            </select>
+            <hr class="my-3 border-gray-400" />
+        </div>
+
+        <ul v-if="!isCustom" class="flex-1 overflow-y-auto px-4">
+            <li
+                v-for="topic in topics"
+                :key="topic._id"
+                class="bg-white p-3 px-4 border-2 border-gray-200 rounded-lg mx-auto my-2"
+            >
+                <div class="flex flex-row gap-4 items-center">
+                    <div class="flex-grow">
+                        {{ topic.title }}
+                    </div>
+                    <!--<div><ButtonFavorite :isFavorite="false" @favorite="" /></div>-->
+                    <div>
+                        <button type="button" class="topic-play" @click="handlePlay(topic)">
+                            <div
+                                class="flex justify-center items-center rounded-full p-1"
+                                :class="[
+                                    topic.isSelected ? 'bg-green-100 selected' : 'bg-orange-100',
+                                ]"
+                            >
+                                <IconPlay
+                                    :class="[
+                                        topic.isSelected ? 'text-green-500' : 'text-orange-500',
+                                    ]"
+                                />
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </li>
+            <li
+                v-for="topic in topics"
+                :key="topic._id"
+                class="bg-white p-3 px-4 border-2 border-gray-200 rounded-lg mx-auto mb my-2"
+            >
+                <div class="flex flex-row gap-4 items-center">
+                    <div class="flex-grow">
+                        {{ topic.title }}
+                    </div>
+                    <!--<div><ButtonFavorite :isFavorite="false" @favorite="" /></div>-->
+                    <div>
+                        <button type="button" class="topic-play" @click="handlePlay(topic)">
+                            <div
+                                class="flex justify-center items-center rounded-full p-1"
+                                :class="[
+                                    topic.isSelected ? 'bg-green-100 selected' : 'bg-orange-100',
+                                ]"
+                            >
+                                <IconPlay
+                                    :class="[
+                                        topic.isSelected ? 'text-green-500' : 'text-orange-500',
+                                    ]"
+                                />
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <div class="my-4 px-4">
+            <button @click="toggleCustomPanel" class="btn w-full p-2 text-white rounded-lg">
+                Custom prompt
+            </button>
+        </div>
+
+        <div class="flex flex-row justify-center items-center my-2 px-4 gap-2">
             <!-- Language Selection -->
             <select v-model="selectedLanguage" class="w-full p-2 border rounded">
                 <option disabled>Select a language</option>
@@ -196,6 +233,9 @@ function handlePlay(topic: ITopic) {
 </template>
 
 <style scoped>
+.btn {
+    background: var(--gradient-orange);
+}
 ul {
     scrollbar-color: var(--light-blue) transparent;
 }
