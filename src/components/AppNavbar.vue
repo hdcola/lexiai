@@ -50,7 +50,11 @@ const route = useRoute()
                         <button :href="href" @click="navigate" class="menu-btn">Home</button>
                     </RouterLink>-->
                     <RouterLink to="/" class="menu-btn" active-class="active">Home</RouterLink>
-                    <RouterLink to="/gemini" class="menu-btn action" active-class="active highlight"
+                    <RouterLink
+                        v-if="isLoggedIn"
+                        to="/gemini"
+                        class="menu-btn action"
+                        active-class="active highlight"
                         >Practice</RouterLink
                     >
 
