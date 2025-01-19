@@ -4,6 +4,9 @@ import IconMD from './images/icons/IconMD.vue'
 import { mdiMenu } from '@mdi/js'
 /*import logo from '@/assets/img/logo-horizontal-black.png'*/
 import { useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
 
 const isLoggedIn = ref<boolean>(!!localStorage.getItem('accessToken'))
 const logout = () => {
@@ -51,7 +54,7 @@ const route = useRoute()
                     </RouterLink>-->
                     <RouterLink to="/" class="menu-btn" active-class="active">Home</RouterLink>
                     <RouterLink
-                        v-if="isLoggedIn"
+                        v-if="authStore.isLoggedIn"
                         to="/gemini"
                         class="menu-btn action"
                         active-class="active highlight"
@@ -60,18 +63,18 @@ const route = useRoute()
 
                     <RouterLink
                         to="/login"
-                        v-if="!isLoggedIn"
+                        v-if="!authStore.isLoggedIn"
                         class="menu-btn"
                         active-class="active"
                         >Log In</RouterLink
                     >
 
                     <span v-else class="flex space-x-4">
-                        <button @click="logout" class="menu-btn">Logout</button>
+                        <button @click="authStore.logout()" class="menu-btn">Logout</button>
                     </span>
                     <RouterLink
                         to="/register"
-                        v-if="!isLoggedIn"
+                        v-if="!authStore.isLoggedIn"
                         class="menu-btn action"
                         active-class="active highlight"
                         >Sign Up</RouterLink

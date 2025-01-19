@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue';
 import RegisterView from '@/views/RegisterView.vue';
 import LoginView from '@/views/LoginView.vue';
 import GeminiView from '@/views/GeminiView.vue';
+import { useAuthStore } from '@/stores/auth';
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,6 +32,19 @@ const router = createRouter({
             path: '/gemini',
             name: 'gemini',
             component: GeminiView,
+        },
+        {
+            path: '/lexiai',
+            name: 'gemini',
+            component: GeminiView,
+            beforeEnter: (to, from) => {
+                //check if authenticated
+                const authStore = useAuthStore();
+
+                if (from.name != 'login' && !authStore.isLoggedIn) {
+                    return '/login'
+                }
+            }
         }
     ],
 })
