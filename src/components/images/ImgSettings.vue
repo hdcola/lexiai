@@ -1318,7 +1318,7 @@ const isAnimated = ref<boolean>(props.animate)
 <style scoped>
 div {
     width: 100%;
-    height: 100%;
+    height: auto;
 }
 svg {
     width: inherit;
