@@ -28,9 +28,9 @@ const voice = ref<VoiceName | ''>('')
         </div>
         <div class="form-group">
             <div>
-                <label class="block font-medium mb-1">Language</label>
+                <label class="block font-medium mb-1">Change voice</label>
                 <select v-model="voice" class="w-full p-2 border rounded">
-                    <option disabled value="">Select a language</option>
+                    <option disabled value="">Select a voice</option>
                     <option v-for="v in Voices" :key="v" :value="v">
                         {{ v }}
                     </option>
