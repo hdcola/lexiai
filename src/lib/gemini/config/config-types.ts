@@ -4,7 +4,8 @@ import type {
     Tool,
 } from "@google/generative-ai";
 
-export type VoiceName = "Puck" | "Charon" | "Kore" | "Fenrir" | "Aoede";
+export const Voices = ["Puck", "Charon", "Kore", "Fenrir", "Aoede"] as const;
+export type VoiceName = typeof Voices[number];
 export type ResponseModalities = "text" | "audio" | "image";
 
 export type LiveConfig = {
