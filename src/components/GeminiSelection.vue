@@ -3,6 +3,10 @@ import axios from 'axios'
 import { onMounted, ref } from 'vue'
 import ButtonFavorite from './ButtonFavorite.vue'
 import IconPlay from './images/icons/IconPlay.vue'
+import { initTabs } from 'flowbite'
+import IconEdit from './images/icons/IconEdit.vue'
+import IconHeartFull from './images/icons/IconHeartFull.vue'
+import IconSwatchbook from './images/icons/IconSwatchbook.vue'
 
 // types needed to convert string id to ObjectId(id)
 type ILanguage = {
@@ -98,7 +102,10 @@ async function fetchNewTopics() {
     }
 }
 
-onMounted(fetchOptions)
+onMounted(() => {
+    initTabs()
+    fetchOptions()
+})
 
 function handlePlay(topic: ITopic) {
     // Previously selected topic
@@ -118,88 +125,153 @@ function handlePlay(topic: ITopic) {
         level: selectedLevel.value == 'Beginner' ? 'a beginner, tell me what to say' : 'advanced',
     })
 }
-
-const isCustom = ref<boolean>(false)
-function toggleCustomPanel() {
-    isCustom.value = !isCustom.value
-}
 </script>
 
 <template>
     <div class="flex flex-col flex-1">
-        <div v-if="isCustom" class="flex-1">
-            <div class="flex flex-col my-16 px-4 mt-6">
-                <label class="text-xl font-medium text-center my-3">Custom prompt</label>
-            </div>
-        </div>
-
-        <div v-if="!isCustom" class="flex flex-col px-4 mt-6">
-            <label class="text-xl font-medium text-center my-3">Section</label>
-            <select
-                v-model="selectedLevel"
-                class="w-full p-2 border rounded"
-                @change="fetchNewTopics"
-            >
-                <option disabled>Select a section</option>
-                <option v-for="level in levels" :key="level">
-                    {{ level }}
-                </option>
-            </select>
-            <hr class="my-3 border-gray-400" />
-        </div>
-
-        <ul v-if="!isCustom" class="flex-1 overflow-y-auto px-4">
-            <li
-                v-for="topic in topics"
-                :key="topic._id"
-                class="bg-white p-3 px-4 border-2 border-gray-200 rounded-lg mx-auto my-2"
-            >
-                <div class="flex flex-row gap-4 items-center">
-                    <div class="flex-grow">
-                        {{ topic.title }}
-                    </div>
-                    <!--<div><ButtonFavorite :isFavorite="false" @favorite="" /></div>-->
-                    <div>
-                        <button type="button" class="topic-play" @click="handlePlay(topic)">
-                            <div
-                                class="flex justify-center items-center rounded-full p-1"
-                                :class="[
-                                    topic.isSelected ? 'bg-green-100 selected' : 'bg-orange-100',
-                                ]"
-                            >
-                                <IconPlay
-                                    :class="[
-                                        topic.isSelected ? 'text-green-500' : 'text-orange-500',
-                                    ]"
-                                />
-                            </div>
+        <div class="flex flex-col h-full">
+            <div class="border-b flex justify-center">
+                <ul
+                    class="flex flex-wrap -mb-px pt-4 text-sm font-medium text-center"
+                    id="default-styled-tab"
+                    data-tabs-toggle="#default-styled-tab-content"
+                    data-tabs-active-classes="text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-500 border-purple-600 dark:border-purple-500"
+                    data-tabs-inactive-classes="dark:border-transparent text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300"
+                    role="tablist"
+                >
+                    <li class="me-2" role="presentation">
+                        <button
+                            class="inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            id="profile-styled-tab"
+                            data-tabs-target="#styled-profile"
+                            type="button"
+                            role="tab"
+                            aria-controls="profile"
+                            aria-selected="false"
+                        >
+                            <IconSwatchbook class="me-2" />
+                            Topics
                         </button>
+                    </li>
+                    <li class="me-2" role="presentation">
+                        <button
+                            class="inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            id="security-styled-tab"
+                            data-tabs-target="#styled-security"
+                            type="button"
+                            role="tab"
+                            aria-controls="security"
+                            aria-selected="false"
+                        >
+                            <IconHeartFull class="me-2" />
+                            Favorites
+                        </button>
+                    </li>
+                    <li class="me-2" role="presentation">
+                        <button
+                            class="inline-flex p-4 items-center border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            id="dashboard-styled-tab"
+                            data-tabs-target="#styled-dashboard"
+                            type="button"
+                            role="tab"
+                            aria-controls="dashboard"
+                            aria-selected="false"
+                        >
+                            <IconEdit class="me-2" />
+                            Custom
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div id="default-styled-tab-content" class="flex flex-col flex-1 min-h-0">
+                <div
+                    class="rounded-lg flex flex-col h-full py-3"
+                    id="styled-profile"
+                    role="tabpanel"
+                    aria-labelledby="profile-tab"
+                >
+                    <div class="py-3 px-4">
+                        <select
+                            v-model="selectedLevel"
+                            class="w-full p-2 border rounded"
+                            @change="fetchNewTopics"
+                        >
+                            <option disabled>Select a section</option>
+                            <option v-for="level in levels" :key="level">
+                                {{ level }}
+                            </option>
+                        </select>
+                        <hr class="my-3 border-blue-200" />
                     </div>
+                    <ul class="flex-1 overflow-y-auto px-4">
+                        <li
+                            v-for="topic in topics"
+                            :key="topic._id"
+                            class="bg-white p-3 px-4 border-2 border-gray-200 rounded-lg mx-auto my-2"
+                        >
+                            <div class="flex flex-row gap-4 items-center">
+                                <div class="flex-grow">
+                                    {{ topic.title }}
+                                </div>
+                                <!--<div><ButtonFavorite :isFavorite="false" @favorite="" /></div>-->
+                                <div>
+                                    <button
+                                        type="button"
+                                        class="topic-play"
+                                        @click="handlePlay(topic)"
+                                    >
+                                        <div
+                                            class="flex justify-center items-center rounded-full p-1"
+                                            :class="[
+                                                topic.isSelected
+                                                    ? 'bg-green-100 selected'
+                                                    : 'bg-orange-100',
+                                            ]"
+                                        >
+                                            <IconPlay
+                                                :class="[
+                                                    topic.isSelected
+                                                        ? 'text-green-500'
+                                                        : 'text-orange-500',
+                                                ]"
+                                            />
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
-            </li>
-        </ul>
+                <div
+                    class="hidden p-4 rounded-lg"
+                    id="styled-security"
+                    role="tabpanel"
+                    aria-labelledby="security-tab"
+                ></div>
+                <div
+                    class="hidden p-4 rounded-lg"
+                    id="styled-dashboard"
+                    role="tabpanel"
+                    aria-labelledby="dashboard-tab"
+                ></div>
+            </div>
 
-        <div class="my-4 px-4">
-            <button @click="toggleCustomPanel" class="btn w-full p-2 text-white rounded-lg">
-                Custom prompt
-            </button>
-        </div>
+            <div class="flex flex-row justify-center items-center px-4 py-2 gap-2">
+                <!-- Language Selection -->
+                <select v-model="selectedLanguage" class="w-full p-2 border rounded">
+                    <option disabled>Select a language</option>
+                    <option v-for="lang in languages" :key="lang._id" :value="lang.name">
+                        {{ lang.name }}
+                    </option>
+                </select>
 
-        <div class="flex flex-row justify-center items-center my-2 px-4 gap-2">
-            <!-- Language Selection -->
-            <select v-model="selectedLanguage" class="w-full p-2 border rounded">
-                <option disabled>Select a language</option>
-                <option v-for="lang in languages" :key="lang._id" :value="lang.name">
-                    {{ lang.name }}
-                </option>
-            </select>
-
-            <select v-model="selectedStyle" class="w-full p-2 border rounded">
-                <option disabled>Select a style</option>
-                <option v-for="style in styles" :key="style._id" :value="style.name">
-                    {{ style.name }}
-                </option>
-            </select>
+                <select v-model="selectedStyle" class="w-full p-2 border rounded">
+                    <option disabled>Select a style</option>
+                    <option v-for="style in styles" :key="style._id" :value="style.name">
+                        {{ style.name }}
+                    </option>
+                </select>
+            </div>
         </div>
     </div>
 </template>
@@ -209,7 +281,7 @@ function toggleCustomPanel() {
     background: var(--gradient-orange);
 }
 ul {
-    scrollbar-color: var(--light-blue) transparent;
+    scrollbar-color: #c3ddfd transparent;
 }
 .topic-play .selected {
     animation: scaleup 0.3s linear;
