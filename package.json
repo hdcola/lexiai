@@ -15,6 +15,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
     "@mdi/js": "^7.4.47",
+    "@vueuse/core": "^12.4.0",
     "axios": "^1.7.9",
     "eventemitter3": "^5.0.1",
     "flowbite": "^2.5.2",
