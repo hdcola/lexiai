@@ -37,7 +37,7 @@ function interrupt() {
 
         <button
             id="cancel-btn"
-            class="absolute rounded-full size-10 flex justify-center items-center bg-red-300"
+            class="absolute rounded-full size-10 flex justify-center items-center bg-red-500"
             @click="interrupt"
             :class="{ active: props.isResponding }"
         >
