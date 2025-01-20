@@ -18,11 +18,27 @@ const router = createRouter({
             path: '/register',
             name: 'register',
             component: RegisterView,
+            beforeEnter: async (to, from) => {
+                //check if authenticated
+                const authStore = useAuthStore();
+
+                if (from.name != 'lexiai' && await authStore.isAuthenticated()) {
+                    return '/lexiai'
+                }
+            }
         },
         {
             path: '/login',
             name: 'login',
             component: LoginView,
+            beforeEnter: async (to, from) => {
+                //check if authenticated
+                const authStore = useAuthStore();
+
+                if (from.name != 'lexiai' && await authStore.isAuthenticated()) {
+                    return '/lexiai'
+                }
+            }
         },
         {
             path: '/test',
@@ -38,11 +54,11 @@ const router = createRouter({
             path: '/lexiai',
             name: 'gemini',
             component: GeminiView,
-            beforeEnter: (to, from) => {
+            beforeEnter: async (to, from) => {
                 //check if authenticated
                 const authStore = useAuthStore();
 
-                if (from.name != 'login' && !authStore.isAuthenticated()) {
+                if (from.name != 'login' && await !authStore.isAuthenticated()) {
                     return '/login'
                 }
             }
@@ -51,11 +67,11 @@ const router = createRouter({
             path: '/settings',
             name: 'settings',
             component: Settings,
-            beforeEnter: (to, from) => {
+            beforeEnter: async (to, from) => {
                 //check if authenticated
                 const authStore = useAuthStore();
 
-                if (from.name != 'login' && !authStore.isAuthenticated()) {
+                if (from.name != 'login' && await !authStore.isAuthenticated()) {
                     return '/login'
                 }
             }
