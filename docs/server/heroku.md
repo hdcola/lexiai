@@ -12,6 +12,7 @@
 - `DISABLE_COLLECTSTATIC`: Set to `1` to disable collectstatic
 - `DJANGO_SETTINGS_MODULE`: `project.settings.production`
 - `MONGO_URI1`: MongoDB Connection URI
+- `TOKEN_KEY`: JWT Secret key
 
 
 ## Domains 
