@@ -6,6 +6,7 @@ import ImgConvoAudio from '@/components/images/ImgConvoAudio.vue'
 import ImgLexiLogo from '@/components/images/ImgLexiLogoImage.vue'
 import ImgLexiLogoText from '@/components/images/ImgLexiLogoText.vue'
 import { onMounted, onUnmounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
 const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -16,6 +17,7 @@ const observer = new IntersectionObserver((entries) => {
         entry.target.classList.remove('in-view')
     })
 })
+const authStore = useAuthStore()
 
 onMounted(() => {
     const allAnimatedElements = document.querySelectorAll('.animate')
@@ -48,7 +50,21 @@ onUnmounted(() => {
                         <p class="my-2 text-lg">
                             Boost your confidence in any language with personalized content.
                         </p>
-                        <RouterLink to="/register" v-slot="{ href, navigate }">
+                        <RouterLink
+                            v-if="!authStore.isLoggedIn"
+                            to="/register"
+                            v-slot="{ href, navigate }"
+                        >
+                            <button
+                                :href="href"
+                                @click="navigate"
+                                class="action-btn mt-5 text-lg font-semibold"
+                            >
+                                Get Started
+                            </button>
+                        </RouterLink>
+
+                        <RouterLink v-else to="/lexiai" v-slot="{ href, navigate }">
                             <button
                                 :href="href"
                                 @click="navigate"

@@ -10,9 +10,8 @@ import IconConfig from './images/icons/IconConfig.vue'
 const authStore = useAuthStore()
 
 const logout = () => {
-  authStore.logout() 
+    authStore.logout()
 }
-
 
 const path = mdiMenu
 // Debugging to check mdiMenu path
@@ -23,7 +22,8 @@ const isMenuOpen = ref<boolean>(false)
 
 const route = useRoute()
 onMounted(async () => {
-  await authStore.isAuthenticated()  
+    await authStore.isAuthenticated()
+    console.log('isLoggedIn', authStore.isLoggedIn)
 })
 </script>
 

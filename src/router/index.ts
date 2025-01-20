@@ -42,7 +42,7 @@ const router = createRouter({
                 //check if authenticated
                 const authStore = useAuthStore();
 
-                if (from.name != 'login' && !authStore.isLoggedIn) {
+                if (from.name != 'login' && !authStore.isAuthenticated()) {
                     return '/login'
                 }
             }
@@ -55,7 +55,7 @@ const router = createRouter({
                 //check if authenticated
                 const authStore = useAuthStore();
 
-                if (from.name != 'login' && !authStore.isLoggedIn) {
+                if (from.name != 'login' && !authStore.isAuthenticated()) {
                     return '/login'
                 }
             }

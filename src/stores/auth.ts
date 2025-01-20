@@ -16,6 +16,9 @@ export const useAuthStore = defineStore('auth', {
     }),
     actions: {
         async isAuthenticated() {
+            if (this.isLoggedIn == true){
+                return this.isLoggedIn;
+            }
             const jwtStore = useJWTStore();
             const token = jwtStore.getToken();
             if (!token) {
@@ -65,7 +68,7 @@ export const useAuthStore = defineStore('auth', {
                     this.successMessage = 'Login successful'
 
                     // redirect to home
-                    setTimeout(() => router.push('/'), 2000)
+                    setTimeout(() => router.push('/lexiai'), 2000)
                 }
             } catch (error) {
                 this.isLoggedIn = false;
