@@ -51,20 +51,9 @@ onUnmounted(() => {
                             Boost your confidence in any language with personalized content.
                         </p>
                         <RouterLink
-                            v-if="!authStore.isLoggedIn"
                             to="/register"
                             v-slot="{ href, navigate }"
                         >
-                            <button
-                                :href="href"
-                                @click="navigate"
-                                class="action-btn mt-5 text-lg font-semibold"
-                            >
-                                Get Started
-                            </button>
-                        </RouterLink>
-
-                        <RouterLink v-else to="/lexiai" v-slot="{ href, navigate }">
                             <button
                                 :href="href"
                                 @click="navigate"
