@@ -14,10 +14,10 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
-    "@material-tailwind/html": "^2.3.2",
     "@mdi/js": "^7.4.47",
     "axios": "^1.7.9",
     "eventemitter3": "^5.0.1",
+    "flowbite": "^2.5.2",
     "mdi-vue": "^3.0.13",
     "pinia": "^2.3.0",
     "pinia-plugin-persistedstate": "^4.2.0",
