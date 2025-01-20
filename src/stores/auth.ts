@@ -7,6 +7,7 @@ import axios from 'axios';
 const apiUrl = import.meta.env.VITE_API_URL
 const apiPORT = import.meta.env.VITE_API_PORT
 
+
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         isLoggedIn: <boolean>false,
@@ -14,7 +15,28 @@ export const useAuthStore = defineStore('auth', {
         successMessage: ""
     }),
     actions: {
-        isAuthenticated() {
+        async isAuthenticated() {
+            const jwtStore = useJWTStore();
+            const token = jwtStore.getToken();
+            if (!token) {
+                this.isLoggedIn = false;
+                console.log("No token found. User is not logged in.");
+                return this.isLoggedIn;
+            }
+
+            try {
+                const isValid = await jwtStore.isValidToken();  
+                if (isValid) {
+                    this.isLoggedIn = true;
+                    console.log("Token is valid. User is logged in.");
+                } else {
+                    this.isLoggedIn = false;
+                    console.log("Token is invalid. User is not logged in.");
+                }
+            } catch (error) {
+                console.error("Error validating token:", error);
+                this.isLoggedIn = false;
+            }
             return this.isLoggedIn;
         },
         async login(email: string, password: string) {
@@ -28,7 +50,7 @@ export const useAuthStore = defineStore('auth', {
             try {
                 const response = await axios.post(`${apiUrl}:${apiPORT}/api/users/login`, {
                     email: email,
-                    password: password,
+                    password: password
                 })
 
                 if (response.data.accessToken) {
@@ -38,12 +60,12 @@ export const useAuthStore = defineStore('auth', {
                     // Save token
                     jwtStore.saveToken(newToken)
 
-                    console.log('Login successful, token stored')
+                    console.log('Login successful, token stored.')
                     this.isLoggedIn = true;
                     this.successMessage = 'Login successful'
 
                     // redirect to home
-                    setTimeout(() => router.push('/lexiai'), 2000)
+                    setTimeout(() => router.push('/'), 2000)
                 }
             } catch (error) {
                 this.isLoggedIn = false;

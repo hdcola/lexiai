@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import IconMD from './images/icons/IconMD.vue'
 import { mdiMenu } from '@mdi/js'
 /*import logo from '@/assets/img/logo-horizontal-black.png'*/
@@ -9,12 +9,10 @@ import IconConfig from './images/icons/IconConfig.vue'
 
 const authStore = useAuthStore()
 
-const isLoggedIn = ref<boolean>(!!localStorage.getItem('accessToken'))
 const logout = () => {
-    localStorage.removeItem('accessToken')
-    window.location.reload()
-    console.log('User logged out')
+  authStore.logout() 
 }
+
 
 const path = mdiMenu
 // Debugging to check mdiMenu path
@@ -24,6 +22,9 @@ console.log('mdiMenu path:', path)
 const isMenuOpen = ref<boolean>(false)
 
 const route = useRoute()
+onMounted(async () => {
+  await authStore.isAuthenticated()  
+})
 </script>
 
 <template>
@@ -96,7 +97,7 @@ const route = useRoute()
                 >Home</RouterLink
             >
 
-            <span v-if="!isLoggedIn">
+            <span v-if="!authStore.isLoggedIn">
                 <RouterLink
                     to="/login"
                     class="block text-white px-3 py-2 rounded-md hover:bg-blue-700"
