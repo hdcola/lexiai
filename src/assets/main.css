@@ -25,6 +25,10 @@ html {
     scrollbar-color: #3accfd #dbeafe;
 }
 
+input {
+    @apply border-0;
+}
+
 /*
     Fake highlight on clickables
 */
