@@ -1,28 +1,14 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { initTabs } from 'flowbite'
 import ImgSettings from '@/components/images/ImgSettings.vue'
 import SettingsLexi from '@/components/settings/SettingsLexi.vue'
-import { onMounted, ref } from 'vue'
-import { initTabs } from 'flowbite'
 import SettingsProfile from '@/components/settings/SettingsProfile.vue'
 import SettingsSecurity from '@/components/settings/SettingsSecurity.vue'
-
-const errorMessage = ref<string>('')
-const successMessage = ref<string>('')
-
-const username = ref<string>('tamara')
-const email = ref<string>('')
-const password = ref<string>('')
-const apiKey = ref<string>('')
-const voice = ref<string>('')
-
-// Load user settings
 
 // Update settings
 onMounted(() => {
     initTabs()
-    /*let tokenizerScript = document.createElement('script')
-    tokenizerScript.setAttribute('src', '/node_modules/@material-tailwind/html/scripts/tabs.js')
-    document.head.appendChild(tokenizerScript)*/
 })
 </script>
 <template>
