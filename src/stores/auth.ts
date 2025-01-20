@@ -56,6 +56,29 @@ export const useAuthStore = defineStore('auth', {
             }
 
         },
+        async register(username: string, email: string, password: string) {
+            this.successMessage = '';
+            this.errorMessage = '';
+
+            try {
+                const response = await axios.post(`${apiUrl}:${apiPORT}/api/users/register`, {
+                    username,
+                    email,
+                    password,
+                })
+
+                console.log('Registration successful:', response.data)
+
+                this.successMessage = 'Registration successful. Please log in.'
+                setTimeout(() => router.push('/login'), 2000) // Redirect after 3 seconds
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    this.errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+                } else {
+                    this.errorMessage = 'An unexpected error occurred.';
+                }
+            }
+        },
         logout() {
             const jwtStore = useJWTStore();
             jwtStore.deleteToken();
