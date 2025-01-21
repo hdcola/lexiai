@@ -75,6 +75,8 @@ function handlePlay(topic: ITopic) {
 function handleFavorite(topic: ITopic) {
     // Add to favorites
     topic.isFavorite = !topic.isFavorite
+
+    // Update in MongoDB
 }
 
 onMounted(() => {
@@ -83,20 +85,19 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="py-3 px-4">
-        <select v-model="selectedLevel" class="w-full p-2 border rounded" @change="fetchNewTopics">
+    <div class="py-3 px-4 mb-4">
+        <select v-model="selectedLevel" class="w-full" @change="fetchNewTopics">
             <option disabled>Select a section</option>
             <option v-for="level in levels" :key="level">
                 {{ level }}
             </option>
         </select>
-        <hr class="my-3 border-blue-200" />
     </div>
     <ul class="flex-1 overflow-y-auto px-4">
         <li
             v-for="topic in topics"
             :key="topic._id"
-            class="bg-white p-3 px-4 border-2 border-gray-200 rounded-lg mx-auto my-2"
+            class="bg-white p-3 px-4 rounded-lg shadow-md mx-auto mb-4"
         >
             <div class="flex flex-row gap-4 items-center">
                 <div class="flex-grow">
@@ -134,5 +135,16 @@ ul {
 li:hover .btn-toggle {
     opacity: 1;
     transition: opacity 0.3s ease;
+}
+.topic-play .selected {
+    animation: scaleup 0.3s linear;
+}
+@keyframes scaleup {
+    from {
+        scale: 1.1;
+    }
+    to {
+        scale: 1;
+    }
 }
 </style>

@@ -28,7 +28,7 @@ function handleSelection(selection: {
 <template>
     <div class="flex flex-col md:flex-row gap-6 mx-auto max-w-6xl py-10">
         <div
-            class="bg-gray-100 rounded-lg shadow-lg w-full md:w-2/5 flex min-h-96 h-[calc(100vh-10.5rem)]"
+            class="bg-gray-50 rounded-lg shadow-lg w-full md:w-2/5 flex min-h-96 h-[calc(100vh-10.5rem)]"
         >
             <GeminiSelection @selection="handleSelection" />
         </div>
