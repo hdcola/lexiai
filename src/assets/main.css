@@ -75,7 +75,9 @@ input[type='reset']:active,
     background: var(--gradient-blue);
 }*/
 
-
+select {
+    @apply p-2 border border-gray-400 rounded focus:border-purple-400;
+}
 
 section {
     padding: 30px;

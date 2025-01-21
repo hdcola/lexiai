@@ -94,16 +94,16 @@ function handlePlay(selection: { topic: string; level: string }) {
         <div class="flex flex-col h-full">
             <div class="border-b flex justify-center">
                 <ul
-                    class="flex flex-wrap -mb-px pt-4 text-sm font-medium text-center"
+                    class="flex flex-wrap -mb-px pt-4 text-sm font-medium text-center gap-2"
                     id="default-styled-tab"
                     data-tabs-toggle="#default-styled-tab-content"
                     data-tabs-active-classes="text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-500 border-purple-600 dark:border-purple-500"
                     data-tabs-inactive-classes="dark:border-transparent text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300"
                     role="tablist"
                 >
-                    <li class="me-2" role="presentation">
+                    <li role="presentation">
                         <button
-                            class="inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            class="tab"
                             id="topics-styled-tab"
                             data-tabs-target="#styled-topics"
                             type="button"
@@ -111,13 +111,13 @@ function handlePlay(selection: { topic: string; level: string }) {
                             aria-controls="topics"
                             aria-selected="false"
                         >
-                            <IconSwatchbook class="me-2 md:hidden lg:block" />
+                            <IconSwatchbook class="icon" />
                             Topics
                         </button>
                     </li>
-                    <li class="me-2" role="presentation">
+                    <li role="presentation">
                         <button
-                            class="inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            class="tab"
                             id="favorites-styled-tab"
                             data-tabs-target="#styled-favorites"
                             type="button"
@@ -125,13 +125,13 @@ function handlePlay(selection: { topic: string; level: string }) {
                             aria-controls="favorites"
                             aria-selected="false"
                         >
-                            <IconHeartFull class="me-2 md:hidden lg:block" />
+                            <IconHeartFull class="icon" />
                             Favorites
                         </button>
                     </li>
-                    <li class="me-2" role="presentation">
+                    <li role="presentation">
                         <button
-                            class="inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            class="tab"
                             id="custom-styled-tab"
                             data-tabs-target="#styled-custom"
                             type="button"
@@ -139,7 +139,7 @@ function handlePlay(selection: { topic: string; level: string }) {
                             aria-controls="custom"
                             aria-selected="false"
                         >
-                            <IconEdit class="me-2 md:hidden lg:block" />
+                            <IconEdit class="icon" />
                             Custom
                         </button>
                     </li>
@@ -172,16 +172,16 @@ function handlePlay(selection: { topic: string; level: string }) {
                 </div>
             </div>
 
-            <div class="flex flex-row justify-center items-center px-4 py-2 gap-2">
+            <div class="flex flex-row justify-center items-center px-4 py-3 gap-2">
                 <!-- Language Selection -->
-                <select v-model="selectedLanguage" class="w-full p-2 border rounded">
+                <select v-model="selectedLanguage" class="w-full">
                     <option disabled>Select a language</option>
                     <option v-for="lang in languages" :key="lang._id" :value="lang.name">
                         {{ lang.name }}
                     </option>
                 </select>
 
-                <select v-model="selectedStyle" class="w-full p-2 border rounded">
+                <select v-model="selectedStyle" class="w-full">
                     <option disabled>Select a style</option>
                     <option v-for="style in styles" :key="style._id" :value="style.name">
                         {{ style.name }}
@@ -193,18 +193,10 @@ function handlePlay(selection: { topic: string; level: string }) {
 </template>
 
 <style scoped>
-.btn {
-    background: var(--gradient-orange);
+.tab {
+    @apply inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300;
 }
-.topic-play .selected {
-    animation: scaleup 0.3s linear;
-}
-@keyframes scaleup {
-    from {
-        scale: 1.1;
-    }
-    to {
-        scale: 1;
-    }
+.icon {
+    @apply me-2 md:hidden lg:block;
 }
 </style>
