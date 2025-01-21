@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import IconHeartEmpty from './images/icons/IconHeartEmpty.vue'
 import IconHeartFull from './images/icons/IconHeartFull.vue'
 
-const props = defineProps<{ isFavorite: boolean }>()
+const props = defineProps({ isFavorite: { type: Boolean, default: false } })
 const emit = defineEmits(['favorite'])
 
 const isFavorite = ref<boolean>(props.isFavorite)
@@ -24,7 +24,7 @@ function handleToggle() {
 <style scoped>
 button svg {
     color: rgb(255, 116, 116);
-    scale: 1.3;
+    scale: 1.1;
 }
 .scale {
     animation: scaleup 0.3s linear;

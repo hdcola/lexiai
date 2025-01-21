@@ -32,6 +32,7 @@ export type ITopic = {
     start?: string
     createdAt?: string
     isSelected?: boolean
+    isFavorite?: boolean
 }
 
 // environmental variables
@@ -103,11 +104,11 @@ function handlePlay(selection: { topic: string; level: string }) {
                     <li class="me-2" role="presentation">
                         <button
                             class="inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
-                            id="profile-styled-tab"
-                            data-tabs-target="#styled-profile"
+                            id="topics-styled-tab"
+                            data-tabs-target="#styled-topics"
                             type="button"
                             role="tab"
-                            aria-controls="profile"
+                            aria-controls="topics"
                             aria-selected="false"
                         >
                             <IconSwatchbook class="me-2 md:hidden lg:block" />
@@ -117,11 +118,11 @@ function handlePlay(selection: { topic: string; level: string }) {
                     <li class="me-2" role="presentation">
                         <button
                             class="inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
-                            id="security-styled-tab"
-                            data-tabs-target="#styled-security"
+                            id="favorites-styled-tab"
+                            data-tabs-target="#styled-favorites"
                             type="button"
                             role="tab"
-                            aria-controls="security"
+                            aria-controls="favorites"
                             aria-selected="false"
                         >
                             <IconHeartFull class="me-2 md:hidden lg:block" />
@@ -131,11 +132,11 @@ function handlePlay(selection: { topic: string; level: string }) {
                     <li class="me-2" role="presentation">
                         <button
                             class="inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
-                            id="dashboard-styled-tab"
-                            data-tabs-target="#styled-dashboard"
+                            id="custom-styled-tab"
+                            data-tabs-target="#styled-custom"
                             type="button"
                             role="tab"
-                            aria-controls="dashboard"
+                            aria-controls="custom"
                             aria-selected="false"
                         >
                             <IconEdit class="me-2 md:hidden lg:block" />
@@ -147,25 +148,25 @@ function handlePlay(selection: { topic: string; level: string }) {
             <div id="default-styled-tab-content" class="flex flex-col flex-1 min-h-0">
                 <div
                     class="rounded-lg flex flex-col h-full py-3"
-                    id="styled-profile"
+                    id="styled-topics"
                     role="tabpanel"
-                    aria-labelledby="profile-tab"
+                    aria-labelledby="topics-tab"
                 >
                     <SelectionTopic @selection="handlePlay" />
                 </div>
                 <div
                     class="hidden p-4 rounded-lg"
-                    id="styled-security"
+                    id="styled-favorites"
                     role="tabpanel"
-                    aria-labelledby="security-tab"
+                    aria-labelledby="favorites-tab"
                 >
                     <SelectionFavorites />
                 </div>
                 <div
                     class="hidden p-4 rounded-lg"
-                    id="styled-dashboard"
+                    id="styled-custom"
                     role="tabpanel"
-                    aria-labelledby="dashboard-tab"
+                    aria-labelledby="custom-tab"
                 >
                     <SelectionCustom />
                 </div>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
+import ButtonFavorite from '../ButtonFavorite.vue'
 import IconPlay from '../images/icons/IconPlay.vue'
 import type { ITopic } from '../GeminiSelection.vue'
 
@@ -71,6 +72,11 @@ function handlePlay(topic: ITopic) {
     })
 }
 
+function handleFavorite(topic: ITopic) {
+    // Add to favorites
+    topic.isFavorite = !topic.isFavorite
+}
+
 onMounted(() => {
     fetchOptions()
 })
@@ -96,19 +102,23 @@ onMounted(() => {
                 <div class="flex-grow">
                     {{ topic.title }}
                 </div>
-                <!--<div><ButtonFavorite :isFavorite="false" @favorite="" /></div>-->
-                <div>
-                    <button type="button" class="topic-play" @click="handlePlay(topic)">
-                        <div
-                            class="flex justify-center items-center rounded-full p-1"
-                            :class="[topic.isSelected ? 'bg-green-100 selected' : 'bg-orange-100']"
-                        >
-                            <IconPlay
-                                :class="[topic.isSelected ? 'text-green-500' : 'text-orange-500']"
-                            />
-                        </div>
-                    </button>
-                </div>
+
+                <ButtonFavorite
+                    :class="{ 'btn-toggle': !topic.isFavorite }"
+                    :isFavorite="topic.isFavorite"
+                    @favorite="handleFavorite(topic)"
+                />
+
+                <button type="button" class="topic-play" @click="handlePlay(topic)">
+                    <div
+                        class="flex justify-center items-center rounded-full p-1"
+                        :class="[topic.isSelected ? 'bg-green-100 selected' : 'bg-orange-100']"
+                    >
+                        <IconPlay
+                            :class="[topic.isSelected ? 'text-green-500' : 'text-orange-500']"
+                        />
+                    </div>
+                </button>
             </div>
         </li>
     </ul>
@@ -117,5 +127,12 @@ onMounted(() => {
 <style scoped>
 ul {
     scrollbar-color: #c3ddfd transparent;
+}
+.btn-toggle {
+    opacity: 0;
+}
+li:hover .btn-toggle {
+    opacity: 1;
+    transition: opacity 0.3s ease;
 }
 </style>
