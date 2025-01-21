@@ -7,20 +7,23 @@ import { initTabs } from 'flowbite'
 import IconEdit from './images/icons/IconEdit.vue'
 import IconHeartFull from './images/icons/IconHeartFull.vue'
 import IconSwatchbook from './images/icons/IconSwatchbook.vue'
+import SelectionTopic from './selection/SelectionTopic.vue'
+import SelectionFavorites from './selection/SelectionFavorites.vue'
+import SelectionCustom from './selection/SelectionCustom.vue'
 
 // types needed to convert string id to ObjectId(id)
-type ILanguage = {
+export type ILanguage = {
     _id: string
     name: string
 }
 
-type IStyle = {
+export type IStyle = {
     _id: string
     name: string
     description?: string
 }
 
-type ITopic = {
+export type ITopic = {
     _id: string
     title: string
     description?: string
@@ -39,20 +42,15 @@ const emit = defineEmits(['selection'])
 
 const languages = ref<ILanguage[]>([])
 const styles = ref<IStyle[]>([])
-const topics = ref<ITopic[]>([])
-const levels = ref(['Beginner', 'Advanced'])
 
 // to read from MongoDb for logged user
 const selectedLanguage = ref<string>('French')
 const selectedStyle = ref<string>('Casual')
-const selectedLevel = ref<string>('Beginner')
-const selectedTopic = ref<ITopic | null>(null)
 
 async function fetchOptions() {
     try {
-        const [languagesResponse, topicsResponse, stylesResponse] = await Promise.all([
+        const [languagesResponse, stylesResponse] = await Promise.all([
             axios.get(`${apiUrl}:${apiPort}/api/languages`),
-            axios.get(`${apiUrl}:${apiPort}/api/topics?level=${selectedLevel.value}`),
             axios.get(`${apiUrl}:${apiPort}/api/styles`),
         ])
 
@@ -60,14 +58,6 @@ async function fetchOptions() {
             (lang: { _id: { $oid: string }; name: string }) => ({
                 _id: lang._id.$oid, //extract $oid as _id
                 name: lang.name,
-            }),
-        )
-
-        topics.value = topicsResponse.data.map(
-            (topic: { _id: string; title: string; level: string }) => ({
-                _id: topic._id,
-                title: topic.title,
-                level: topic.level,
             }),
         )
 
@@ -83,46 +73,17 @@ async function fetchOptions() {
     }
 }
 
-async function fetchNewTopics() {
-    try {
-        if (selectedLevel.value) {
-            const response = await axios.get(
-                `${apiUrl}:${apiPort}/api/topics?level=${selectedLevel.value}`,
-            )
-            topics.value = response.data.map(
-                (topic: { _id: string; title: string; level: string }) => ({
-                    _id: topic._id,
-                    title: topic.title,
-                    level: topic.level,
-                }),
-            )
-        }
-    } catch (error) {
-        console.error('Error fetching new topics:', error)
-    }
-}
-
 onMounted(() => {
     initTabs()
     fetchOptions()
 })
 
-function handlePlay(topic: ITopic) {
-    // Previously selected topic
-    if (selectedTopic.value) {
-        selectedTopic.value.isSelected = false
-        selectedTopic.value = null
-    }
-
-    selectedTopic.value = topic
-    topic.isSelected = true
-
-    // Emit to Gemini the full selection
+function handlePlay(selection: { topic: string; level: string }) {
     emit('selection', {
         language: selectedLanguage.value,
         style: selectedStyle.value,
-        topic: selectedTopic.value.title,
-        level: selectedLevel.value == 'Beginner' ? 'a beginner, tell me what to say' : 'advanced',
+        topic: selection.topic,
+        level: selection.level,
     })
 }
 </script>
@@ -149,7 +110,7 @@ function handlePlay(topic: ITopic) {
                             aria-controls="profile"
                             aria-selected="false"
                         >
-                            <IconSwatchbook class="me-2" />
+                            <IconSwatchbook class="me-2 md:hidden lg:block" />
                             Topics
                         </button>
                     </li>
@@ -163,13 +124,13 @@ function handlePlay(topic: ITopic) {
                             aria-controls="security"
                             aria-selected="false"
                         >
-                            <IconHeartFull class="me-2" />
+                            <IconHeartFull class="me-2 md:hidden lg:block" />
                             Favorites
                         </button>
                     </li>
                     <li class="me-2" role="presentation">
                         <button
-                            class="inline-flex p-4 items-center border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            class="inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
                             id="dashboard-styled-tab"
                             data-tabs-target="#styled-dashboard"
                             type="button"
@@ -177,7 +138,7 @@ function handlePlay(topic: ITopic) {
                             aria-controls="dashboard"
                             aria-selected="false"
                         >
-                            <IconEdit class="me-2" />
+                            <IconEdit class="me-2 md:hidden lg:block" />
                             Custom
                         </button>
                     </li>
@@ -190,70 +151,24 @@ function handlePlay(topic: ITopic) {
                     role="tabpanel"
                     aria-labelledby="profile-tab"
                 >
-                    <div class="py-3 px-4">
-                        <select
-                            v-model="selectedLevel"
-                            class="w-full p-2 border rounded"
-                            @change="fetchNewTopics"
-                        >
-                            <option disabled>Select a section</option>
-                            <option v-for="level in levels" :key="level">
-                                {{ level }}
-                            </option>
-                        </select>
-                        <hr class="my-3 border-blue-200" />
-                    </div>
-                    <ul class="flex-1 overflow-y-auto px-4">
-                        <li
-                            v-for="topic in topics"
-                            :key="topic._id"
-                            class="bg-white p-3 px-4 border-2 border-gray-200 rounded-lg mx-auto my-2"
-                        >
-                            <div class="flex flex-row gap-4 items-center">
-                                <div class="flex-grow">
-                                    {{ topic.title }}
-                                </div>
-                                <!--<div><ButtonFavorite :isFavorite="false" @favorite="" /></div>-->
-                                <div>
-                                    <button
-                                        type="button"
-                                        class="topic-play"
-                                        @click="handlePlay(topic)"
-                                    >
-                                        <div
-                                            class="flex justify-center items-center rounded-full p-1"
-                                            :class="[
-                                                topic.isSelected
-                                                    ? 'bg-green-100 selected'
-                                                    : 'bg-orange-100',
-                                            ]"
-                                        >
-                                            <IconPlay
-                                                :class="[
-                                                    topic.isSelected
-                                                        ? 'text-green-500'
-                                                        : 'text-orange-500',
-                                                ]"
-                                            />
-                                        </div>
-                                    </button>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
+                    <SelectionTopic @selection="handlePlay" />
                 </div>
                 <div
                     class="hidden p-4 rounded-lg"
                     id="styled-security"
                     role="tabpanel"
                     aria-labelledby="security-tab"
-                ></div>
+                >
+                    <SelectionFavorites />
+                </div>
                 <div
                     class="hidden p-4 rounded-lg"
                     id="styled-dashboard"
                     role="tabpanel"
                     aria-labelledby="dashboard-tab"
-                ></div>
+                >
+                    <SelectionCustom />
+                </div>
             </div>
 
             <div class="flex flex-row justify-center items-center px-4 py-2 gap-2">
@@ -279,9 +194,6 @@ function handlePlay(topic: ITopic) {
 <style scoped>
 .btn {
     background: var(--gradient-orange);
-}
-ul {
-    scrollbar-color: #c3ddfd transparent;
 }
 .topic-play .selected {
     animation: scaleup 0.3s linear;
