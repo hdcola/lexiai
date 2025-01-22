@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { useJWTStore } from './jwt';
 import axios from 'axios';
-
+import type { VoiceName } from '@/lib/gemini/config/config-types';
 
 const apiUrl = import.meta.env.VITE_API_URL
 const apiPORT = import.meta.env.VITE_API_PORT
@@ -12,12 +12,14 @@ export type UserSettings = {
     topic_id: string;
     style: string;
     favorites: Record<string,boolean>;
+    apiKey: string;
+    voiceName: VoiceName;
 };
 
 
 export const useUserStore = defineStore('userSet', {
     state: () => ({
-        settings: {} as UserSettings | null,
+        settings: {} as UserSettings,
         favorites: {} as Record<string,boolean>
     }),
     actions: {
@@ -40,7 +42,7 @@ export const useUserStore = defineStore('userSet', {
 
                 if (response.data && response.data.settings) {
                     this.settings = response.data.settings;
-                    if (this.settings?.favorites) {
+                    if (this.settings.favorites) {
                         this.favorites = this.settings.favorites;
                     }
                     console.log("Settings retrieved:", response.data.settings);
@@ -64,6 +66,17 @@ export const useUserStore = defineStore('userSet', {
         },
         getFavorites() {
             return {...this.favorites};
+        },
+        saveLexiSettings(voiceName: VoiceName, apiKey: string) {
+
+            // Save to user
+            this.settings.voiceName = voiceName;
+            this.settings.apiKey = apiKey;
+
+            // Save to server
+        },
+        getLexiSettings() {
+            return {...this.settings}
         }
     },
     persist: false

@@ -11,9 +11,11 @@ import VolMeterWorket from '@/lib/gemini/audio/worklets/vol-meter'
 import ButtonMicrophone from './ButtonMicrophone.vue'
 import ButtonGeminiSpeaker from './ButtonGeminiSpeaker.vue'
 import ImgLearningBooks from './images/ImgLearningBooks.vue'
+import { useUserStore } from '@/stores/user'
 
 const GOOGLE_AI_STUDIO_API_KEY = ref<string>(import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY)
 
+const userStore = useUserStore()
 const client = new MultimodalLiveClient({ apiKey: GOOGLE_AI_STUDIO_API_KEY.value })
 const isConnected = ref<boolean>(false)
 const isRecording = ref<boolean>(false)
@@ -35,13 +37,15 @@ const props = defineProps<{
     language?: string
 }>()
 const responseModalities = ref<ResponseModalities>(props.responseModalities)
-const updateResponseModalities = computed(() => {
-    console.log(`Update responseModalities to ${props.responseModalities}`)
-    responseModalities.value = props.responseModalities
-    updateConfig()
-})
 
 onMounted(async () => {
+    const settings = userStore.getLexiSettings()
+    if (settings.apiKey) {
+        GOOGLE_AI_STUDIO_API_KEY.value = settings.apiKey
+    }
+    if (settings.voiceName) {
+        voiceName.value = settings.voiceName
+    }
     connect()
 })
 
