@@ -102,11 +102,6 @@ export const useUserStore = defineStore('userSet', {
             const jwtStore = useJWTStore();
             const token = jwtStore.getToken();
 
-            if (!token) {
-                console.log("No token found for saveLexiSettings. User is not logged in.");
-                return;
-            }
-
             try {
                 // Send API request to update settings
                 const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/settings`, {
