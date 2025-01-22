@@ -92,12 +92,7 @@ export const useUserStore = defineStore('userSet', {
             return { ...this.favorites };
         },
         async saveLexiSettings(voiceName: VoiceName, apiKey: string) {
-
-            // Save to user
-            this.settings.voiceName = voiceName;
-            this.settings.apiKey = apiKey;
-
-   
+  
             // Save to server
             const jwtStore = useJWTStore();
             const token = jwtStore.getToken();
@@ -117,6 +112,10 @@ export const useUserStore = defineStore('userSet', {
 
                 if (response.status === 200 && response.data.settings) {
                     console.log("Lexi settings successfully updated on the server:", response.data.settings);
+                    
+                    // Save to user
+                    this.settings.voiceName = voiceName;
+                    this.settings.apiKey = apiKey;
                 } else {
                     console.log("Unexpected response when updating Lexi settings:", response);
                 }
