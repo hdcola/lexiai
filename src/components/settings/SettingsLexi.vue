@@ -1,17 +1,41 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { Voices } from '@/lib/gemini/config/config-types'
 import type { VoiceName } from '@/lib/gemini/config/config-types'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
 
 const errorMessage = ref<string>('')
 const successMessage = ref<string>('')
 
 const apiKey = ref<string>('')
-const voice = ref<VoiceName | ''>('')
+const voiceName = ref<VoiceName>('Aoede')
+
+const onSubmit = () => {
+    // Could verify if anything changed before submitting?
+    try {
+        userStore.saveLexiSettings(voiceName.value, apiKey.value)
+        successMessage.value = 'Successfully saved'
+    } catch (error) {
+        // TODO: Implement proper error
+        errorMessage.value = 'Something went wrong.'
+    }
+}
+
+onMounted(() => {
+    const settings = userStore.getLexiSettings()
+    if (settings.apiKey) {
+        apiKey.value = settings.apiKey
+    }
+    if (settings.voiceName) {
+        voiceName.value = settings.voiceName
+    }
+})
 </script>
 
 <template>
-    <form @submit.prevent="" class="space-y-8 sm:mx-auto sm:w-full sm:max-w-sm">
+    <form @submit.prevent="onSubmit" class="space-y-8 sm:mx-auto sm:w-full sm:max-w-sm">
         <div v-if="errorMessage" role="alert" class="error-msg">
             {{ errorMessage }}
         </div>
@@ -21,16 +45,16 @@ const voice = ref<VoiceName | ''>('')
         <div class="form-group">
             <div>
                 <label class="block font-medium mb-1">Change voice</label>
-                <select v-model="voice" class="w-full p-2 border rounded">
+                <select v-model="voiceName" class="w-full p-2 border rounded">
                     <option disabled value="">Select a voice</option>
-                    <option v-for="v in Voices" :key="v" :value="v">
-                        {{ v }}
+                    <option v-for="voice in Voices" :key="voice" :value="voice">
+                        {{ voice }}
                     </option>
                 </select>
             </div>
         </div>
 
-        <div class="hidden form-group">
+        <div class="form-group">
             <label for="apiKey" class="block mb-2 text-sm font-medium text-gray-900"
                 >Custom Gemini API Key</label
             >
@@ -42,7 +66,6 @@ const voice = ref<VoiceName | ''>('')
                 required
                 minlength="39"
                 maxlength="39"
-                class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
             />
         </div>
 

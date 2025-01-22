@@ -74,6 +74,13 @@ div[role="alert"] {
 .error-msg {
     @apply bg-red-50 border border-red-400 text-red-700;
 }
+input {
+    @apply block w-full rounded-md bg-white border-0 px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6;
+}
+input[disabled] {
+    @apply bg-blue-50 outline-none;
+}
+
 /*
 .lexi-btn:hover,
 .lexi-btn.active {
