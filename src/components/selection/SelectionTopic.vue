@@ -4,8 +4,11 @@ import { onMounted, ref } from 'vue'
 import ButtonFavorite from '../ButtonFavorite.vue'
 import IconPlay from '../images/icons/IconPlay.vue'
 import type { ITopic } from '../GeminiSelection.vue'
+import { useUserStore } from '@/stores/user'
 
 const emit = defineEmits(['selection'])
+const userStore = useUserStore()
+const favorites = userStore.getFavorites()
 
 // environmental variables
 const apiUrl = import.meta.env.VITE_API_URL
@@ -18,40 +21,22 @@ const levels = ref(['Beginner', 'Advanced'])
 const selectedLevel = ref<string>('Beginner')
 const selectedTopic = ref<ITopic | null>(null)
 
-async function fetchOptions() {
+async function fetchTopics() {
     try {
         const topicsResponse = await axios.get(
             `${apiUrl}:${apiPort}/api/topics?level=${selectedLevel.value}`,
         )
 
         topics.value = topicsResponse.data.map(
-            (topic: { _id: string; title: string; level: string }) => ({
-                _id: topic._id,
+            (topic: { _id: { $oid: string }; title: string; level: string }) => ({
+                _id: topic._id.$oid,
                 title: topic.title,
                 level: topic.level,
+                isFavorite: topic._id.$oid in favorites,
             }),
         )
     } catch (error) {
         console.error('Error fetching options:', error)
-    }
-}
-
-async function fetchNewTopics() {
-    try {
-        if (selectedLevel.value) {
-            const response = await axios.get(
-                `${apiUrl}:${apiPort}/api/topics?level=${selectedLevel.value}`,
-            )
-            topics.value = response.data.map(
-                (topic: { _id: string; title: string; level: string }) => ({
-                    _id: topic._id,
-                    title: topic.title,
-                    level: topic.level,
-                }),
-            )
-        }
-    } catch (error) {
-        console.error('Error fetching new topics:', error)
     }
 }
 
@@ -68,7 +53,10 @@ function handlePlay(topic: ITopic) {
     // Emit to Gemini the full selection
     emit('selection', {
         topic: selectedTopic.value.title,
-        level: selectedLevel.value == 'Beginner' ? 'a beginner, tell me what to say' : 'advanced',
+        level:
+            selectedLevel.value == 'Beginner'
+                ? 'a beginner, tell me what to say but take it slow'
+                : 'advanced',
     })
 }
 
@@ -76,17 +64,18 @@ function handleFavorite(topic: ITopic) {
     // Add to favorites
     topic.isFavorite = !topic.isFavorite
 
-    // Update in MongoDB
+    // Update in store & MongoDB
+    userStore.toggleFavorite(topic._id, topic.isFavorite)
 }
 
-onMounted(() => {
-    fetchOptions()
+onMounted(async () => {
+    await fetchTopics()
 })
 </script>
 
 <template>
     <div class="py-3 px-4 mb-4">
-        <select v-model="selectedLevel" class="w-full" @change="fetchNewTopics">
+        <select v-model="selectedLevel" class="w-full" @change="fetchTopics">
             <option disabled>Select a section</option>
             <option v-for="level in levels" :key="level">
                 {{ level }}
