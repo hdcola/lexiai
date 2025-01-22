@@ -69,21 +69,17 @@ onMounted(() => {
             {{ successMessage }}
         </div>
         <div class="form-group">
-            <div>
-                <label class="block font-medium mb-1">Change voice</label>
-                <select v-model="voiceName" class="w-full p-2 border rounded">
-                    <option disabled value="">Select a voice</option>
-                    <option v-for="voice in Voices" :key="voice" :value="voice">
-                        {{ voice }}
-                    </option>
-                </select>
-            </div>
+            <label>Change voice</label>
+            <select v-model="voiceName" class="w-full p-2 border rounded">
+                <option disabled value="">Select a voice</option>
+                <option v-for="voice in Voices" :key="voice" :value="voice">
+                    {{ voice }}
+                </option>
+            </select>
         </div>
 
         <div class="form-group">
-            <label for="apiKey" class="block mb-2 text-sm font-medium text-gray-900"
-                >Custom Gemini API Key</label
-            >
+            <label for="apiKey">Custom Gemini API Key</label>
             <input
                 type="apiKey"
                 name="apiKey"
