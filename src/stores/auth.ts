@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { useJWTStore } from './jwt';
 import router from '@/router';
 import axios from 'axios';
+import { AxiosError } from 'axios';
 import { useUserStore } from './user';
 
 
@@ -20,22 +21,12 @@ export const useAuthStore = defineStore('auth', {
             if (this.isLoggedIn == true){
                 return this.isLoggedIn;
             }
-            const jwtStore = useJWTStore();
-            const token = jwtStore.getToken();
-            if (!token) {
-                this.isLoggedIn = false;
-                console.log("No token found. User is not logged in.");
-                return this.isLoggedIn;
-            }
 
             try {
-                const isValid = await jwtStore.isValidToken();  
+                const isValid = await this.isValidToken();  
                 if (isValid) {
                     this.isLoggedIn = true;
                     console.log("Token is valid. User is logged in.");
-
-                    const userStore = useUserStore()
-                    userStore.fetchUserSettings()
 
                 } else {
                     this.isLoggedIn = false;
@@ -46,6 +37,41 @@ export const useAuthStore = defineStore('auth', {
                 this.isLoggedIn = false;
             }
             return this.isLoggedIn;
+        },
+        async isValidToken(): Promise<boolean> {
+            const jwtStore = useJWTStore();
+            const token = jwtStore.getToken();
+
+            if (!token) {
+                console.error('Token is missing.');
+                return false;
+            }
+            
+            try {
+                const response = await axios.get(`${apiUrl}:${apiPORT}/api/jwt/validate`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+                console.log('Token is valid');
+
+                // Save user info to user
+                const userStore = useUserStore();
+                userStore.saveUser(response.data.user)
+
+                return true;
+            }
+            catch(error) {
+                if (error instanceof AxiosError) {
+                    if (error.status === 401) {
+                        console.error('Token is invalid');
+                        jwtStore.deleteToken();
+                        return false;
+                    }
+                }
+                throw error;
+            }
         },
         async login(email: string, password: string) {
             this.successMessage = '';
@@ -72,8 +98,8 @@ export const useAuthStore = defineStore('auth', {
                     this.isLoggedIn = true;
                     this.successMessage = 'Login successful'
 
-                    const userStore = useUserStore()
-                    userStore.fetchUserSettings()
+                    const userStore = useUserStore();
+                    userStore.saveUser(response.data.user);
 
                     // redirect to home
                     setTimeout(() => router.push('/lexiai'), 2000)
