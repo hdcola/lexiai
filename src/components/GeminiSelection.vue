@@ -10,6 +10,10 @@ import IconSwatchbook from './images/icons/IconSwatchbook.vue'
 import SelectionTopic from './selection/SelectionTopic.vue'
 import SelectionFavorites from './selection/SelectionFavorites.vue'
 import SelectionCustom from './selection/SelectionCustom.vue'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+console.log("userStore: ", userStore); 
 
 // types needed to convert string id to ObjectId(id)
 export type ILanguage = {
@@ -74,9 +78,10 @@ async function fetchOptions() {
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
     initTabs()
     fetchOptions()
+    await userStore.fetchUserSettings()
 })
 
 function handlePlay(selection: { topic: string; level: string }) {

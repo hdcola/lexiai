@@ -32,7 +32,8 @@ export const useJWTStore = defineStore('jwt', {
                 });
         
                 if (response.status === 200) {
-                    console.log('Token is valid');
+                    const decoded_token = response.data?.decoded_token;
+                    console.log('Token is valid', decoded_token);
                     return true;
                 } else {
                     console.error('Token is invalid');
