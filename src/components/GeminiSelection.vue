@@ -13,7 +13,7 @@ import SelectionCustom from './selection/SelectionCustom.vue'
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
-console.log("userStore: ", userStore); 
+console.log('userStore: ', userStore)
 
 // types needed to convert string id to ObjectId(id)
 export type ILanguage = {
@@ -81,7 +81,7 @@ async function fetchOptions() {
 onMounted(async () => {
     initTabs()
     fetchOptions()
-    await userStore.fetchUserSettings()
+    //await userStore.fetchUserSettings()
 })
 
 function handlePlay(selection: { topic: string; level: string }) {

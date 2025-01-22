@@ -22,7 +22,7 @@ const router = createRouter({
                 //check if authenticated
                 const authStore = useAuthStore();
 
-                if (from.name != 'lexiai' && await authStore.isAuthenticated()) {
+                if (from.name != 'lexiai' && authStore.isLoggedIn) {
                     return '/lexiai'
                 }
             }
@@ -35,7 +35,7 @@ const router = createRouter({
                 //check if authenticated
                 const authStore = useAuthStore();
 
-                if (from.name != 'lexiai' && await authStore.isAuthenticated()) {
+                if (from.name != 'lexiai' && authStore.isLoggedIn) {
                     return '/lexiai'
                 }
             }
@@ -54,11 +54,11 @@ const router = createRouter({
             path: '/lexiai',
             name: 'gemini',
             component: GeminiView,
-            beforeEnter: async (to, from) => {
+            beforeEnter: (to, from) => {
                 //check if authenticated
                 const authStore = useAuthStore();
 
-                if (from.name != 'login' && !await authStore.isAuthenticated()) {
+                if (from.name != 'login' && !authStore.isLoggedIn) {
                     return '/login'
                 }
             }
@@ -71,12 +71,17 @@ const router = createRouter({
                 //check if authenticated
                 const authStore = useAuthStore();
 
-                if (from.name != 'login' && !await authStore.isAuthenticated()) {
+                if (from.name != 'login' && !authStore.isLoggedIn) {
                     return '/login'
                 }
             }
         }
     ],
+})
+
+router.beforeEach(async (to, from) => {
+    const authStore = useAuthStore();
+    await authStore.isAuthenticated();
 })
 
 export default router

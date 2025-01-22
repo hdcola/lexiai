@@ -11,13 +11,14 @@ export type UserSettings = {
     level: string;
     topic_id: string;
     style: string;
-
+    favorites: Record<string,boolean>;
 };
 
 
 export const useUserStore = defineStore('userSet', {
     state: () => ({
         settings: {} as UserSettings | null,
+        favorites: {} as Record<string,boolean>
     }),
     actions: {
         async fetchUserSettings() {
@@ -39,6 +40,9 @@ export const useUserStore = defineStore('userSet', {
 
                 if (response.data && response.data.settings) {
                     this.settings = response.data.settings;
+                    if (this.settings?.favorites) {
+                        this.favorites = this.settings.favorites;
+                    }
                     console.log("Settings retrieved:", response.data.settings);
                 } else {
                     console.log("Settings are not set up.");
@@ -46,6 +50,20 @@ export const useUserStore = defineStore('userSet', {
             } catch (error) {
                 console.error("Error fetching settings:", error);
             }
+        },
+        toggleFavorite(topicId: string, isFavorite: boolean) {
+
+            // Save to user
+            if (!isFavorite) {
+                delete this.favorites[topicId]
+            } else {
+                this.favorites[topicId] = isFavorite;
+            }
+            
+            // Save to server
+        },
+        getFavorites() {
+            return {...this.favorites};
         }
     },
     persist: false

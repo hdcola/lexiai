@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { useJWTStore } from './jwt';
 import router from '@/router';
 import axios from 'axios';
+import { useUserStore } from './user';
 
 
 const apiUrl = import.meta.env.VITE_API_URL
@@ -32,6 +33,10 @@ export const useAuthStore = defineStore('auth', {
                 if (isValid) {
                     this.isLoggedIn = true;
                     console.log("Token is valid. User is logged in.");
+
+                    const userStore = useUserStore()
+                    userStore.fetchUserSettings()
+
                 } else {
                     this.isLoggedIn = false;
                     console.log("Token is invalid. User is not logged in.");
@@ -66,6 +71,9 @@ export const useAuthStore = defineStore('auth', {
                     console.log('Login successful, token stored.')
                     this.isLoggedIn = true;
                     this.successMessage = 'Login successful'
+
+                    const userStore = useUserStore()
+                    userStore.fetchUserSettings()
 
                     // redirect to home
                     setTimeout(() => router.push('/lexiai'), 2000)
