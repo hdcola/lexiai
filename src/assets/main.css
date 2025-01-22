@@ -25,10 +25,6 @@ html {
     scrollbar-color: #3accfd #dbeafe;
 }
 
-input {
-    @apply border-0;
-}
-
 /*
     Fake highlight on clickables
 */
@@ -67,6 +63,36 @@ input[type='reset']:active,
 .outline-btn.active {
     @apply outline-none text-white;
     background: var(--gradient-purple);
+}
+
+div[role="alert"] {
+    @apply px-4 py-3 rounded relative text-center;
+}
+.success-msg {
+    @apply bg-green-50 border border-green-400 text-green-700;
+}
+.error-msg {
+    @apply bg-red-50 border border-red-400 text-red-700;
+}
+
+label {
+    @apply block mb-2 text-sm font-medium text-gray-900;
+}
+input[type="text"],
+input[type="email"] {
+    @apply block w-full rounded-md bg-white border px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6;
+}
+input[disabled] {
+    @apply bg-blue-50 outline-none border-0 text-gray-800;
+}
+input.with-label {
+    @apply text-sm ps-10 p-2.5;
+}
+input.error {
+    @apply bg-red-50 outline-red-500 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500;
+}
+input.error + p {
+    @apply mt-2 text-sm text-red-600 dark:text-red-500;
 }
 
 /*

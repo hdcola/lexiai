@@ -103,8 +103,4 @@ onMounted(() => {
     </section>
 </template>
 
-<style scoped>
-input[disabled] {
-    @apply bg-blue-50 rounded-lg;
-}
-</style>
+<style scoped></style>

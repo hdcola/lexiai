@@ -10,18 +10,10 @@ const confirmPassword = ref<string>('')
 
 <template>
     <form @submit.prevent="" class="space-y-8 sm:mx-auto sm:w-full sm:max-w-sm">
-        <div
-            v-if="errorMessage"
-            role="alert"
-            class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center"
-        >
+        <div v-if="errorMessage" role="alert" class="error-msg">
             {{ errorMessage }}
         </div>
-        <div
-            v-if="successMessage"
-            role="alert"
-            class="bg-green-50 border-green-400 text-green-700 px-4 py-3 rounded relative text-center"
-        >
+        <div v-if="successMessage" role="alert" class="success-msg">
             {{ successMessage }}
         </div>
         <div class="form-group">

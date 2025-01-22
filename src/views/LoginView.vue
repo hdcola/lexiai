@@ -75,7 +75,7 @@ const onSubmit = async () => {
                     <div
                         v-if="authStore.errorMessage"
                         role="alert"
-                        class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center"
+                        class="error-msg"
                         aria-live="polite"
                     >
                         {{ authStore.errorMessage }}
@@ -83,7 +83,7 @@ const onSubmit = async () => {
                     <div
                         v-if="authStore.successMessage"
                         role="alert"
-                        class="bg-green-50 border-green-400 text-green-700 px-4 py-3 rounded relative text-center"
+                        class="success-msg"
                         aria-live="polite"
                     >
                         {{ authStore.successMessage }}
