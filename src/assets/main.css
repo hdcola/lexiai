@@ -25,10 +25,6 @@ html {
     scrollbar-color: #3accfd #dbeafe;
 }
 
-input {
-    @apply border-0;
-}
-
 /*
     Fake highlight on clickables
 */
@@ -69,6 +65,15 @@ input[type='reset']:active,
     background: var(--gradient-purple);
 }
 
+div[role="alert"] {
+    @apply px-4 py-3 rounded relative text-center;
+}
+.success-msg {
+    @apply bg-green-50 border border-green-400 text-green-700;
+}
+.error-msg {
+    @apply bg-red-50 border border-red-400 text-red-700;
+}
 /*
 .lexi-btn:hover,
 .lexi-btn.active {
