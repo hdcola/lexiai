@@ -77,22 +77,48 @@ export const useUserStore = defineStore('userSet', {
                 console.error("Error fetching settings:", error);
             }
         },
-        toggleFavorite(topicId: string, isFavorite: boolean) {
+        async toggleFavorite(topicId: string, isFavorite: boolean) {
+
+            const jwtStore = useJWTStore();
+            const token = jwtStore.getToken();
+            if (!token) {
+                console.log("No token found for fetchUserSettings. User is not logged in.");
+                return;
+            } else {
+                console.log("fetchUserSettings function. User is logged in.", token);
+            }
 
             // Save to user
             if (!isFavorite) {
-                delete this.favorites[topicId]
+                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/favorites`, {
+                    favorites: { [topicId]: false }
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+                if (response.status === 200) {
+                    delete this.favorites[topicId]
+                }
             } else {
-                this.favorites[topicId] = isFavorite;
-            }        
-            
+                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/favorites`, {
+                    favorites: { [topicId]: true }
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+                if (response.status === 200) {
+                    this.favorites[topicId] = isFavorite;
+                }
+            }
             // Save to server
         },
         getFavorites() {
             return { ...this.favorites };
         },
         async saveLexiSettings(voiceName: VoiceName, apiKey: string) {
-  
+
             // Save to server
             const jwtStore = useJWTStore();
             const token = jwtStore.getToken();
@@ -112,7 +138,7 @@ export const useUserStore = defineStore('userSet', {
 
                 if (response.status === 200 && response.data.settings) {
                     console.log("Lexi settings successfully updated on the server:", response.data.settings);
-                    
+
                     // Save to user
                     this.settings.voiceName = voiceName;
                     this.settings.apiKey = apiKey;
@@ -136,7 +162,7 @@ export const useUserStore = defineStore('userSet', {
 
         },
         getProfileSettings() {
-            return {...this.user}
+            return { ...this.user }
         }
     },
     persist: false
