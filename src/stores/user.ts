@@ -20,7 +20,7 @@ export type UserSettings = {
     level: string;
     topic_id: string;
     style: string;
-    favorites: Record<string,boolean>;
+    favorites: Record<string, boolean>;
     apiKey: string;
     voiceName: VoiceName;
 };
@@ -45,7 +45,7 @@ export const useUserStore = defineStore('userSet', {
             }
         },
         getUser() {
-            return {...this.user};
+            return { ...this.user };
         },
         async fetchUserSettings() {
             const jwtStore = useJWTStore();
@@ -84,23 +84,48 @@ export const useUserStore = defineStore('userSet', {
                 delete this.favorites[topicId]
             } else {
                 this.favorites[topicId] = isFavorite;
-            }
+            }        
             
             // Save to server
         },
         getFavorites() {
-            return {...this.favorites};
+            return { ...this.favorites };
         },
-        saveLexiSettings(voiceName: VoiceName, apiKey: string) {
+        async saveLexiSettings(voiceName: VoiceName, apiKey: string) {
 
             // Save to user
             this.settings.voiceName = voiceName;
             this.settings.apiKey = apiKey;
 
+   
             // Save to server
+            const jwtStore = useJWTStore();
+            const token = jwtStore.getToken();
+
+            try {
+                // Send API request to update settings
+                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/settings`, {
+                    settings: {
+                        voiceName: this.settings.voiceName,
+                        apiKey: this.settings.apiKey,
+                    }
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+                if (response.status === 200 && response.data.settings) {
+                    console.log("Lexi settings successfully updated on the server:", response.data.settings);
+                } else {
+                    console.log("Unexpected response when updating Lexi settings:", response);
+                }
+            } catch (error) {
+                console.error("Error updating Lexi settings:", error);
+            }
         },
         getLexiSettings() {
-            return {...this.settings}
+            return { ...this.settings }
         }
     },
     persist: false
