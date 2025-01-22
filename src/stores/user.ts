@@ -6,6 +6,15 @@ import type { VoiceName } from '@/lib/gemini/config/config-types';
 const apiUrl = import.meta.env.VITE_API_URL
 const apiPORT = import.meta.env.VITE_API_PORT
 
+type User = {
+    email: string;
+    username: string;
+    password?: string;
+    createdAt: string;
+    settings: UserSettings;
+}
+
+
 export type UserSettings = {
     language_id: string;
     level: string;
@@ -19,10 +28,25 @@ export type UserSettings = {
 
 export const useUserStore = defineStore('userSet', {
     state: () => ({
+        user: {} as User,
         settings: {} as UserSettings,
-        favorites: {} as Record<string,boolean>
+        favorites: {} as UserSettings["favorites"],
     }),
     actions: {
+        saveUser(user: User) {
+            this.user = user;
+
+            if (user.settings) {
+                this.settings = user.settings;
+
+                if (user.settings.favorites) {
+                    this.favorites = user.settings.favorites;
+                }
+            }
+        },
+        getUser() {
+            return {...this.user};
+        },
         async fetchUserSettings() {
             const jwtStore = useJWTStore();
             const token = jwtStore.getToken();
