@@ -1,17 +1,78 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+import * as Yup from 'yup'
+
+const userStore = useUserStore()
 
 const errorMessage = ref<string>('')
 const successMessage = ref<string>('')
+// validation errors
+const errors = ref<Record<string, string>>({})
 
 const username = ref<string>('')
 const newUsername = ref<string>('')
 const email = ref<string>('')
 const newEmail = ref<string>('')
+
+const schema = Yup.object().shape({
+    username: Yup.string()
+        .min(4, 'Username must be at least 4 characters long')
+        .max(50, 'Username is too long'),
+    email: Yup.string().email('Invalid email format').max(360, 'Email is too long'),
+})
+
+function handleChange(event: Event) {
+    const el = event.target as HTMLInputElement
+    errors.value[el.name] = ''
+}
+
+const onSubmit = async () => {
+    errorMessage.value = ''
+    successMessage.value = ''
+
+    try {
+        await schema.validate(
+            { username: newUsername.value, email: newEmail.value },
+            { abortEarly: false },
+        )
+
+        const sanitizedUsername = (
+            newUsername.value !== '' ? newUsername.value : username.value
+        ).trim()
+        const sanitizedEmail = (newEmail.value !== '' ? newEmail.value : email.value).trim()
+
+        await userStore.saveProfileSettings(sanitizedUsername, sanitizedEmail)
+
+        successMessage.value = 'Successfully saved'
+        email.value = sanitizedEmail
+        username.value = sanitizedUsername
+    } catch (error) {
+        if (error instanceof Yup.ValidationError) {
+            error.inner.forEach((err) => {
+                errors.value[err.path as string] = err.message
+            })
+        } else {
+            // TODO: Implement proper error
+            errorMessage.value = 'Something went wrong.'
+        }
+    }
+}
+
+onMounted(() => {
+    const settings = userStore.getProfileSettings()
+
+    username.value = settings.username
+    email.value = settings.email
+})
 </script>
 
 <template>
-    <form @submit.prevent="" class="space-y-8 sm:mx-auto sm:w-full sm:max-w-sm">
+    <form
+        @submit.prevent="onSubmit"
+        :validation-schema="schema"
+        class="space-y-8 sm:mx-auto sm:w-full sm:max-w-sm"
+    >
         <div v-if="errorMessage" role="alert" class="error-msg">
             {{ errorMessage }}
         </div>
@@ -20,15 +81,13 @@ const newEmail = ref<string>('')
         </div>
         <div class="form-group">
             <div class="relative mb-2">
-                <label for="username" class="block mb-2 text-sm font-medium text-gray-900"
-                    >Your username</label
-                >
+                <label for="username">Your username</label>
                 <div class="relative mb-4">
                     <div
                         class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none"
                     >
                         <svg
-                            class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                            class="w-4 h-4 text-gray-500"
                             aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="currentColor"
@@ -42,38 +101,33 @@ const newEmail = ref<string>('')
                     <input
                         type="text"
                         id="username"
-                        class="bg-gray-50 text-gray-900 text-sm rounded-lg border-0 focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        :placeholder="username"
+                        class="with-label"
                         v-model="username"
                         disabled
                     />
                 </div>
             </div>
-            <div>
-                <label for="newUsername" class="block mb-2 text-sm font-medium text-gray-900"
-                    >Change username</label
-                >
+            <div class="form-group">
+                <label for="newUsername">Change username</label>
                 <input
                     type="text"
                     name="newUsername"
                     id="newUsername"
                     v-model="newUsername"
-                    minlength="4"
-                    required
-                    class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    v-on:change="handleChange"
+                    :class="{ error: errors.username }"
                 />
+                <p>{{ errors.username }}</p>
             </div>
         </div>
         <div class="form-group">
-            <label for="email" class="block mb-2 text-sm font-medium text-gray-900"
-                >Your email</label
-            >
+            <label for="email">Your email</label>
             <div class="relative mb-4">
                 <div
                     class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none"
                 >
                     <svg
-                        class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                        class="w-4 h-4 text-gray-500"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
@@ -87,27 +141,20 @@ const newEmail = ref<string>('')
                         />
                     </svg>
                 </div>
-                <input
-                    type="email"
-                    id="email"
-                    disabled
-                    class="bg-gray-50 text-gray-900 text-sm rounded-lg border-0 w-full ps-10 p-2.5 dark:bg-gray-700"
-                    :placeholder="email"
-                />
+                <input type="email" id="email" class="with-label" v-model="email" disabled />
             </div>
-            <div>
-                <label for="newEmail" class="block mb-2 text-sm font-medium text-gray-900"
-                    >Change email</label
-                >
+            <div class="form-group">
+                <label for="newEmail">Change email</label>
                 <input
                     type="email"
                     name="newEmail"
                     id="newEmail"
                     v-model="newEmail"
+                    v-on:change="handleChange"
                     autocomplete="email"
-                    required
-                    class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    :class="{ error: errors.email }"
                 />
+                <p>{{ errors.email }}</p>
             </div>
         </div>
 

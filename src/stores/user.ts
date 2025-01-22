@@ -126,6 +126,18 @@ export const useUserStore = defineStore('userSet', {
         },
         getLexiSettings() {
             return { ...this.settings }
+        },
+        saveProfileSettings(username: string, email: string) {
+
+            // Save to user
+            this.user.username = username;
+            this.user.email = email;
+
+            // Save to server
+
+        },
+        getProfileSettings() {
+            return {...this.user}
         }
     },
     persist: false
