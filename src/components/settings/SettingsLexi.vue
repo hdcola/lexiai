@@ -30,8 +30,8 @@ const onSubmit = async () => {
 
     try {
         await schema.validate({ apiKey: apiKey.value }, { abortEarly: false })
+        await userStore.saveLexiSettings(voiceName.value, apiKey.value.trim())
 
-        userStore.saveLexiSettings(voiceName.value, apiKey.value)
         successMessage.value = 'Successfully saved'
     } catch (error) {
         if (error instanceof Yup.ValidationError) {
@@ -81,7 +81,7 @@ onMounted(() => {
         <div class="form-group">
             <label for="apiKey">Custom Gemini API Key</label>
             <input
-                type="apiKey"
+                type="text"
                 name="apiKey"
                 id="apiKey"
                 v-model="apiKey"
