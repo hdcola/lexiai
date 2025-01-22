@@ -1,15 +1,62 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+import * as Yup from 'yup'
+
+const userStore = useUserStore()
 
 const errorMessage = ref<string>('')
 const successMessage = ref<string>('')
+// validation errors
+const errors = ref<Record<string, string>>({})
 
 const password = ref<string>('')
 const confirmPassword = ref<string>('')
+
+const schema = Yup.object().shape({
+    password: Yup.string()
+        .required('Password is required')
+        .min(6, 'Password must be at least 6 characters long'),
+    confirmPassword: Yup.string()
+        .oneOf([Yup.ref('password')], 'Password must match')
+        .required('Confirm password is required'),
+})
+
+function handleChange(event: Event) {
+    const el = event.target as HTMLInputElement
+    errors.value[el.name] = ''
+}
+
+const onSubmit = async () => {
+    errorMessage.value = ''
+    successMessage.value = ''
+
+    try {
+        await schema.validate(
+            { password: password.value, confirmPassword: confirmPassword.value },
+            { abortEarly: false },
+        )
+        await userStore.saveSecuritySettings(password.value)
+        successMessage.value = 'Successfully saved'
+    } catch (error) {
+        if (error instanceof Yup.ValidationError) {
+            error.inner.forEach((err) => {
+                errors.value[err.path as string] = err.message
+            })
+        } else {
+            // TODO: Implement proper error
+            errorMessage.value = 'Something went wrong.'
+        }
+    }
+}
 </script>
 
 <template>
-    <form @submit.prevent="" class="space-y-8 sm:mx-auto sm:w-full sm:max-w-sm">
+    <form
+        @submit.prevent="onSubmit"
+        :validation-schema="schema"
+        class="space-y-8 sm:mx-auto sm:w-full sm:max-w-sm"
+    >
         <div v-if="errorMessage" role="alert" class="error-msg">
             {{ errorMessage }}
         </div>
@@ -18,34 +65,28 @@ const confirmPassword = ref<string>('')
         </div>
         <div class="form-group">
             <div class="mb-4">
-                <label for="password" class="block mb-2 text-sm font-medium text-gray-900"
-                    >New password</label
-                >
+                <label for="password">New password</label>
                 <input
                     type="password"
                     name="password"
                     id="password"
                     v-model="password"
-                    required
-                    minlength="6"
-                    maxlength="50"
-                    class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    v-on:change="handleChange"
+                    :class="{ error: errors.password }"
                 />
+                <p>{{ errors.password }}</p>
             </div>
-            <div>
-                <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900"
-                    >Confirm password</label
-                >
+            <div class="form-group">
+                <label for="confirm-password">Confirm password</label>
                 <input
                     type="password"
                     name="confirmPassword"
                     id="confirm-password"
                     v-model="confirmPassword"
-                    required
-                    minlength="6"
-                    maxlength="50"
-                    class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    v-on:change="handleChange"
+                    :class="{ error: errors.confirmPassword }"
                 />
+                <p>{{ errors.confirmPassword }}</p>
             </div>
         </div>
 
