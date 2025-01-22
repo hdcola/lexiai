@@ -11,14 +11,14 @@ export type UserSettings = {
     level: string;
     topic_id: string;
     style: string;
-    favorites: Record<string,boolean>;
+    favorites: Record<string, boolean>;
 };
 
 
 export const useUserStore = defineStore('userSet', {
     state: () => ({
         settings: {} as UserSettings | null,
-        favorites: {} as Record<string,boolean>
+        favorites: {} as Record<string, boolean>
     }),
     actions: {
         async fetchUserSettings() {
@@ -51,19 +51,45 @@ export const useUserStore = defineStore('userSet', {
                 console.error("Error fetching settings:", error);
             }
         },
-        toggleFavorite(topicId: string, isFavorite: boolean) {
+        async toggleFavorite(topicId: string, isFavorite: boolean) {
+
+            const jwtStore = useJWTStore();
+            const token = jwtStore.getToken();
+            if (!token) {
+                console.log("No token found for fetchUserSettings. User is not logged in.");
+                return;
+            } else {
+                console.log("fetchUserSettings function. User is logged in.", token);
+            }
 
             // Save to user
             if (!isFavorite) {
-                delete this.favorites[topicId]
+                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/favorites`, {
+                    favorites: { [topicId]: false }
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+                if (response.status === 200) {
+                    delete this.favorites[topicId]
+                }
             } else {
-                this.favorites[topicId] = isFavorite;
+                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/favorites`, {
+                    favorites: { [topicId]: true }
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+                if (response.status === 200) {
+                    this.favorites[topicId] = isFavorite;
+                }
             }
-            
             // Save to server
         },
         getFavorites() {
-            return {...this.favorites};
+            return { ...this.favorites };
         }
     },
     persist: false
