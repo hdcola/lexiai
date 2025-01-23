@@ -163,6 +163,10 @@ export const useUserStore = defineStore('userSet', {
         },
         getProfileSettings() {
             return { ...this.user }
+        },
+        saveSecuritySettings(password: string) {
+
+            // Save to server
         }
     },
     persist: false

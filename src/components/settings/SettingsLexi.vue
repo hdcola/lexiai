@@ -79,7 +79,7 @@ onMounted(() => {
         </div>
 
         <div class="form-group">
-            <label for="apiKey">Custom Gemini API Key</label>
+            <label for="apiKey">Gemini API key <em>-optional</em></label>
             <input
                 type="text"
                 name="apiKey"
