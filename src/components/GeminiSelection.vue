@@ -50,7 +50,7 @@ const styles = ref<IStyle[]>([])
 
 // to read from MongoDb for logged user
 const selectedLanguage = ref<string>('678557da79bc79eeab784fe4')
-const selectedStyle = ref<string>('Casual')
+const selectedStyle = ref<string>('6785601479bc79eeab784ffe')
 
 function handleLanguageChange() {
     userStore.saveLanguage(selectedLanguage.value, selectedStyle.value)
