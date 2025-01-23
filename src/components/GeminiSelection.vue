@@ -165,7 +165,7 @@ function handlePlay(selection: { topic: string; level: string }) {
                     role="tabpanel"
                     aria-labelledby="favorites-tab"
                 >
-                    <SelectionFavorites />
+                    <SelectionFavorites @selection="handlePlay" />
                 </div>
                 <div
                     class="hidden p-4 rounded-lg"
