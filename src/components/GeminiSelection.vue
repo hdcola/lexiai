@@ -53,7 +53,7 @@ const selectedLanguage = ref<string>('678557da79bc79eeab784fe4')
 const selectedStyle = ref<string>('Casual')
 
 function handleLanguageChange() {
-    userStore.saveLanguage(selectedLanguage.value)
+    userStore.saveLanguage(selectedLanguage.value, selectedStyle.value)
 }
 
 async function fetchOptions() {
@@ -87,6 +87,7 @@ onMounted(async () => {
     await fetchOptions()
     const languageSettings = userStore.getLanguageSettings()
     selectedLanguage.value = languageSettings.language_id
+    selectedStyle.value = languageSettings.style_id
 })
 
 function handlePlay(selection: { topic: string; level: string }) {
@@ -191,9 +192,9 @@ function handlePlay(selection: { topic: string; level: string }) {
                     </option>
                 </select>
 
-                <select v-model="selectedStyle" class="w-full">
+                <select v-model="selectedStyle" class="w-full" @change="handleLanguageChange">
                     <option disabled>Select a style</option>
-                    <option v-for="style in styles" :key="style._id" :value="style.name">
+                    <option v-for="style in styles" :key="style._id" :value="style._id">
                         {{ style.name }}
                     </option>
                 </select>

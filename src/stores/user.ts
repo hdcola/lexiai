@@ -19,7 +19,7 @@ export type UserSettings = {
     language_id: string;
     level: string;
     topic_id: string;
-    style: string;
+    style_id: string;
     favorites: Record<string, boolean>;
     apiKey: string;
     voiceName: VoiceName;
@@ -80,7 +80,7 @@ export const useUserStore = defineStore('userSet', {
         getLanguageSettings() {
             return {... this.settings}
         },
-        async saveLanguage(languageId: string) {
+        async saveLanguage(languageId: string, styleId: string) {
             const jwtStore = useJWTStore();
             const token = jwtStore.getToken();
             
@@ -88,6 +88,7 @@ export const useUserStore = defineStore('userSet', {
                 const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/settings`, {
                     settings: {
                         language_id: languageId,
+                        style_id: styleId,
                     }
                 }, {
                     headers: {
@@ -98,6 +99,7 @@ export const useUserStore = defineStore('userSet', {
                 if (response.status === 200) {
                     console.log('Language updated successfully:', response.data);
                     this.settings.language_id = languageId; // Update language in store
+                    this.settings.style_id = styleId; 
                 } else {
                     console.log('Error updating language:', response);
                 }
@@ -187,6 +189,7 @@ export const useUserStore = defineStore('userSet', {
             this.user.email = email;
 
             // Save to server
+            
 
         },
         getProfileSettings() {
