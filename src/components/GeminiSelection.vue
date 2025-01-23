@@ -52,6 +52,14 @@ const styles = ref<IStyle[]>([])
 const selectedLanguage = ref<string>('French')
 const selectedStyle = ref<string>('Casual')
 
+function handleLanguageChange() {
+  if (selectedLanguage.value) {
+    userStore.saveLanguage(selectedLanguage.value);
+  } else {
+    console.log('No language selected');
+  }
+}
+
 async function fetchOptions() {
     try {
         const [languagesResponse, stylesResponse] = await Promise.all([
@@ -179,7 +187,7 @@ function handlePlay(selection: { topic: string; level: string }) {
 
             <div class="flex flex-row justify-center items-center px-4 py-3 gap-2">
                 <!-- Language Selection -->
-                <select v-model="selectedLanguage" class="w-full">
+                <select v-model="selectedLanguage" class="w-full" @change="handleLanguageChange">
                     <option disabled>Select a language</option>
                     <option v-for="lang in languages" :key="lang._id" :value="lang.name">
                         {{ lang.name }}

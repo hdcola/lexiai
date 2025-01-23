@@ -77,6 +77,31 @@ export const useUserStore = defineStore('userSet', {
                 console.error("Error fetching settings:", error);
             }
         },
+        async saveLanguage(languageId: string) {
+            const jwtStore = useJWTStore();
+            const token = jwtStore.getToken();
+            
+            try {
+                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/settings`, {
+                    settings: {
+                        language_id: languageId,
+                    }
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+                if (response.status === 200) {
+                    console.log('Language updated successfully:', response.data);
+                    this.settings.language_id = languageId; // Update language in store
+                } else {
+                    console.log('Error updating language:', response);
+                }
+            } catch (error) {
+                console.error('Error updating language:', error);
+            }
+        },
         async toggleFavorite(topicId: string, isFavorite: boolean) {
 
             const jwtStore = useJWTStore();
