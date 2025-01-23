@@ -78,12 +78,12 @@ export const useUserStore = defineStore('userSet', {
             }
         },
         getLanguageSettings() {
-            return {... this.settings}
+            return { ... this.settings }
         },
         async saveLanguage(languageId: string, styleId: string) {
             const jwtStore = useJWTStore();
             const token = jwtStore.getToken();
-            
+
             try {
                 const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/settings`, {
                     settings: {
@@ -99,7 +99,7 @@ export const useUserStore = defineStore('userSet', {
                 if (response.status === 200) {
                     console.log('Language updated successfully:', response.data);
                     this.settings.language_id = languageId; // Update language in store
-                    this.settings.style_id = styleId; 
+                    this.settings.style_id = styleId;
                 } else {
                     console.log('Error updating language:', response);
                 }
@@ -182,14 +182,35 @@ export const useUserStore = defineStore('userSet', {
         getLexiSettings() {
             return { ...this.settings }
         },
-        saveProfileSettings(username: string, email: string) {
-
-            // Save to user
-            this.user.username = username;
-            this.user.email = email;
+        async saveProfileSettings(username: string, email: string) {
 
             // Save to server
-            
+            const jwtStore = useJWTStore();
+            const token = jwtStore.getToken();
+
+            try {
+                // Send API request to update settings
+                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/update`, {
+                    username: username,
+                    email: email,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+                if (response.status === 200 && response.data.user) {
+                    console.log("User profile successfully updated on the server:", response.data.user);
+
+                    // Save to user
+                    this.user.username = response.data.user.username;
+                    this.user.email = response.data.user.email;
+                } else {
+                    console.log("Unexpected response when updating profile:", response);
+                }
+            } catch (error) {
+                console.error("Error updating profile:", error);
+            }
 
         },
         getProfileSettings() {
