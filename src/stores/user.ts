@@ -77,6 +77,34 @@ export const useUserStore = defineStore('userSet', {
                 console.error("Error fetching settings:", error);
             }
         },
+        getLanguageSettings() {
+            return {... this.settings}
+        },
+        async saveLanguage(languageId: string) {
+            const jwtStore = useJWTStore();
+            const token = jwtStore.getToken();
+            
+            try {
+                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/settings`, {
+                    settings: {
+                        language_id: languageId,
+                    }
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+                if (response.status === 200) {
+                    console.log('Language updated successfully:', response.data);
+                    this.settings.language_id = languageId; // Update language in store
+                } else {
+                    console.log('Error updating language:', response);
+                }
+            } catch (error) {
+                console.error('Error updating language:', error);
+            }
+        },
         async toggleFavorite(topicId: string, isFavorite: boolean) {
 
             const jwtStore = useJWTStore();
@@ -127,8 +155,8 @@ export const useUserStore = defineStore('userSet', {
                 // Send API request to update settings
                 const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/settings`, {
                     settings: {
-                        voiceName: this.settings.voiceName,
-                        apiKey: this.settings.apiKey,
+                        voiceName: voiceName,
+                        apiKey: apiKey,
                     }
                 }, {
                     headers: {
@@ -140,8 +168,8 @@ export const useUserStore = defineStore('userSet', {
                     console.log("Lexi settings successfully updated on the server:", response.data.settings);
 
                     // Save to user
-                    this.settings.voiceName = voiceName;
-                    this.settings.apiKey = apiKey;
+                    this.settings.voiceName = response.data.settings.voiceName;
+                    this.settings.apiKey = response.data.settings.apiKey;
                 } else {
                     console.log("Unexpected response when updating Lexi settings:", response);
                 }

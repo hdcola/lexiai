@@ -49,8 +49,12 @@ const languages = ref<ILanguage[]>([])
 const styles = ref<IStyle[]>([])
 
 // to read from MongoDb for logged user
-const selectedLanguage = ref<string>('French')
+const selectedLanguage = ref<string>('678557da79bc79eeab784fe4')
 const selectedStyle = ref<string>('Casual')
+
+function handleLanguageChange() {
+    userStore.saveLanguage(selectedLanguage.value)
+}
 
 async function fetchOptions() {
     try {
@@ -80,8 +84,9 @@ async function fetchOptions() {
 
 onMounted(async () => {
     initTabs()
-    fetchOptions()
-    //await userStore.fetchUserSettings()
+    await fetchOptions()
+    const languageSettings = userStore.getLanguageSettings()
+    selectedLanguage.value = languageSettings.language_id
 })
 
 function handlePlay(selection: { topic: string; level: string }) {
@@ -179,9 +184,9 @@ function handlePlay(selection: { topic: string; level: string }) {
 
             <div class="flex flex-row justify-center items-center px-4 py-3 gap-2">
                 <!-- Language Selection -->
-                <select v-model="selectedLanguage" class="w-full">
+                <select v-model="selectedLanguage" class="w-full" @change="handleLanguageChange">
                     <option disabled>Select a language</option>
-                    <option v-for="lang in languages" :key="lang._id" :value="lang.name">
+                    <option v-for="lang in languages" :key="lang._id" :value="lang._id">
                         {{ lang.name }}
                     </option>
                 </select>
