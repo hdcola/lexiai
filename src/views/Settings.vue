@@ -1,14 +1,77 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { initTabs } from 'flowbite'
+import { onMounted, ref, useTemplateRef, watch } from 'vue'
 import ImgSettings from '@/components/images/ImgSettings.vue'
 import SettingsLexi from '@/components/settings/SettingsLexi.vue'
 import SettingsProfile from '@/components/settings/SettingsProfile.vue'
 import SettingsSecurity from '@/components/settings/SettingsSecurity.vue'
+import IconProfileEdit from '@/components/images/icons/IconProfileEdit.vue'
+import IconSecurity from '@/components/images/icons/IconSecurity.vue'
+import IconTools from '@/components/images/icons/IconTools.vue'
+import { initTabs, Tabs } from 'flowbite'
+import type { TabsOptions, TabsInterface, TabItem, InstanceOptions } from 'flowbite'
+
+const selectedTab = ref<TabItem>()
+const refs: Record<string, any> = {
+    lexi: useTemplateRef('lexi'),
+    profile: useTemplateRef('profile'),
+    security: useTemplateRef('security'),
+}
+
+watch(selectedTab, (newTab, oldTab) => {
+    if (oldTab) {
+        const component = refs[oldTab.id].value
+        if (component) {
+            component.resetState()
+        }
+    }
+})
 
 // Update settings
 onMounted(() => {
     initTabs()
+
+    const tabsElement: HTMLElement = document.getElementById('default-styled-tab')!
+
+    // create an array of objects with the id, trigger element (eg. button), and the content element
+    const tabElements: TabItem[] = [
+        {
+            id: 'profile',
+            triggerEl: document.querySelector('#profile-styled-tab')!,
+            targetEl: document.querySelector('#styled-profile')!,
+        },
+        {
+            id: 'security',
+            triggerEl: document.querySelector('#security-styled-tab')!,
+            targetEl: document.querySelector('#styled-security')!,
+        },
+        {
+            id: 'lexi',
+            triggerEl: document.querySelector('#dashboard-styled-tab')!,
+            targetEl: document.querySelector('#styled-dashboard')!,
+        },
+    ]
+
+    // options with default values
+    const options: TabsOptions = {
+        defaultTabId: 'profile',
+        onShow: (tabs: TabsInterface, tab: TabItem) => {
+            selectedTab.value = tab
+        },
+    }
+
+    // instance options with default values
+    const instanceOptions: InstanceOptions = {
+        id: 'default-styled-tab',
+        override: true,
+    }
+
+    /*
+     * tabsElement: parent element of the tabs component (required)
+     * tabElements: array of tab elements (required)
+     * options (optional)
+     * instanceOptions (optional)
+     */
+    const tabs = new Tabs(tabsElement, tabElements, options, instanceOptions)
 })
 </script>
 <template>
@@ -33,7 +96,6 @@ onMounted(() => {
                     >
                         <li class="me-2" role="presentation">
                             <button
-                                class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
                                 id="profile-styled-tab"
                                 data-tabs-target="#styled-profile"
                                 type="button"
@@ -41,12 +103,12 @@ onMounted(() => {
                                 aria-controls="profile"
                                 aria-selected="false"
                             >
+                                <IconProfileEdit class="me-2" />
                                 Profile
                             </button>
                         </li>
                         <li class="me-2" role="presentation">
                             <button
-                                class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
                                 id="security-styled-tab"
                                 data-tabs-target="#styled-security"
                                 type="button"
@@ -54,12 +116,12 @@ onMounted(() => {
                                 aria-controls="security"
                                 aria-selected="false"
                             >
+                                <IconSecurity class="me-2" />
                                 Security
                             </button>
                         </li>
                         <li class="me-2" role="presentation">
                             <button
-                                class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300"
                                 id="dashboard-styled-tab"
                                 data-tabs-target="#styled-dashboard"
                                 type="button"
@@ -67,6 +129,7 @@ onMounted(() => {
                                 aria-controls="dashboard"
                                 aria-selected="false"
                             >
+                                <IconTools class="me-2" />
                                 Lexi AI
                             </button>
                         </li>
@@ -79,7 +142,7 @@ onMounted(() => {
                         role="tabpanel"
                         aria-labelledby="profile-tab"
                     >
-                        <SettingsProfile />
+                        <SettingsProfile ref="profile" />
                     </div>
                     <div
                         class="hidden p-4 rounded-lg"
@@ -87,7 +150,7 @@ onMounted(() => {
                         role="tabpanel"
                         aria-labelledby="security-tab"
                     >
-                        <SettingsSecurity />
+                        <SettingsSecurity ref="security" />
                     </div>
                     <div
                         class="hidden p-4 rounded-lg"
@@ -95,7 +158,7 @@ onMounted(() => {
                         role="tabpanel"
                         aria-labelledby="dashboard-tab"
                     >
-                        <SettingsLexi />
+                        <SettingsLexi ref="lexi" />
                     </div>
                 </div>
             </div>
@@ -103,4 +166,8 @@ onMounted(() => {
     </section>
 </template>
 
-<style scoped></style>
+<style scoped>
+button[role='tab'] {
+    @apply inline-flex items-center p-4 border-b-2 rounded-t-lg;
+}
+</style>
