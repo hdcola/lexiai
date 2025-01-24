@@ -68,8 +68,17 @@ function handleFavorite(topic: ITopic) {
     userStore.toggleFavorite(topic._id, topic.isFavorite)
 }
 
-onMounted(async () => {
+async function onActivated() {
+    // TODO More elegant solution
     await fetchTopics()
+}
+
+onMounted(async () => {
+    await onActivated()
+})
+
+defineExpose({
+    onActivated,
 })
 </script>
 

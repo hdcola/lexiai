@@ -103,7 +103,7 @@ input.error + p {
 }*/
 
 select {
-    @apply p-2 border border-gray-400 rounded focus:border-purple-400;
+    @apply p-2 border w-full border-gray-400 rounded focus:border-purple-400;
 }
 
 section {

@@ -111,38 +111,27 @@ export const useUserStore = defineStore('userSet', {
 
             const jwtStore = useJWTStore();
             const token = jwtStore.getToken();
-            if (!token) {
-                console.log("No token found for fetchUserSettings. User is not logged in.");
-                return;
-            } else {
-                console.log("fetchUserSettings function. User is logged in.", token);
-            }
 
-            // Save to user
-            if (!isFavorite) {
-                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/favorites`, {
-                    favorites: { [topicId]: false }
+            try {
+                await axios.patch(`${apiUrl}:${apiPORT}/api/users/favorites`, {
+                    favorites: { [topicId]: isFavorite }
                 }, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
                 });
-                if (response.status === 200) {
+
+                // Save to user
+                if (isFavorite) {
+                    this.favorites[topicId] = isFavorite;
+                } 
+                else {
                     delete this.favorites[topicId]
                 }
-            } else {
-                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/favorites`, {
-                    favorites: { [topicId]: true }
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                });
-                if (response.status === 200) {
-                    this.favorites[topicId] = isFavorite;
-                }
+
+            } catch (error) {
+                console.error("Error updating favorites:", error);
             }
-            // Save to server
         },
         getFavorites() {
             return { ...this.favorites };
@@ -199,15 +188,12 @@ export const useUserStore = defineStore('userSet', {
                     }
                 });
 
-                if (response.status === 200 && response.data.user) {
-                    console.log("User profile successfully updated on the server:", response.data.user);
+                console.log("User profile successfully updated on the server:", response.data);
 
-                    // Save to user
-                    this.user.username = response.data.user.username;
-                    this.user.email = response.data.user.email;
-                } else {
-                    console.log("Unexpected response when updating profile:", response);
-                }
+                // Save to user
+                this.user.username = response.data.username;
+                this.user.email = response.data.email;
+
             } catch (error) {
                 console.error("Error updating profile:", error);
             }

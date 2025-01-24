@@ -20,6 +20,27 @@ const token = jwtStore.getToken()
 const topics = ref<ITopic[]>([])
 const selectedTopic = ref<ITopic | null>(null)
 
+async function fetchTopics() {
+    try {
+        const topicsResponse = await axios.get(`${apiUrl}:${apiPort}/api/users/favorites`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+
+        topics.value = topicsResponse.data.map(
+            (topic: { _id: { $oid: string }; title: string; level: string }) => ({
+                _id: topic._id.$oid,
+                title: topic.title,
+                level: topic.level,
+                isFavorite: true,
+            }),
+        )
+    } catch (error) {
+        console.error('Error fetching options:', error)
+    }
+}
+
 function handlePlay(topic: ITopic) {
     // Previously selected topic
     if (selectedTopic.value) {
@@ -39,35 +60,22 @@ function handlePlay(topic: ITopic) {
 function handleFavorite(topic: ITopic) {
     // Add to favorites
     topic.isFavorite = !topic.isFavorite
-
+    topics.value.filter((t) => t._id != topic._id)
     // Update in store & MongoDB
     userStore.toggleFavorite(topic._id, topic.isFavorite)
 }
 
-async function fetchTopics() {
-    try {
-        const topicsResponse = await axios.get(`${apiUrl}:${apiPort}/api/users/favorites`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-        console.log(topicsResponse)
-
-        topics.value = topicsResponse.data.map(
-            (topic: { _id: { $oid: string }; title: string; level: string }) => ({
-                _id: topic._id.$oid,
-                title: topic.title,
-                level: topic.level,
-                isFavorite: true,
-            }),
-        )
-    } catch (error) {
-        console.error('Error fetching options:', error)
-    }
+async function onActivated() {
+    // TODO More elegant solution
+    await fetchTopics()
 }
 
 onMounted(async () => {
-    await fetchTopics()
+    await onActivated()
+})
+
+defineExpose({
+    onActivated,
 })
 </script>
 

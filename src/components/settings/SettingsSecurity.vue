@@ -27,6 +27,17 @@ function handleChange(event: Event) {
     errors.value[el.name] = ''
 }
 
+function resetState() {
+    errorMessage.value = ''
+    successMessage.value = ''
+    errors.value = {}
+}
+
+function setDefaults() {
+    password.value = ''
+    confirmPassword.value = ''
+}
+
 const onSubmit = async () => {
     errorMessage.value = ''
     successMessage.value = ''
@@ -38,6 +49,7 @@ const onSubmit = async () => {
         )
         await userStore.saveSecuritySettings(password.value)
         successMessage.value = 'Successfully saved'
+        setDefaults()
     } catch (error) {
         if (error instanceof Yup.ValidationError) {
             error.inner.forEach((err) => {
@@ -49,6 +61,10 @@ const onSubmit = async () => {
         }
     }
 }
+
+defineExpose({
+    resetState,
+})
 </script>
 
 <template>

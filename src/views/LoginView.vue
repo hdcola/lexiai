@@ -6,34 +6,36 @@ import { ref } from 'vue'
 
 const authStore = useAuthStore()
 
-const email = ref<string>('')
-const password = ref<string>('')
-authStore.errorMessage = ''
-authStore.successMessage = ''
-
+const isLoading = ref<boolean>(false)
+const errorMessage = ref<string>('')
+const successMessage = ref<string>('')
 // validation errors
 const errors = ref<Record<string, string>>({})
+
+const email = ref<string>('')
+const password = ref<string>('')
 
 const schema = Yup.object({
     email: Yup.string()
         .email('Invalid email format')
         .required('Email is required')
         .max(360, 'Email is too long'),
-    password: Yup.string()
-        .required('Password is required')
-        .min(6, 'Password must be at least 6 characters long'),
+    password: Yup.string().required('Password is required'),
 })
 
-const isLoading = ref(false)
+function handleChange(event: Event) {
+    const el = event.target as HTMLInputElement
+    errors.value[el.name] = ''
+}
 
-// clear error if input changes
-const clearError = (field: string) => {
-    if (errors.value[field]) {
-        delete errors.value[field]
-    }
+function resetState() {
+    errorMessage.value = ''
+    successMessage.value = ''
+    errors.value = {}
 }
 
 const onSubmit = async () => {
+    resetState()
     isLoading.value = true
     try {
         await schema.validate(
@@ -41,13 +43,16 @@ const onSubmit = async () => {
             { abortEarly: false },
         )
         await authStore.login(email.value, password.value)
-    } catch (validationError) {
-        if (validationError instanceof Yup.ValidationError) {
-            validationError.inner.forEach((err) => {
-                if (err.path && err.message) {
-                    errors.value[err.path] = err.message
-                }
+        successMessage.value = 'Login successful'
+    } catch (error) {
+        if (error instanceof Yup.ValidationError) {
+            error.inner.forEach((err) => {
+                errors.value[err.path as string] = err.message
             })
+        } else if (typeof error === 'string') {
+            errorMessage.value = error
+        } else {
+            console.error(error)
         }
     } finally {
         isLoading.value = false
@@ -69,57 +74,41 @@ const onSubmit = async () => {
                 <!-- Login Form -->
                 <form
                     @submit.prevent="onSubmit"
+                    :validation-schema="schema"
                     class="space-y-8 mt-10 sm:mx-auto sm:w-full sm:max-w-sm"
                 >
-                    <!-- Success and Error Messages -->
-                    <div
-                        v-if="authStore.errorMessage"
-                        role="alert"
-                        class="error-msg"
-                        aria-live="polite"
-                    >
-                        {{ authStore.errorMessage }}
+                    <div v-if="errorMessage" role="alert" aria-live="polite" class="error-msg">
+                        {{ errorMessage }}
                     </div>
-                    <div
-                        v-if="authStore.successMessage"
-                        role="alert"
-                        class="success-msg"
-                        aria-live="polite"
-                    >
-                        {{ authStore.successMessage }}
+                    <div v-if="successMessage" role="alert" aria-live="polite" class="success-msg">
+                        {{ successMessage }}
                     </div>
 
                     <div class="form-group">
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900"
-                            >Your email</label
-                        >
+                        <label for="email">Your email</label>
                         <input
-                            v-model="email"
                             type="email"
                             id="email"
+                            name="email"
                             autocomplete="email"
-                            @input="clearError('email')"
-                            class="form-control block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2"
+                            v-model="email"
+                            v-on:change="handleChange"
+                            :class="{ error: errors.email }"
                         />
-                        <div v-if="errors.email" class="text-red-500 text-sm mt-1">
-                            {{ errors.email }}
-                        </div>
+                        <p>{{ errors.email }}</p>
                     </div>
                     <div class="form-group">
-                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900"
-                            >Password</label
-                        >
+                        <label for="password">Your password</label>
                         <input
-                            v-model="password"
                             type="password"
                             id="password"
-                            @input="clearError('password')"
+                            name="password"
                             autocomplete="current-password"
-                            class="form-control block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2"
+                            v-model="password"
+                            v-on:change="handleChange"
+                            :class="{ error: errors.password }"
                         />
-                        <div v-if="errors.password" class="text-red-500 text-sm mt-1">
-                            {{ errors.password }}
-                        </div>
+                        <p>{{ errors.password }}</p>
                     </div>
                     <button :disabled="isLoading" class="w-full lexi-btn">
                         <span v-if="isLoading">Loading...</span>
