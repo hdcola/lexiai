@@ -144,9 +144,12 @@ onMounted(async () => {
 })
 
 function handlePlay(selection: { topic: string; level: string }) {
+    const language = languages.value.find((l) => l._id === selectedLanguage.value)
+    const style = styles.value.find((s) => s._id === selectedStyle.value)
+
     emit('selection', {
-        language: selectedLanguage.value,
-        style: selectedStyle.value,
+        language: language?.name,
+        style: style?.description,
         topic: selection.topic,
         level: selection.level,
     })
@@ -224,12 +227,12 @@ function handlePlay(selection: { topic: string; level: string }) {
                     <SelectionFavorites @selection="handlePlay" ref="favorites" />
                 </div>
                 <div
-                    class="hidden p-4 rounded-lg"
+                    class="rounded-lg flex flex-col h-full py-3"
                     id="styled-custom"
                     role="tabpanel"
                     aria-labelledby="custom-tab"
                 >
-                    <SelectionCustom ref="custom" />
+                    <SelectionCustom @selection="handlePlay" ref="custom" />
                 </div>
             </div>
 
