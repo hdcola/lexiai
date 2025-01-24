@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, useTemplateRef, watch } from 'vue'
 import ImgSettings from '@/components/images/ImgSettings.vue'
-import SettingsLexi from '@/components/settings/SettingsLexi.vue'
-import SettingsProfile from '@/components/settings/SettingsProfile.vue'
-import SettingsSecurity from '@/components/settings/SettingsSecurity.vue'
-import IconProfileEdit from '@/components/images/icons/IconProfileEdit.vue'
-import IconSecurity from '@/components/images/icons/IconSecurity.vue'
-import IconTools from '@/components/images/icons/IconTools.vue'
+import { SettingsLexi, SettingsProfile, SettingsSecurity } from '@/components/settings'
+import { IconProfileEdit, IconSecurity, IconTools } from '@/components/images/icons'
 import { initTabs, Tabs } from 'flowbite'
 import type { TabsOptions, TabsInterface, TabItem, InstanceOptions } from 'flowbite'
 
