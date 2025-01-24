@@ -81,7 +81,7 @@ const onSubmit = async () => {
             {
                 title: topic.value,
                 description: description.value,
-                level: 'custom',
+                level: 'Custom',
                 systemPrompt: role.value,
                 start: start.value,
             },
