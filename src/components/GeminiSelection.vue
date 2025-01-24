@@ -227,12 +227,12 @@ function handlePlay(selection: { topic: string; level: string }) {
                     <SelectionFavorites @selection="handlePlay" ref="favorites" />
                 </div>
                 <div
-                    class="hidden p-4 rounded-lg"
+                    class="rounded-lg flex flex-col h-full py-3"
                     id="styled-custom"
                     role="tabpanel"
                     aria-labelledby="custom-tab"
                 >
-                    <SelectionCustom ref="custom" />
+                    <SelectionCustom @selection="handlePlay" ref="custom" />
                 </div>
             </div>
 
