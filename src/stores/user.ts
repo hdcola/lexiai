@@ -202,9 +202,30 @@ export const useUserStore = defineStore('userSet', {
         getProfileSettings() {
             return { ...this.user }
         },
-        saveSecuritySettings(password: string) {
+        async saveSecuritySettings(password: string) {
 
-            // Save to server
+            // Save to server 
+            const jwtStore = useJWTStore();
+            const token = jwtStore.getToken();
+
+            try {
+                // Send API request to update settings
+                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/security`, {
+                    password: password,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+                if (response.status === 200 && response.data.user) {
+                    console.log("User new password successfully saved on the server:", response.data.user);
+                } else {
+                    console.log("Unexpected response when saving a new password:", response);
+                }
+            } catch (error) {
+                console.error("Error saving a new password:", error);
+            }
         }
     },
     persist: false
