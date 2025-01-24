@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { useJWTStore } from './jwt';
 import router from '@/router';
 import axios from 'axios';
-import { AxiosError } from 'axios';
 import { useUserStore } from './user';
 
 
@@ -63,7 +62,7 @@ export const useAuthStore = defineStore('auth', {
                 return true;
             }
             catch(error) {
-                if (error instanceof AxiosError) {
+                if (axios.isAxiosError(error)) {
                     if (error.status === 401) {
                         console.error('Token is invalid');
                         jwtStore.deleteToken();
@@ -74,43 +73,36 @@ export const useAuthStore = defineStore('auth', {
             }
         },
         async login(email: string, password: string) {
-            this.successMessage = '';
-            this.errorMessage = '';
 
-            if (!email || !password) {
-                this.errorMessage = 'Email and password are required.';
-                return
-            }
+
             try {
                 const response = await axios.post(`${apiUrl}:${apiPORT}/api/users/login`, {
                     email: email,
                     password: password
                 })
 
-                if (response.data.accessToken) {
-                    const newToken = response.data.accessToken
-                    const jwtStore = useJWTStore()
+                const newToken = response.data.accessToken
+                const jwtStore = useJWTStore()
 
-                    // Save token
-                    jwtStore.saveToken(newToken)
+                // Save token
+                jwtStore.saveToken(newToken)
 
-                    console.log('Login successful, token stored.')
-                    this.isLoggedIn = true;
-                    this.successMessage = 'Login successful'
+                console.log('Login successful, token stored.')
+                this.isLoggedIn = true;
 
-                    const userStore = useUserStore();
-                    userStore.saveUser(response.data.user);
+                const userStore = useUserStore();
+                userStore.saveUser(response.data.user);
 
-                    // redirect to home
-                    setTimeout(() => router.push('/lexiai'), 2000)
-                }
+                // redirect to home
+                setTimeout(() => router.push('/lexiai'), 2000)
+
             } catch (error) {
                 this.isLoggedIn = false;
                 if (axios.isAxiosError(error)) {
-                    this.errorMessage = error.response?.data?.message || 'Login failed. Please try again.'
+                    throw error.response?.data.message || 'Login failed. Please try again.'
                 } else {
                     // other unknown errors
-                    this.errorMessage = 'An unexpected error occurred.'
+                    throw 'An unexpected error occurred.'
                 }
             }
 

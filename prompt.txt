@@ -1,0 +1,307 @@
+Okay, let's update the previous example to use WebSockets for interacting with the Gemini 2.0 API. This is more complex, as we need to manage a live, bidirectional connection. We'll assume that the Gemini 2.0 API supports a WebSocket endpoint for streaming audio and responses.
+
+Important Notes on WebSockets and Gemini
+
+API Support: Make absolutely sure that Gemini 2.0's API actually provides a WebSocket endpoint for the specific type of multimodal audio interaction you need. If not, this approach will not work.
+
+Streaming Protocol: Pay close attention to the message structure/protocol that Gemini's WebSocket uses. You will need to format your messages correctly to communicate with it, including how the audio data is sent and what type of response is expected.
+
+Error Handling: Websocket connections can be flaky, so robust error handling for disconnections and errors will be critical.
+
+Authentication: You'll need to handle authentication for the websocket connection as specified by the Gemini 2.0 API. This might involve including a token in the initial handshake request or through other means.
+
+Updated Code with WebSocket Integration
+
+// HTML elements to connect
+const recordButton = document.getElementById("recordButton");
+const stopButton = document.getElementById("stopButton");
+
+let audioStream;
+let mediaRecorder;
+let audioContext; // Web Audio context
+let socket;
+
+// WebSocket endpoint (replace with actual endpoint if needed)
+const GEMINI_WEBSOCKET_ENDPOINT =
+    "wss://your-gemini-websocket-endpoint.example.com"; // **REPLACE THIS**
+
+// Replace with your Gemini API key or any client setup.
+const GEMINI_API_KEY = "[YOUR_GEMINI_API_KEY]"; // Replace with actual API key
+
+
+async function startRecording() {
+  try {
+    audioStream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      // Add parameters to get a sample rate that the service expects
+      sampleRate : 16000,
+    });
+     recordButton.disabled = true;
+    stopButton.disabled = false;
+
+
+    mediaRecorder = new MediaRecorder(audioStream,
+        {
+            mimeType: 'audio/webm',
+             audioBitsPerSecond: 128000,
+        });
+
+    mediaRecorder.ondataavailable = (event) => {
+        if(socket && socket.readyState === WebSocket.OPEN){
+           sendAudioData(event.data)
+        } else{
+            console.log('Error, websocket not connected')
+        }
+
+    };
+    mediaRecorder.onstop = handleStop;
+    mediaRecorder.onerror = (error) => {
+        console.error('Media Recorder Error:', error);
+    };
+
+    mediaRecorder.start(500); //Send audio every 500 milliseconds, Adjust as necessary
+    connectWebSocket();
+
+  } catch (error) {
+    console.error("Error accessing microphone:", error);
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop();
+       recordButton.disabled = false;
+       stopButton.disabled = true;
+  }
+    if(socket && socket.readyState === WebSocket.OPEN){
+        socket.close();
+    }
+
+}
+
+
+function connectWebSocket() {
+  socket = new WebSocket(GEMINI_WEBSOCKET_ENDPOINT + `?key=${GEMINI_API_KEY}`);
+
+  socket.onopen = () => {
+    console.log("WebSocket connection established");
+    // Send initial configuration or authentication messages if needed
+  };
+
+  socket.onmessage = (event) => {
+    handleGeminiResponse(event.data);
+  };
+
+  socket.onerror = (error) => {
+    console.error("WebSocket Error:", error);
+  };
+
+  socket.onclose = () => {
+    console.log("WebSocket connection closed");
+  };
+}
+
+function sendAudioData(audioBlob) {
+
+  if (socket && socket.readyState === WebSocket.OPEN) {
+
+      const reader = new FileReader();
+      reader.onload = () => {
+         const base64String = reader.result.split(',')[1];
+
+        const message = {
+           audioData: base64String,
+            //Add text prompt if necessary, like "What did I say?"
+           //textPrompt: "What did I say?"
+         };
+
+
+        socket.send(JSON.stringify(message));
+      };
+      reader.readAsDataURL(audioBlob); //Read as base64 to send to socket
+  }
+
+}
+
+async function handleStop() {
+    // handle cleanup when recording is stopped
+}
+
+
+ async function handleGeminiResponse(data) {
+     //Process data from the WebSocket
+     console.log("Gemini WebSocket message:", data);
+    try {
+        const message = JSON.parse(data)
+
+      //TODO: handle audio response.
+        if(message && message.text){
+            await playText(message.text);
+        }
+        if(message && message.audioData){
+           // Play audio data directly
+          //TODO: Implement handling for the audio data response.
+          console.log('Audio received from websocket')
+        }
+    } catch(error){
+        console.log('Error parsing response' , error);
+        console.log(error.message);
+    }
+
+}
+
+async function playText(text) {
+  // Step 1: Create an audio context if not created
+    if(!audioContext){
+      audioContext = new AudioContext();
+    }
+
+    try {
+      // Step 2: Fetch speech audio data from the Text to Speech API
+      // Implement using your own service API or an open source api
+        const audioData = await fetchSpeechAudio(text); // Example, need implementation
+
+
+        // Step 3: Create a buffer source
+      const audioBuffer = await audioContext.decodeAudioData(audioData);
+      const source = audioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioContext.destination);
+
+      source.start();
+
+    } catch(err){
+      console.log('Error generating audio' , err);
+      console.log(err.message);
+    }
+
+}
+async function fetchSpeechAudio(text) {
+  // Step 1: Build data to make the api call.
+  const requestData = {
+      text: text,
+  };
+
+  // Step 2: Make the API call using Fetch API
+  // This example is using Google Text to Speech, but you can implement using your own API
+  const response = await fetch(
+      `https://texttospeech.googleapis.com/v1beta1/text:synthesize?key=[YOUR_API_KEY]`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          input: {
+            text: requestData.text,
+          },
+          voice: {
+            languageCode: "en-US",
+            name: "en-US-Wavenet-A",
+          },
+          audioConfig: {
+            audioEncoding: "LINEAR16",
+          },
+        }),
+      }
+    );
+
+
+      if (!response.ok) {
+      const message = `An error has occured: ${response.status}`;
+        throw new Error(message);
+    }
+
+      const responseData = await response.json();
+
+  // Step 3: Decode the base64 audio content
+    const audioContent = responseData.audioContent;
+
+   // Step 4: Convert base64 content to Uint8Array
+    const byteString = atob(audioContent);
+    const byteArray = new Uint8Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++) {
+        byteArray[i] = byteString.charCodeAt(i);
+    }
+  return byteArray.buffer
+}
+// Add event listeners for the buttons
+recordButton.addEventListener("click", startRecording);
+stopButton.addEventListener("click", stopRecording);
+content_copy
+download
+Use code with caution.
+JavaScript
+
+HTML (Same as before)
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multimodal Demo</title>
+</head>
+<body>
+    <button id="recordButton">Start Recording</button>
+    <button id="stopButton" disabled>Stop Recording</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
+content_copy
+download
+Use code with caution.
+Html
+
+Key Changes and Explanations
+
+WebSocket Endpoint:
+
+GEMINI_WEBSOCKET_ENDPOINT: Replace this with the actual WebSocket endpoint URL from Gemini's API.
+
+WebSocket Connection:
+
+connectWebSocket(): This function establishes the WebSocket connection and sets up the onopen, onmessage, onerror, and onclose event handlers.
+
+Sending Audio Data:
+
+sendAudioData(): This function now takes a blob object, converts it to a base64 encoded string, and sends it via the websocket as a stringified JSON object.
+
+Handling Gemini Responses
+
+handleGeminiResponse is updated to accept the websocket message, parses the json and calls the text to speech API.
+
+Media Recorder Settings
+
+When creating the media recorder object, additional settings such as mimeType and audioBitsPerSecond can be included, so the websocket receives the audio data in the expected format.
+
+Real-time streaming
+
+The start function on mediaRecorder will call the ondataavailable method repeatedly, allowing for real-time streaming of audio to the websocket.
+
+Error handling
+
+Added error handling for various cases such as incorrect connection states, or when errors occur when parsing JSON responses.
+
+Removed audioChunks
+
+The audio chunks were removed as we are streaming the audio rather than batch processing it.
+
+Important Next Steps
+
+Gemini WebSocket API Documentation: The most critical step is to refer to the official Gemini API documentation to get the correct WebSocket endpoint, authentication method, message structures, data formats, and error codes. Without this, your application will fail. This was very important in the above examples, and why I am repeating it.
+
+Message Protocol: You'll have to tailor the sendAudioData and handleGeminiResponse functions to match the message format expected by Gemini's WebSocket. You might need to include metadata along with the audio data.
+
+Error Handling: Improve your error handling for situations when the WebSocket connection is closed abruptly, or when parsing errors occur. Add mechanisms to reconnect if needed.
+
+Authentication: Make sure you're using the correct way to send authentication headers or parameters according to the documentation.
+
+Testing and Troubleshooting
+
+Use the console.log() to output messages, so you can see that audio is being sent correctly and the messages are being received by the websocket on the client side.
+
+Test the websocket connection before implementing the audio.
+
+Check the logs from the service you are connecting to for any errors.
+
+This updated example provides a starting point for using WebSockets, but the critical work will be in carefully aligning the code with the specifics of the Gemini 2.0 API. Please let me know if you have further questions.
