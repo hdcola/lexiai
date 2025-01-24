@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import * as Yup from 'yup'
-import IconPlay from '../images/icons/IconPlay.vue'
+import { IconPlay, IconClose } from '@/components/images/icons'
 import type { ITopic } from '../GeminiSelection.vue'
+import axios from 'axios'
+import { useJWTStore } from '@/stores/jwt'
+
+// environmental variables
+const apiUrl = import.meta.env.VITE_API_URL
+const apiPort = import.meta.env.VITE_API_PORT
+const jwtStore = useJWTStore()
+const token = jwtStore.getToken()
 
 const emit = defineEmits(['selection'])
 
@@ -68,6 +76,21 @@ const onSubmit = async () => {
             { abortEarly: false },
         )
         // Save to server
+        const response = await axios.post(
+            `${apiUrl}:${apiPort}/api/topics`,
+            {
+                title: topic.value,
+                description: description.value,
+                level: 'custom',
+                systemPrompt: role.value,
+                start: start.value,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
     } catch (error) {
         if (error instanceof Yup.ValidationError) {
             error.inner.forEach((err) => {
@@ -141,13 +164,16 @@ defineExpose({
             </div>
 
             <div class="flex gap-2">
-                <button type="submit" class="flex-grow orange-btn">Save</button>
+                <button type="submit" class="flex-grow lexi-btn">Save</button>
                 <button
                     type="button"
-                    class="lexi-btn inline-flex items-center"
+                    class="inline-flex items-center orange-btn"
                     @click="handlePlay()"
                 >
-                    <IconPlay class="-ms-2" />Try it
+                    <IconPlay class="-ms-2 me-2" />Try it
+                </button>
+                <button type="reset" class="inline-flex items-center purple-btn text-white !px-3">
+                    <IconClose />
                 </button>
             </div>
         </form>
