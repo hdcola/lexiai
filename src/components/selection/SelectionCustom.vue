@@ -131,7 +131,7 @@ defineExpose({
                 <textarea
                     name="description"
                     id="description"
-                    class="w-full rounded-lg max-h-28"
+                    class="w-full rounded-lg h-28 max-h-28"
                     v-model="description"
                     placeholder="Learn how to open a bank account."
                     v-on:change="handleChange"
@@ -145,7 +145,7 @@ defineExpose({
                 <textarea
                     name="role"
                     id="role"
-                    class="w-full rounded-lg max-h-28"
+                    class="w-full rounded-lg h-28 max-h-28"
                     v-model="role"
                     placeholder="You are a bank teller that will assist with bank counter operations."
                 ></textarea>
