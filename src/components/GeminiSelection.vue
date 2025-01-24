@@ -1,19 +1,13 @@
 <script setup lang="ts">
 import axios from 'axios'
-import { onMounted, ref } from 'vue'
-import ButtonFavorite from './ButtonFavorite.vue'
-import IconPlay from './images/icons/IconPlay.vue'
-import { initTabs } from 'flowbite'
-import IconEdit from './images/icons/IconEdit.vue'
-import IconHeartFull from './images/icons/IconHeartFull.vue'
-import IconSwatchbook from './images/icons/IconSwatchbook.vue'
-import SelectionTopic from './selection/SelectionTopic.vue'
-import SelectionFavorites from './selection/SelectionFavorites.vue'
-import SelectionCustom from './selection/SelectionCustom.vue'
+import { onMounted, ref, useTemplateRef, watch } from 'vue'
+import { IconEdit, IconHeartFull, IconSwatchbook } from '@/components/images/icons'
+import { SelectionTopics, SelectionFavorites, SelectionCustom } from '@/components/selection'
 import { useUserStore } from '@/stores/user'
+import { initTabs, Tabs } from 'flowbite'
+import type { TabsOptions, TabsInterface, TabItem, InstanceOptions } from 'flowbite'
 
 const userStore = useUserStore()
-console.log('userStore: ', userStore)
 
 // types needed to convert string id to ObjectId(id)
 export type ILanguage = {
@@ -44,6 +38,22 @@ const apiUrl = import.meta.env.VITE_API_URL
 const apiPort = import.meta.env.VITE_API_PORT
 
 const emit = defineEmits(['selection'])
+
+const selectedTab = ref<TabItem>()
+const refs: Record<string, any> = {
+    topics: useTemplateRef('topics'),
+    favorites: useTemplateRef('favorites'),
+    custom: useTemplateRef('custom'),
+}
+
+watch(selectedTab, async (newTab) => {
+    if (newTab) {
+        const component = refs[newTab.id].value
+        if (component) {
+            await component.onActivated()
+        }
+    }
+})
 
 const languages = ref<ILanguage[]>([])
 const styles = ref<IStyle[]>([])
@@ -88,6 +98,49 @@ onMounted(async () => {
     const languageSettings = userStore.getLanguageSettings()
     selectedLanguage.value = languageSettings.language_id
     selectedStyle.value = languageSettings.style_id
+
+    const tabsElement: HTMLElement = document.getElementById('default-styled-tab')!
+
+    // create an array of objects with the id, trigger element (eg. button), and the content element
+    const tabElements: TabItem[] = [
+        {
+            id: 'topics',
+            triggerEl: document.querySelector('#topics-styled-tab')!,
+            targetEl: document.querySelector('#styled-topics')!,
+        },
+        {
+            id: 'favorites',
+            triggerEl: document.querySelector('#favorites-styled-tab')!,
+            targetEl: document.querySelector('#styled-favorites')!,
+        },
+        {
+            id: 'custom',
+            triggerEl: document.querySelector('#custom-styled-tab')!,
+            targetEl: document.querySelector('#styled-custom')!,
+        },
+    ]
+
+    // options with default values
+    const options: TabsOptions = {
+        defaultTabId: 'topics',
+        onShow: (tabs: TabsInterface, tab: TabItem) => {
+            selectedTab.value = tab
+        },
+    }
+
+    // instance options with default values
+    const instanceOptions: InstanceOptions = {
+        id: 'default-styled-tab',
+        override: true,
+    }
+
+    /*
+     * tabsElement: parent element of the tabs component (required)
+     * tabElements: array of tab elements (required)
+     * options (optional)
+     * instanceOptions (optional)
+     */
+    const tabs = new Tabs(tabsElement, tabElements, options, instanceOptions)
 })
 
 function handlePlay(selection: { topic: string; level: string }) {
@@ -114,7 +167,6 @@ function handlePlay(selection: { topic: string; level: string }) {
                 >
                     <li role="presentation">
                         <button
-                            class="tab"
                             id="topics-styled-tab"
                             data-tabs-target="#styled-topics"
                             type="button"
@@ -128,7 +180,6 @@ function handlePlay(selection: { topic: string; level: string }) {
                     </li>
                     <li role="presentation">
                         <button
-                            class="tab"
                             id="favorites-styled-tab"
                             data-tabs-target="#styled-favorites"
                             type="button"
@@ -142,7 +193,6 @@ function handlePlay(selection: { topic: string; level: string }) {
                     </li>
                     <li role="presentation">
                         <button
-                            class="tab"
                             id="custom-styled-tab"
                             data-tabs-target="#styled-custom"
                             type="button"
@@ -163,15 +213,15 @@ function handlePlay(selection: { topic: string; level: string }) {
                     role="tabpanel"
                     aria-labelledby="topics-tab"
                 >
-                    <SelectionTopic @selection="handlePlay" />
+                    <SelectionTopics @selection="handlePlay" ref="topics" />
                 </div>
                 <div
-                    class="hidden p-4 rounded-lg"
+                    class="rounded-lg flex flex-col h-full py-3"
                     id="styled-favorites"
                     role="tabpanel"
                     aria-labelledby="favorites-tab"
                 >
-                    <SelectionFavorites @selection="handlePlay" />
+                    <SelectionFavorites @selection="handlePlay" ref="favorites" />
                 </div>
                 <div
                     class="hidden p-4 rounded-lg"
@@ -179,20 +229,20 @@ function handlePlay(selection: { topic: string; level: string }) {
                     role="tabpanel"
                     aria-labelledby="custom-tab"
                 >
-                    <SelectionCustom />
+                    <SelectionCustom ref="custom" />
                 </div>
             </div>
 
             <div class="flex flex-row justify-center items-center px-4 py-3 gap-2">
                 <!-- Language Selection -->
-                <select v-model="selectedLanguage" class="w-full" @change="handleLanguageChange">
+                <select v-model="selectedLanguage" @change="handleLanguageChange">
                     <option disabled>Select a language</option>
                     <option v-for="lang in languages" :key="lang._id" :value="lang._id">
                         {{ lang.name }}
                     </option>
                 </select>
 
-                <select v-model="selectedStyle" class="w-full" @change="handleLanguageChange">
+                <select v-model="selectedStyle" @change="handleLanguageChange">
                     <option disabled>Select a style</option>
                     <option v-for="style in styles" :key="style._id" :value="style._id">
                         {{ style.name }}
@@ -204,7 +254,7 @@ function handlePlay(selection: { topic: string; level: string }) {
 </template>
 
 <style scoped>
-.tab {
+button[role='tab'] {
     @apply inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300;
 }
 .icon {

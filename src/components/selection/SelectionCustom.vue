@@ -1,4 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+function onActivated() {
+    console.log('hello?? custom')
+}
+
+defineExpose({
+    onActivated,
+})
+</script>
 
 <template></template>
 
