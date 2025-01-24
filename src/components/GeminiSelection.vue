@@ -144,9 +144,12 @@ onMounted(async () => {
 })
 
 function handlePlay(selection: { topic: string; level: string }) {
+    const language = languages.value.find((l) => l._id === selectedLanguage.value)
+    const style = styles.value.find((s) => s._id === selectedStyle.value)
+
     emit('selection', {
-        language: selectedLanguage.value,
-        style: selectedStyle.value,
+        language: language?.name,
+        style: style?.description,
         topic: selection.topic,
         level: selection.level,
     })
