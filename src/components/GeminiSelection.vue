@@ -255,7 +255,7 @@ function handlePlay(selection: { topic: string; level: string }) {
 
 <style scoped>
 button[role='tab'] {
-    @apply inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300;
+    @apply inline-flex items-center p-4 border-b-2 rounded-t-lg;
 }
 .icon {
     @apply me-2 md:hidden lg:block;
