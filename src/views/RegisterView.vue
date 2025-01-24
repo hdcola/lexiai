@@ -6,15 +6,16 @@ import { ref } from 'vue'
 
 const authStore = useAuthStore()
 
+const isLoading = ref<boolean>(false)
+const errorMessage = ref<string>('')
+const successMessage = ref<string>('')
+// validation errors
+const errors = ref<Record<string, string>>({})
+
 const username = ref<string>('')
 const email = ref<string>('')
 const password = ref<string>('')
 const confirmPassword = ref<string>('')
-authStore.errorMessage = ''
-authStore.successMessage = ''
-
-// validation errors
-const errors = ref<Record<string, string>>({})
 
 const schema = Yup.object({
     username: Yup.string()
@@ -33,19 +34,20 @@ const schema = Yup.object({
         .required('Confirm password is required'),
 })
 
-const isLoading = ref(false)
+function handleChange(event: Event) {
+    const el = event.target as HTMLInputElement
+    errors.value[el.name] = ''
+}
 
-// clear error if input changes
-const clearError = (field: string) => {
-    if (errors.value[field]) {
-        delete errors.value[field]
-    }
+function resetState() {
+    errorMessage.value = ''
+    successMessage.value = ''
+    errors.value = {}
 }
 
 const onSubmit = async () => {
+    resetState()
     isLoading.value = true
-    errors.value = {} // Reset errors
-
     try {
         await schema.validate(
             {
@@ -57,13 +59,16 @@ const onSubmit = async () => {
             { abortEarly: false },
         )
         await authStore.register(username.value, email.value, password.value)
-    } catch (validationError) {
-        if (validationError instanceof Yup.ValidationError) {
-            validationError.inner.forEach((err) => {
-                if (err.path && err.message) {
-                    errors.value[err.path] = err.message
-                }
+        successMessage.value = 'Registration successful. Please log in.'
+    } catch (error) {
+        if (error instanceof Yup.ValidationError) {
+            error.inner.forEach((err) => {
+                errors.value[err.path as string] = err.message
             })
+        } else if (typeof error === 'string') {
+            errorMessage.value = error
+        } else {
+            console.error(error)
         }
     } finally {
         isLoading.value = false
@@ -84,91 +89,66 @@ const onSubmit = async () => {
 
                 <form
                     @submit.prevent="onSubmit"
+                    :validation-schema="schema"
                     class="space-y-8 mt-10 sm:mx-auto sm:w-full sm:max-w-sm"
                 >
-                    <!-- Success and Error Messages -->
-                    <div
-                        v-if="authStore.errorMessage"
-                        role="alert"
-                        class="error-msg"
-                        aria-live="polite"
-                    >
-                        {{ authStore.errorMessage }}
+                    <div v-if="errorMessage" role="alert" aria-live="polite" class="error-msg">
+                        {{ errorMessage }}
                     </div>
-                    <div
-                        v-if="authStore.successMessage"
-                        role="alert"
-                        class="success-msg"
-                        aria-live="polite"
-                    >
-                        {{ authStore.successMessage }}
-                    </div>
-                    <div class="form-group">
-                        <label for="username" class="block mb-2 text-sm font-medium text-gray-900"
-                            >Username</label
-                        >
-                        <input
-                            type="username"
-                            name="username"
-                            id="username"
-                            v-model="username"
-                            @input="clearError('username')"
-                            class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
-                        />
-                        <div v-if="errors.username" class="text-red-500 text-sm mt-1">
-                            {{ errors.username }}
-                        </div>
+                    <div v-if="successMessage" role="alert" aria-live="polite" class="success-msg">
+                        {{ successMessage }}
                     </div>
 
                     <div class="form-group">
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900"
-                            >Email address</label
-                        >
+                        <label for="username">Username</label>
+                        <input
+                            type="text"
+                            name="username"
+                            id="username"
+                            v-model="username"
+                            v-on:change="handleChange"
+                            :class="{ error: errors.username }"
+                        />
+                        <p>{{ errors.username }}</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email address</label>
                         <input
                             type="email"
                             name="email"
                             id="email"
                             v-model="email"
-                            @input="clearError('email')"
-                            class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                            v-on:change="handleChange"
+                            :class="{ error: errors.email }"
                         />
-                        <div v-if="errors.email" class="text-red-500 text-sm mt-1">
-                            {{ errors.email }}
-                        </div>
+                        <p>{{ errors.email }}</p>
                     </div>
 
                     <div class="form-group">
-                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900"
-                            >Password</label
-                        >
+                        <label for="password">Password</label>
                         <input
                             type="password"
                             name="password"
                             id="password"
                             v-model="password"
-                            @input="clearError('password')"
-                            class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                            v-on:change="handleChange"
+                            :class="{ error: errors.password }"
                         />
-                        <div v-if="errors.password" class="text-red-500 text-sm mt-1">
-                            {{ errors.password }}
-                        </div>
+                        <p>{{ errors.password }}</p>
                     </div>
 
                     <div class="form-group">
-                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900"
-                            >Confirm password</label
-                        >
+                        <label for="password">Confirm password</label>
                         <input
                             type="password"
                             name="confirmPassword"
                             id="confirmPassword"
                             v-model="confirmPassword"
-                            @input="clearError('confirmPassword')"
-                            class="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                            v-on:change="handleChange"
+                            :class="{ error: errors.confirmPassword }"
                         />
-                        <div v-if="errors.confirmPassword" class="text-red-500 text-sm mt-1">
-                            {{ errors.confirmPassword }}
-                        </div>
+                        <p>{{ errors.confirmPassword }}</p>
                     </div>
 
                     <button :disabled="isLoading" class="w-full lexi-btn">

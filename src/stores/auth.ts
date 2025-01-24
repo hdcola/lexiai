@@ -12,28 +12,19 @@ const apiPORT = import.meta.env.VITE_API_PORT
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         isLoggedIn: <boolean>false,
-        errorMessage: "",
-        successMessage: ""
     }),
     actions: {
         async isAuthenticated() {
-            if (this.isLoggedIn == true){
-                return this.isLoggedIn;
-            }
-
-            try {
-                const isValid = await this.isValidToken();  
-                if (isValid) {
-                    this.isLoggedIn = true;
-                    console.log("Token is valid. User is logged in.");
-
-                } else {
+            if (!this.isLoggedIn) {
+                try {
+                    const isValid = await this.isValidToken();
+                    this.isLoggedIn = isValid;
+                    console.log("Token is valid?", isValid)
+    
+                } catch (error) {
+                    console.error("Validating token:", error);
                     this.isLoggedIn = false;
-                    console.log("Token is invalid. User is not logged in.");
                 }
-            } catch (error) {
-                console.error("Error validating token:", error);
-                this.isLoggedIn = false;
             }
             return this.isLoggedIn;
         },
@@ -108,8 +99,6 @@ export const useAuthStore = defineStore('auth', {
 
         },
         async register(username: string, email: string, password: string) {
-            this.successMessage = '';
-            this.errorMessage = '';
 
             try {
                 const response = await axios.post(`${apiUrl}:${apiPORT}/api/users/register`, {
@@ -120,13 +109,13 @@ export const useAuthStore = defineStore('auth', {
 
                 console.log('Registration successful:', response.data)
 
-                this.successMessage = 'Registration successful. Please log in.'
                 setTimeout(() => router.push('/login'), 2000) // Redirect after 3 seconds
+
             } catch (error) {
                 if (axios.isAxiosError(error)) {
-                    this.errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+                    throw error.response?.data?.message || 'Registration failed. Please try again.';
                 } else {
-                    this.errorMessage = 'An unexpected error occurred.';
+                    throw 'An unexpected error occurred.';
                 }
             }
         },
