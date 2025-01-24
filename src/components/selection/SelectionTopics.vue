@@ -8,7 +8,7 @@ import { useUserStore } from '@/stores/user'
 
 const emit = defineEmits(['selection'])
 const userStore = useUserStore()
-const favorites = userStore.getFavorites()
+let favorites = userStore.getFavorites()
 
 // environmental variables
 const apiUrl = import.meta.env.VITE_API_URL
@@ -63,13 +63,13 @@ function handlePlay(topic: ITopic) {
 function handleFavorite(topic: ITopic) {
     // Add to favorites
     topic.isFavorite = !topic.isFavorite
-
     // Update in store & MongoDB
     userStore.toggleFavorite(topic._id, topic.isFavorite)
 }
 
 async function onActivated() {
     // TODO More elegant solution
+    favorites = userStore.getFavorites()
     await fetchTopics()
 }
 
