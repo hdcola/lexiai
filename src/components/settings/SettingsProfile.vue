@@ -17,6 +17,8 @@ const newEmail = ref<string>('')
 
 const schema = Yup.object().shape({
     username: Yup.string()
+        .transform((current) => (current === '' ? null : current)) // support optional empty string
+        .nullable()
         .min(4, 'Username must be at least 4 characters long')
         .max(50, 'Username is too long'),
     email: Yup.string().email('Invalid email format').max(360, 'Email is too long'),
@@ -28,8 +30,7 @@ function handleChange(event: Event) {
 }
 
 const onSubmit = async () => {
-    errorMessage.value = ''
-    successMessage.value = ''
+    resetState()
 
     try {
         await schema.validate(
@@ -64,6 +65,14 @@ onMounted(() => {
 
     username.value = settings.username
     email.value = settings.email
+})
+function resetState() {
+    errorMessage.value = ''
+    successMessage.value = ''
+    errors.value = {}
+}
+defineExpose({
+    resetState,
 })
 </script>
 

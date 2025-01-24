@@ -199,15 +199,12 @@ export const useUserStore = defineStore('userSet', {
                     }
                 });
 
-                if (response.status === 200 && response.data.user) {
-                    console.log("User profile successfully updated on the server:", response.data.user);
+                console.log("User profile successfully updated on the server:", response.data);
 
-                    // Save to user
-                    this.user.username = response.data.user.username;
-                    this.user.email = response.data.user.email;
-                } else {
-                    console.log("Unexpected response when updating profile:", response);
-                }
+                // Save to user
+                this.user.username = response.data.username;
+                this.user.email = response.data.email;
+
             } catch (error) {
                 console.error("Error updating profile:", error);
             }
