@@ -15,7 +15,10 @@ const apiKey = ref<string>('')
 const voiceName = ref<VoiceName>('Aoede')
 
 const schema = Yup.object().shape({
-    apiKey: Yup.string().length(39, 'API Key should be 39 characters long'),
+    apiKey: Yup.string()
+        .transform((current) => (current === '' ? null : current))
+        .nullable()
+        .length(39, 'API Key should be 39 characters long'),
 })
 
 function handleChange(event: Event) {
@@ -23,10 +26,14 @@ function handleChange(event: Event) {
     errors.value[el.name] = ''
 }
 
-const onSubmit = async () => {
-    // Could verify if anything changed before submitting?
+function resetState() {
     errorMessage.value = ''
     successMessage.value = ''
+    errors.value = {}
+}
+
+const onSubmit = async () => {
+    resetState()
 
     try {
         await schema.validate({ apiKey: apiKey.value }, { abortEarly: false })
@@ -39,7 +46,6 @@ const onSubmit = async () => {
                 errors.value[err.path as string] = err.message
             })
         } else {
-            // TODO: Implement proper error
             errorMessage.value = 'Something went wrong.'
         }
     }
@@ -53,6 +59,10 @@ onMounted(() => {
     if (settings.voiceName) {
         voiceName.value = settings.voiceName
     }
+})
+
+defineExpose({
+    resetState,
 })
 </script>
 
@@ -70,7 +80,7 @@ onMounted(() => {
         </div>
         <div class="form-group">
             <label>Change voice</label>
-            <select v-model="voiceName" class="w-full p-2 border rounded">
+            <select v-model="voiceName">
                 <option disabled value="">Select a voice</option>
                 <option v-for="voice in Voices" :key="voice" :value="voice">
                     {{ voice }}
@@ -87,7 +97,6 @@ onMounted(() => {
                 v-model="apiKey"
                 v-on:change="handleChange"
                 :class="{ error: errors.apiKey }"
-                required
             />
             <p>{{ errors.apiKey }}</p>
         </div>

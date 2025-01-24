@@ -29,6 +29,19 @@ function handleChange(event: Event) {
     errors.value[el.name] = ''
 }
 
+function resetState() {
+    errorMessage.value = ''
+    successMessage.value = ''
+    errors.value = {}
+}
+
+function setDefaults() {
+    const settings = userStore.getProfileSettings()
+
+    username.value = settings.username
+    email.value = settings.email
+}
+
 const onSubmit = async () => {
     resetState()
 
@@ -46,31 +59,22 @@ const onSubmit = async () => {
         await userStore.saveProfileSettings(sanitizedUsername, sanitizedEmail)
 
         successMessage.value = 'Successfully saved'
-        email.value = sanitizedEmail
-        username.value = sanitizedUsername
+        setDefaults()
     } catch (error) {
         if (error instanceof Yup.ValidationError) {
             error.inner.forEach((err) => {
                 errors.value[err.path as string] = err.message
             })
         } else {
-            // TODO: Implement proper error
             errorMessage.value = 'Something went wrong.'
         }
     }
 }
 
 onMounted(() => {
-    const settings = userStore.getProfileSettings()
-
-    username.value = settings.username
-    email.value = settings.email
+    setDefaults()
 })
-function resetState() {
-    errorMessage.value = ''
-    successMessage.value = ''
-    errors.value = {}
-}
+
 defineExpose({
     resetState,
 })
