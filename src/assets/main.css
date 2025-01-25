@@ -80,7 +80,8 @@ label {
 }
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+textarea {
     @apply block w-full rounded-md bg-white border px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6;
 }
 input[disabled] {
@@ -89,10 +90,12 @@ input[disabled] {
 input.with-label {
     @apply text-sm ps-10 p-2.5;
 }
-input.error {
+input.error,
+textarea.error {
     @apply bg-red-50 outline-red-500 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500;
 }
-input.error + p {
+input.error + p,
+textarea.error + p {
     @apply mt-2 text-sm text-red-600 dark:text-red-500;
 }
 
