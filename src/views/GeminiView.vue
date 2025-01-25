@@ -10,17 +10,28 @@ const geminiref = useTemplateRef('gemini')
 const selectedTopic = ref<string>('')
 const selectedLanguage = ref<string>('')
 
-function handleSelection(selection: {
+function replaceTemplate(str: string, variables: Record<string, string>) {
+    return str.replace(/\{\{(.*?)\}\}/g, (_, key) => variables[key.trim()] || '');
+}
+
+async function handleSelection(selection: {
     language: string
     style: string
     topic: ITopic
     level: string
 }) {
+    const data = {
+        language: selection.language,
+        style: selection.style,
+        level: selection.level,
+    }
+
+    const systemPrompt = replaceTemplate(selection.topic.systemPrompt || '', data)
+
     const gemini = geminiref.value
     if (gemini) {
-        gemini.updatePrompt(
-            `Help me practice ${selection.topic.title} in ${selection.language}. ${selection.style}. I am ${selection.level}. Do not change the topic, the style or language.`,
-        )
+        await gemini.updateSystemInstructions(systemPrompt)
+        await gemini.updatePrompt(selection.topic.start || '')
     }
 }
 </script>
