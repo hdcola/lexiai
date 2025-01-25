@@ -167,6 +167,7 @@ function updateSystemInstructions(newSystemInstruction: string) {
 
 function updatePrompt(newPrompt: string) {
     // Verify if the websocket is still running
+    console.log('Update Prompt', newPrompt)
     if (!isConnected.value) {
         connect()
     }
@@ -210,7 +211,7 @@ client.on('setupcomplete', () => {
 })
 
 client.on('audio', async (data: ArrayBuffer) => {
-    console.log('Audio Received')
+    // console.log('Audio Received')
     try {
         await initAudioStream()
         audioStreamer.value?.addPCM16(new Uint8Array(data))
@@ -254,10 +255,7 @@ defineExpose({
 
 <template>
     <div class="flex flex-col flex-1">
-        <div
-            v-if="!isPromptInitialized"
-            class="flex flex-col justify-center items-center size-full px-10 text-center"
-        >
+        <div v-if="!isPromptInitialized" class="flex flex-col justify-center items-center size-full px-10 text-center">
             <div class="w-full mb-5 mt-14">
                 <h2 class="text-2xl font-bold">Select a topic</h2>
                 <hr class="my-3 border-black opacity-40 w-3/4 mx-auto" />
@@ -271,18 +269,10 @@ defineExpose({
                 <h3></h3>
             </div>
             <div class="flex justify-center items-center gap-10 py-10 px-4">
-                <ButtonMicrophone
-                    class="z-[2]"
-                    :isRecording="isRecording"
-                    :inputVolume="inputVolume"
-                    @click="toggleRecording"
-                />
-                <ButtonGeminiSpeaker
-                    :volume="volume"
-                    :isResponding="isResponding"
-                    :isAudio="true"
-                    @interrupt="handleInterrupt"
-                />
+                <ButtonMicrophone class="z-[2]" :isRecording="isRecording" :inputVolume="inputVolume"
+                    @click="toggleRecording" />
+                <ButtonGeminiSpeaker :volume="volume" :isResponding="isResponding" :isAudio="true"
+                    @interrupt="handleInterrupt" />
             </div>
         </div>
     </div>
