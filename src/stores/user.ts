@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { useJWTStore } from './jwt';
 import axios from 'axios';
 import type { VoiceName } from '@/lib/gemini/config/config-types';
-import { serverRequest } from '@/assets/composables/serverRequest';
+import { useServerRequest } from '@/assets/composables/useServerRequest';
 
 const apiUrl = import.meta.env.VITE_API_URL
 const apiPORT = import.meta.env.VITE_API_PORT
@@ -114,7 +114,7 @@ export const useUserStore = defineStore('userSet', {
               */
 
             try {
-                const response = await serverRequest('patch', '/api/users/settings', {
+                const response = await useServerRequest('patch', '/api/users/settings', {
                     settings: {
                         language_id: languageId,
                         style_id: styleId,

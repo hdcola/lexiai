@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/stores/auth";
 import { useJWTStore } from "@/stores/jwt";
 import axios, { type AxiosRequestConfig } from "axios"
 
@@ -13,7 +14,7 @@ const apiPORT = import.meta.env.VITE_API_PORT
  * @param {string} dataJson - data to send in the request
  * @returns  - the responce from the API request  
  */
-export async function serverRequest(
+export async function useServerRequest(
     apiMethod: 'get' | 'post' | 'patch' | 'delete', // restricting to valid HTTP methods
     apiPoint: string,
     dataJson?: object,
@@ -42,17 +43,17 @@ export async function serverRequest(
             if (error.response) {
                 if (error.response.status === 401) {
                     console.error('Invalid token. Redirecting to login...');
-                    window.location.href = '/login';
-                } else {
-                    console.error(`Error ${error.response.status}:`, error.response.data);
-                }
+                    const authStore = useAuthStore;
+                    authStore.logout();
+                    return;
+                } 
             }
-        }  else if (typeof error === 'string') {
+        }  /* else if (typeof error === 'string') {
             console.error('String error:', error);
           } else {
             console.error('Network or unexpected error:', error);
-            throw error; 
-        }
-        
+            
+        } */
+        throw error; 
     }
 }

@@ -5,16 +5,12 @@ import ButtonFavorite from '../ButtonFavorite.vue'
 import IconPlay from '../images/icons/IconPlay.vue'
 import type { ITopic } from '../GeminiSelection.vue'
 import { useUserStore } from '@/stores/user'
-import { useJWTStore } from '@/stores/jwt'
-import { serverRequest } from '../../assets/composables/serverRequest'
+import { useServerRequest } from '../../assets/composables/useServerRequest'
 
 const emit = defineEmits(['selection'])
 const userStore = useUserStore()
 let favorites = userStore.getFavorites()
 
-// environmental variables
-const apiUrl = import.meta.env.VITE_API_URL
-const apiPort = import.meta.env.VITE_API_PORT
 
 const topics = ref<ITopic[]>([])
 const levels = ref(['Beginner', 'Advanced', 'Custom'])
@@ -36,7 +32,7 @@ async function fetchTopics() {
             },
         ) */
 
-        const topicsResponse = await serverRequest(
+        const topicsResponse = await useServerRequest(
             'get',
             `/api/topics?level=${selectedLevel.value}`,
         )
