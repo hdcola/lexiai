@@ -37,13 +37,15 @@ export async function serverRequest(
             : await axios[apiMethod](`${apiUrl}:${apiPORT}${apiPoint}`, dataJson, config); // payload for POST, PATCH, PUT);
 
         return response;
-    } catch (error: any) {
-        if (error.response) {
-            if (error.response.status === 401) {
-                console.error('Invalid token. Redirecting to login...');
-                window.location.href = '/login';
-            } else {
-                console.error(`Error ${error.response.status}:`, error.response.data);
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            if (error.response) {
+                if (error.response.status === 401) {
+                    console.error('Invalid token. Redirecting to login...');
+                    window.location.href = '/login';
+                } else {
+                    console.error(`Error ${error.response.status}:`, error.response.data);
+                }
             }
         }  else if (typeof error === 'string') {
             console.error('String error:', error);

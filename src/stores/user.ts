@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { useJWTStore } from './jwt';
 import axios from 'axios';
 import type { VoiceName } from '@/lib/gemini/config/config-types';
-import { serverRequest } from '@/components/settings/serverRequest';
+import { serverRequest } from '@/assets/composables/serverRequest';
 
 const apiUrl = import.meta.env.VITE_API_URL
 const apiPORT = import.meta.env.VITE_API_PORT
