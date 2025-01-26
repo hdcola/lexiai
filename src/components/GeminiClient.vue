@@ -5,7 +5,7 @@ import { AudioRecorder } from '@/lib/gemini/audio/audio-recorder'
 import { AudioStreamer } from '@/lib/gemini/audio/audio-streamer'
 import CONFIG from '@/lib/gemini/config/config.example'
 
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import type { LiveConfig, ResponseModalities, VoiceName } from '@/lib/gemini/config/config-types'
 import VolMeterWorket from '@/lib/gemini/audio/worklets/vol-meter'
 import ButtonMicrophone from './ButtonMicrophone.vue'
@@ -46,14 +46,14 @@ onMounted(async () => {
     if (settings.voiceName) {
         voiceName.value = settings.voiceName
     }
-    connect()
+    await connect()
 })
 
 onUnmounted(() => {
     disconnect()
 })
 
-function connect() {
+async function connect() {
     const config: LiveConfig = {
         model: 'models/gemini-2.0-flash-exp',
         generationConfig: {
@@ -74,7 +74,7 @@ function connect() {
             ],
         },
     }
-    client.connect(config)
+    await client.connect(config)
     isConnected.value = true
 
     // Initialize AudioStream
@@ -106,7 +106,7 @@ async function initAudioStream() {
 async function toggleRecording() {
     // Verify if the websocket is still running
     if (!isConnected.value) {
-        connect()
+        await connect()
     }
 
     if (!isRecording.value) {
@@ -141,15 +141,15 @@ async function toggleRecording() {
     }
 }
 
-function updateConfig() {
+async function updateConfig() {
     disconnect()
-    connect()
+    await connect()
 }
 
-function updateVoiceName(newVoiceName: VoiceName) {
+async function updateVoiceName(newVoiceName: VoiceName) {
     console.log(`Update voice to ${newVoiceName}`)
     voiceName.value = newVoiceName
-    updateConfig()
+    await updateConfig()
 }
 
 /*
@@ -159,16 +159,17 @@ function updateResponseModalities(newResponseModalities: ResponseModalities) {
     updateConfig()
 }*/
 
-function updateSystemInstructions(newSystemInstruction: string) {
+async function updateSystemInstructions(newSystemInstruction: string) {
     console.log(`Update system instructions to ${newSystemInstruction}`)
     systemInstruction.value = newSystemInstruction
-    updateConfig()
+    await updateConfig()
 }
 
-function updatePrompt(newPrompt: string) {
+async function updatePrompt(newPrompt: string) {
     // Verify if the websocket is still running
+    console.log('Update Prompt', newPrompt)
     if (!isConnected.value) {
-        connect()
+        await connect()
     }
 
     isPromptInitialized.value = true
@@ -180,8 +181,8 @@ function updatePrompt(newPrompt: string) {
     ])
 }
 
-function handleInterrupt() {
-    updatePrompt('Gemini, stop.')
+async function handleInterrupt() {
+    await updatePrompt('Gemini, stop.')
 }
 
 client.on('open', () => {
@@ -210,7 +211,7 @@ client.on('setupcomplete', () => {
 })
 
 client.on('audio', async (data: ArrayBuffer) => {
-    console.log('Audio Received')
+    // console.log('Audio Received')
     try {
         await initAudioStream()
         audioStreamer.value?.addPCM16(new Uint8Array(data))
@@ -254,10 +255,7 @@ defineExpose({
 
 <template>
     <div class="flex flex-col flex-1">
-        <div
-            v-if="!isPromptInitialized"
-            class="flex flex-col justify-center items-center size-full px-10 text-center"
-        >
+        <div v-if="!isPromptInitialized" class="flex flex-col justify-center items-center size-full px-10 text-center">
             <div class="w-full mb-5 mt-14">
                 <h2 class="text-2xl font-bold">Select a topic</h2>
                 <hr class="my-3 border-black opacity-40 w-3/4 mx-auto" />
@@ -271,18 +269,10 @@ defineExpose({
                 <h3></h3>
             </div>
             <div class="flex justify-center items-center gap-10 py-10 px-4">
-                <ButtonMicrophone
-                    class="z-[2]"
-                    :isRecording="isRecording"
-                    :inputVolume="inputVolume"
-                    @click="toggleRecording"
-                />
-                <ButtonGeminiSpeaker
-                    :volume="volume"
-                    :isResponding="isResponding"
-                    :isAudio="true"
-                    @interrupt="handleInterrupt"
-                />
+                <ButtonMicrophone class="z-[2]" :isRecording="isRecording" :inputVolume="inputVolume"
+                    @click="toggleRecording" />
+                <ButtonGeminiSpeaker :volume="volume" :isResponding="isResponding" :isAudio="true"
+                    @interrupt="handleInterrupt" />
             </div>
         </div>
     </div>

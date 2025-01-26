@@ -143,7 +143,7 @@ onMounted(async () => {
     const tabs = new Tabs(tabsElement, tabElements, options, instanceOptions)
 })
 
-function handlePlay(selection: { topic: string; level: string }) {
+function handlePlay(selection: { topic: ITopic; level: string }) {
     const language = languages.value.find((l) => l._id === selectedLanguage.value)
     const style = styles.value.find((s) => s._id === selectedStyle.value)
 
@@ -160,49 +160,28 @@ function handlePlay(selection: { topic: string; level: string }) {
     <div class="flex flex-col flex-1">
         <div class="flex flex-col h-full">
             <div class="border-b flex justify-center">
-                <ul
-                    class="flex flex-wrap -mb-px pt-4 text-sm font-medium text-center gap-2"
-                    id="default-styled-tab"
+                <ul class="flex flex-wrap -mb-px pt-4 text-sm font-medium text-center gap-2" id="default-styled-tab"
                     data-tabs-toggle="#default-styled-tab-content"
                     data-tabs-active-classes="text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-500 border-purple-600 dark:border-purple-500"
                     data-tabs-inactive-classes="dark:border-transparent text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300"
-                    role="tablist"
-                >
+                    role="tablist">
                     <li role="presentation">
-                        <button
-                            id="topics-styled-tab"
-                            data-tabs-target="#styled-topics"
-                            type="button"
-                            role="tab"
-                            aria-controls="topics"
-                            aria-selected="false"
-                        >
+                        <button id="topics-styled-tab" data-tabs-target="#styled-topics" type="button" role="tab"
+                            aria-controls="topics" aria-selected="false">
                             <IconSwatchbook class="icon" />
                             Topics
                         </button>
                     </li>
                     <li role="presentation">
-                        <button
-                            id="favorites-styled-tab"
-                            data-tabs-target="#styled-favorites"
-                            type="button"
-                            role="tab"
-                            aria-controls="favorites"
-                            aria-selected="false"
-                        >
+                        <button id="favorites-styled-tab" data-tabs-target="#styled-favorites" type="button" role="tab"
+                            aria-controls="favorites" aria-selected="false">
                             <IconHeartFull class="icon" />
                             Favorites
                         </button>
                     </li>
                     <li role="presentation">
-                        <button
-                            id="custom-styled-tab"
-                            data-tabs-target="#styled-custom"
-                            type="button"
-                            role="tab"
-                            aria-controls="custom"
-                            aria-selected="false"
-                        >
+                        <button id="custom-styled-tab" data-tabs-target="#styled-custom" type="button" role="tab"
+                            aria-controls="custom" aria-selected="false">
                             <IconEdit class="icon" />
                             Custom
                         </button>
@@ -210,28 +189,16 @@ function handlePlay(selection: { topic: string; level: string }) {
                 </ul>
             </div>
             <div id="default-styled-tab-content" class="flex flex-col flex-1 min-h-0">
-                <div
-                    class="rounded-lg flex flex-col h-full py-3"
-                    id="styled-topics"
-                    role="tabpanel"
-                    aria-labelledby="topics-tab"
-                >
+                <div class="rounded-lg flex flex-col h-full py-3" id="styled-topics" role="tabpanel"
+                    aria-labelledby="topics-tab">
                     <SelectionTopics @selection="handlePlay" ref="topics" />
                 </div>
-                <div
-                    class="rounded-lg flex flex-col h-full py-3"
-                    id="styled-favorites"
-                    role="tabpanel"
-                    aria-labelledby="favorites-tab"
-                >
+                <div class="rounded-lg flex flex-col h-full py-3" id="styled-favorites" role="tabpanel"
+                    aria-labelledby="favorites-tab">
                     <SelectionFavorites @selection="handlePlay" ref="favorites" />
                 </div>
-                <div
-                    class="rounded-lg flex flex-col h-full py-3"
-                    id="styled-custom"
-                    role="tabpanel"
-                    aria-labelledby="custom-tab"
-                >
+                <div class="rounded-lg flex flex-col h-full py-3" id="styled-custom" role="tabpanel"
+                    aria-labelledby="custom-tab">
                     <SelectionCustom @selection="handlePlay" ref="custom" />
                 </div>
             </div>
@@ -260,6 +227,7 @@ function handlePlay(selection: { topic: string; level: string }) {
 button[role='tab'] {
     @apply inline-flex items-center p-4 border-b-2 rounded-t-lg;
 }
+
 .icon {
     @apply me-2 md:hidden lg:block;
 }

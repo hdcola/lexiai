@@ -36,10 +36,12 @@ async function fetchTopics() {
         )
 
         topics.value = topicsResponse.data.map(
-            (topic: { _id: { $oid: string }; title: string; level: string }) => ({
+            (topic: { _id: { $oid: string }; title: string; level: string; systemPrompt: string; start: string }) => ({
                 _id: topic._id.$oid,
                 title: topic.title,
                 level: topic.level,
+                systemPrompt: topic.systemPrompt,
+                start: topic.start,
                 isFavorite: topic._id.$oid in favorites,
             }),
         )
@@ -60,7 +62,7 @@ function handlePlay(topic: ITopic) {
 
     // Emit to Gemini the full selection
     emit('selection', {
-        topic: selectedTopic.value.title,
+        topic: selectedTopic.value,
         level:
             selectedLevel.value == 'Beginner'
                 ? 'a beginner, tell me what to say but take it slow'
@@ -100,30 +102,19 @@ defineExpose({
         </select>
     </div>
     <ul class="flex-1 overflow-y-auto px-4">
-        <li
-            v-for="topic in topics"
-            :key="topic._id"
-            class="bg-white p-3 px-4 rounded-lg shadow-md mx-auto mb-4"
-        >
+        <li v-for="topic in topics" :key="topic._id" class="bg-white p-3 px-4 rounded-lg shadow-md mx-auto mb-4">
             <div class="flex flex-row gap-4 items-center">
                 <div class="flex-grow">
                     {{ topic.title }}
                 </div>
 
-                <ButtonFavorite
-                    :class="{ 'btn-toggle': !topic.isFavorite }"
-                    :isFavorite="topic.isFavorite"
-                    @favorite="handleFavorite(topic)"
-                />
+                <ButtonFavorite :class="{ 'btn-toggle': !topic.isFavorite }" :isFavorite="topic.isFavorite"
+                    @favorite="handleFavorite(topic)" />
 
                 <button type="button" class="topic-play" @click="handlePlay(topic)">
-                    <div
-                        class="flex justify-center items-center rounded-full p-1"
-                        :class="[topic.isSelected ? 'bg-green-100 selected' : 'bg-orange-100']"
-                    >
-                        <IconPlay
-                            :class="[topic.isSelected ? 'text-green-500' : 'text-orange-500']"
-                        />
+                    <div class="flex justify-center items-center rounded-full p-1"
+                        :class="[topic.isSelected ? 'bg-green-100 selected' : 'bg-orange-100']">
+                        <IconPlay :class="[topic.isSelected ? 'text-green-500' : 'text-orange-500']" />
                     </div>
                 </button>
             </div>
