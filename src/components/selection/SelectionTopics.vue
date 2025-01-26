@@ -6,6 +6,7 @@ import IconPlay from '../images/icons/IconPlay.vue'
 import type { ITopic } from '../GeminiSelection.vue'
 import { useUserStore } from '@/stores/user'
 import { useJWTStore } from '@/stores/jwt'
+import { serverRequest } from '../settings/serverRequest'
 
 const emit = defineEmits(['selection'])
 const userStore = useUserStore()
@@ -23,17 +24,20 @@ const selectedLevel = ref<string>('Beginner')
 const selectedTopic = ref<ITopic | null>(null)
 
 async function fetchTopics() {
-    const jwtStore = useJWTStore()
-    const token = jwtStore.getToken()
+    /* const jwtStore = useJWTStore()
+    const token = jwtStore.getToken() */
     try {
-        const topicsResponse = await axios.get(
+       /*  const topicsResponse = await axios.get(
             `${apiUrl}:${apiPort}/api/topics?level=${selectedLevel.value}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             },
-        )
+        ) */
+
+        const topicsResponse = await serverRequest('get', `/api/topics?level=${selectedLevel.value}`);
+
 
         topics.value = topicsResponse.data.map(
             (topic: { _id: { $oid: string }; title: string; level: string; systemPrompt: string; start: string }) => ({

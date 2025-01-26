@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { useJWTStore } from './jwt';
 import axios from 'axios';
 import type { VoiceName } from '@/lib/gemini/config/config-types';
+import { serverRequest } from '@/components/settings/serverRequest';
 
 const apiUrl = import.meta.env.VITE_API_URL
 const apiPORT = import.meta.env.VITE_API_PORT
@@ -81,31 +82,53 @@ export const useUserStore = defineStore('userSet', {
             return { ... this.settings }
         },
         async saveLanguage(languageId: string, styleId: string) {
-            const jwtStore = useJWTStore();
-            const token = jwtStore.getToken();
+            /* 
+              const jwtStore = useJWTStore();
+              const token = jwtStore.getToken();
+  
+              try {
+                   const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/settings`, {
+                       settings: {
+                           language_id: languageId,
+                           style_id: styleId,
+                       }
+                   }, {
+                       headers: {
+                           Authorization: `Bearer ${token}`,
+                       }
+                   }); 
+                 
+  
+  
+                  if (response.status === 200) {
+                      console.log('Language updated successfully:', response.data);
+                      this.settings.language_id = languageId; // Update language in store
+                      this.settings.style_id = styleId;
+                  } else {
+                      console.log('Error updating language:', response);
+                  }
+              } catch (error) {
+                  console.error('Error updating language:', error);
+              }
+  
+              */
 
             try {
-                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/settings`, {
+                const response = await serverRequest('patch', '/api/users/settings', {
                     settings: {
                         language_id: languageId,
                         style_id: styleId,
-                    }
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
+                    },
                 });
 
-                if (response.status === 200) {
-                    console.log('Language updated successfully:', response.data);
-                    this.settings.language_id = languageId; // Update language in store
-                    this.settings.style_id = styleId;
-                } else {
-                    console.log('Error updating language:', response);
-                }
+                console.log('Language updated successfully:', response.data);
+                this.settings.language_id = languageId; // Update language in store
+                this.settings.style_id = styleId;
             } catch (error) {
-                console.error('Error updating language:', error);
+                console.error('Failed to update settings:', error);
             }
+
+
         },
         async toggleFavorite(topicId: string, isFavorite: boolean) {
 
@@ -124,7 +147,7 @@ export const useUserStore = defineStore('userSet', {
                 // Save to user
                 if (isFavorite) {
                     this.favorites[topicId] = isFavorite;
-                } 
+                }
                 else {
                     delete this.favorites[topicId]
                 }
