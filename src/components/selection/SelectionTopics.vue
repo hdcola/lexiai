@@ -26,7 +26,7 @@ async function fetchTopics() {
             `/api/topics?level=${selectedLevel.value}`,
         )
 
-        topics.value = topicsResponse.data.map(
+        topics.value = topicsResponse?.data.map(
             (topic: {
                 _id: { $oid: string }
                 title: string

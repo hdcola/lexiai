@@ -77,6 +77,8 @@ const onSubmit = async () => {
                 start: start.value,
             });
 
+        console.log(response);
+
     } catch (error) {
         if (error instanceof Yup.ValidationError) {
             error.inner.forEach((err) => {

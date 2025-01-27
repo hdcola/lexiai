@@ -48,12 +48,12 @@ export const useUserStore = defineStore('userSet', {
             try {
                 const response = await useServerRequest('get', '/api/users/settings');
 
-                if (response.data && response.data.settings) {
-                    this.settings = response.data.settings;
+                if (response?.data && response?.data.settings) {
+                    this.settings = response?.data.settings;
                     if (this.settings.favorites) {
                         this.favorites = this.settings.favorites;
                     }
-                    console.log("Settings retrieved:", response.data.settings);
+                    console.log("Settings retrieved:", response?.data.settings);
                 } else {
                     console.log("Settings are not set up.");
                 }
@@ -73,7 +73,7 @@ export const useUserStore = defineStore('userSet', {
                     },
                 });
 
-                console.log('Language updated successfully:', response.data);
+                console.log('Language updated successfully:', response?.data);
                 this.settings.language_id = languageId; // Update language in store
                 this.settings.style_id = styleId;
             } catch (error) {
@@ -117,7 +117,7 @@ export const useUserStore = defineStore('userSet', {
                         apiKey: apiKey,
                     }
                 });
-                if (response.status === 200 && response.data.settings) {
+                if (response?.status === 200 && response.data.settings) {
                     console.log("Lexi settings successfully updated on the server:", response.data.settings);
 
                     // Save to user
@@ -144,11 +144,11 @@ export const useUserStore = defineStore('userSet', {
                     email: email,
                 });
 
-                console.log("User profile successfully updated on the server:", response.data);
+                console.log("User profile successfully updated on the server:", response?.data);
 
                 // Save to user
-                this.user.username = response.data.username;
-                this.user.email = response.data.email;
+                this.user.username = response?.data.username;
+                this.user.email = response?.data.email;
 
             } catch (error) {
                 console.error("Error updating profile:", error);
@@ -167,7 +167,7 @@ export const useUserStore = defineStore('userSet', {
                     password: password,
                 });
 
-                if (response.status === 200 && response.data.user) {
+                if (response?.status === 200 && response.data.user) {
                     console.log("User new password successfully saved on the server:", response.data.user);
                 } else {
                     console.log("Unexpected response when saving a new password:", response);

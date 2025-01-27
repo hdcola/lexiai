@@ -83,14 +83,14 @@ async function fetchOptions() {
             await useServerRequest('get', `/api/topics?level=${userLevel}`),
             await useServerRequest('get', '/api/styles'),
         ])
-        languages.value = languagesResponse.data.map(
+        languages.value = languagesResponse?.data.map(
             (lang: { _id: { $oid: string }; name: string }) => ({
                 _id: lang._id.$oid, //extract $oid as _id
                 name: lang.name,
             }),
         )
 
-        topics.value = topicsResponse.data.map(
+        topics.value = topicsResponse?.data.map(
             (topic: { _id: string; title: string; level: string }) => ({
                 _id: topic._id,
                 title: topic.title,
@@ -98,7 +98,7 @@ async function fetchOptions() {
             }),
         )
 
-        styles.value = stylesResponse.data.map(
+        styles.value = stylesResponse?.data.map(
             (st: { _id: { $oid: string }; name: string; description: string }) => ({
                 _id: st._id.$oid, // extract $oid as _id
                 name: st.name,
@@ -114,7 +114,7 @@ async function fetchNewTopics() {
     try {
         if (selectedLanguage.value && selectedLevel.value) {
             const response = await useServerRequest('get', `/api/topics?level=${selectedLevel.value}`);
-            topics.value = response.data.map(
+            topics.value = response?.data.map(
                 (topic: { _id: string; title: string; level: string }) => ({
                     _id: topic._id,
                     title: topic.title,

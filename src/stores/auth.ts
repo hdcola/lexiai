@@ -31,7 +31,7 @@ export const useAuthStore = defineStore('auth', {
 
                 // Save user info to user
                 const userStore = useUserStore();
-                userStore.saveUser(response.data.user)
+                userStore.saveUser(response?.data.user)
 
                 return true;
             }
@@ -39,6 +39,8 @@ export const useAuthStore = defineStore('auth', {
                 if (axios.isAxiosError(error)) {
                     if (error.status === 401) {
                         console.error('Token is invalid');
+                        
+                        const jwtStore = useJWTStore();
                         jwtStore.deleteToken();
                         return false;
                     }
@@ -55,7 +57,7 @@ export const useAuthStore = defineStore('auth', {
                     password: password
                 })
 
-                const newToken = response.data.accessToken
+                const newToken = response?.data.accessToken
                 const jwtStore = useJWTStore()
 
                 // Save token
@@ -65,7 +67,7 @@ export const useAuthStore = defineStore('auth', {
                 this.isLoggedIn = true;
 
                 const userStore = useUserStore();
-                userStore.saveUser(response.data.user);
+                userStore.saveUser(response?.data.user);
 
                 // redirect to home
                 setTimeout(() => router.push('/lexiai'), 2000)
@@ -90,7 +92,7 @@ export const useAuthStore = defineStore('auth', {
                     password,
                 })
 
-                console.log('Registration successful:', response.data)
+                console.log('Registration successful:', response?.data)
 
                 setTimeout(() => router.push('/login'), 2000) // Redirect after 3 seconds
 

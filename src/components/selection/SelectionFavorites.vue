@@ -18,7 +18,7 @@ async function fetchTopics() {
     try {
         const topicsResponse = await useServerRequest('get', '/api/users/favorites');
 
-        topics.value = topicsResponse.data.map(
+        topics.value = topicsResponse?.data.map(
             (topic: { _id: { $oid: string }; title: string; level: string }) => ({
                 _id: topic._id.$oid,
                 title: topic.title,
