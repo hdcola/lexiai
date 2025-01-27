@@ -25,6 +25,12 @@ export const useAuthStore = defineStore('auth', {
             return this.isLoggedIn;
         },
         async isValidToken(): Promise<boolean> {
+            const jwtStore = useJWTStore();
+            const token = jwtStore.getToken();
+            if (!token) {
+                return false;
+            }
+            
             try {            
                 const response = await useServerRequest('get', '/api/jwt/validate');
                 console.log('Token is valid');
@@ -40,7 +46,6 @@ export const useAuthStore = defineStore('auth', {
                     if (error.status === 401) {
                         console.error('Token is invalid');
                         
-                        const jwtStore = useJWTStore();
                         jwtStore.deleteToken();
                         return false;
                     }
