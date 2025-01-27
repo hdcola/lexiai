@@ -3,14 +3,7 @@ import { ref } from 'vue'
 import * as Yup from 'yup'
 import { IconPlay, IconClose } from '@/components/images/icons'
 import type { ITopic } from '../GeminiSelection.vue'
-import axios from 'axios'
-import { useJWTStore } from '@/stores/jwt'
-
-// environmental variables
-const apiUrl = import.meta.env.VITE_API_URL
-const apiPort = import.meta.env.VITE_API_PORT
-const jwtStore = useJWTStore()
-const token = jwtStore.getToken()
+import { useServerRequest } from '@/assets/composables/useServerRequest';
 
 const emit = defineEmits(['selection'])
 
@@ -76,21 +69,16 @@ const onSubmit = async () => {
             { abortEarly: false },
         )
         // Save to server
-        const response = await axios.post(
-            `${apiUrl}:${apiPort}/api/topics`,
-            {
+        const response = await useServerRequest('post', '/api/topics',  {
                 title: topic.value,
                 description: description.value,
                 level: 'Custom',
                 systemPrompt: role.value,
                 start: start.value,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
-        )
+            });
+
+        console.log(response);
+
     } catch (error) {
         if (error instanceof Yup.ValidationError) {
             error.inner.forEach((err) => {

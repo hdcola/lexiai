@@ -1,34 +1,24 @@
 <script setup lang="ts">
-import axios from 'axios'
 import { onMounted, ref } from 'vue'
 import ButtonFavorite from '../ButtonFavorite.vue'
 import IconPlay from '../images/icons/IconPlay.vue'
 import type { ITopic } from '../GeminiSelection.vue'
 import { useUserStore } from '@/stores/user'
-import { useJWTStore } from '@/stores/jwt'
+import { useServerRequest } from '@/assets/composables/useServerRequest';
 
 const emit = defineEmits(['selection'])
 const userStore = useUserStore()
 const favorites = userStore.getFavorites()
 
-// environmental variables
-const apiUrl = import.meta.env.VITE_API_URL
-const apiPort = import.meta.env.VITE_API_PORT
-const jwtStore = useJWTStore()
-const token = jwtStore.getToken()
 
 const topics = ref<ITopic[]>([])
 const selectedTopic = ref<ITopic | null>(null)
 
 async function fetchTopics() {
     try {
-        const topicsResponse = await axios.get(`${apiUrl}:${apiPort}/api/users/favorites`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
+        const topicsResponse = await useServerRequest('get', '/api/users/favorites');
 
-        topics.value = topicsResponse.data.map(
+        topics.value = topicsResponse?.data.map(
             (topic: { _id: { $oid: string }; title: string; level: string }) => ({
                 _id: topic._id.$oid,
                 title: topic.title,
