@@ -3,11 +3,7 @@ import { useJWTStore } from './jwt';
 import router from '@/router';
 import axios from 'axios';
 import { useUserStore } from './user';
-
-
-const apiUrl = import.meta.env.VITE_API_URL
-const apiPORT = import.meta.env.VITE_API_PORT
-
+import { useServerRequest } from '@/assets/composables/useServerRequest';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -20,7 +16,7 @@ export const useAuthStore = defineStore('auth', {
                     const isValid = await this.isValidToken();
                     this.isLoggedIn = isValid;
                     console.log("Token is valid?", isValid)
-    
+
                 } catch (error) {
                     console.error("Validating token:", error);
                     this.isLoggedIn = false;
@@ -29,21 +25,8 @@ export const useAuthStore = defineStore('auth', {
             return this.isLoggedIn;
         },
         async isValidToken(): Promise<boolean> {
-            const jwtStore = useJWTStore();
-            const token = jwtStore.getToken();
-
-            if (!token) {
-                console.error('Token is missing.');
-                return false;
-            }
-            
-            try {
-                const response = await axios.get(`${apiUrl}:${apiPORT}/api/jwt/validate`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                });
-
+            try {            
+                const response = await useServerRequest('get', '/api/jwt/validate');
                 console.log('Token is valid');
 
                 // Save user info to user
@@ -52,7 +35,7 @@ export const useAuthStore = defineStore('auth', {
 
                 return true;
             }
-            catch(error) {
+            catch (error) {
                 if (axios.isAxiosError(error)) {
                     if (error.status === 401) {
                         console.error('Token is invalid');
@@ -67,7 +50,7 @@ export const useAuthStore = defineStore('auth', {
 
 
             try {
-                const response = await axios.post(`${apiUrl}:${apiPORT}/api/users/login`, {
+                const response = await useServerRequest('post', '/api/users/login', {
                     email: email,
                     password: password
                 })
@@ -101,7 +84,7 @@ export const useAuthStore = defineStore('auth', {
         async register(username: string, email: string, password: string) {
 
             try {
-                const response = await axios.post(`${apiUrl}:${apiPORT}/api/users/register`, {
+                const response = await useServerRequest('post', '/api/users/register', {
                     username,
                     email,
                     password,

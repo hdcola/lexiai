@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import axios from 'axios'
 import { onMounted, ref, useTemplateRef, watch } from 'vue'
 import { IconEdit, IconHeartFull, IconSwatchbook } from '@/components/images/icons'
 import { SelectionTopics, SelectionFavorites, SelectionCustom } from '@/components/selection'
 import { useUserStore } from '@/stores/user'
 import { initTabs, Tabs } from 'flowbite'
 import type { TabsOptions, TabsInterface, TabItem, InstanceOptions } from 'flowbite'
+import { useServerRequest } from '@/assets/composables/useServerRequest'
+
 
 const userStore = useUserStore()
 
@@ -32,11 +33,6 @@ export type ITopic = {
     isSelected?: boolean
     isFavorite?: boolean
 }
-
-// environmental variables
-const apiUrl = import.meta.env.VITE_API_URL
-const apiPort = import.meta.env.VITE_API_PORT
-
 const emit = defineEmits(['selection'])
 
 const selectedTab = ref<TabItem>()
@@ -69,8 +65,8 @@ function handleLanguageChange() {
 async function fetchOptions() {
     try {
         const [languagesResponse, stylesResponse] = await Promise.all([
-            axios.get(`${apiUrl}:${apiPort}/api/languages`),
-            axios.get(`${apiUrl}:${apiPort}/api/styles`),
+            useServerRequest('get', '/api/languages'),
+            useServerRequest('get', '/api/styles'),
         ])
 
         languages.value = languagesResponse.data.map(

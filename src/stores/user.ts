@@ -1,11 +1,7 @@
 import { defineStore } from 'pinia'
-import { useJWTStore } from './jwt';
-import axios from 'axios';
 import type { VoiceName } from '@/lib/gemini/config/config-types';
 import { useServerRequest } from '@/assets/composables/useServerRequest';
 
-const apiUrl = import.meta.env.VITE_API_URL
-const apiPORT = import.meta.env.VITE_API_PORT
 
 type User = {
     email: string;
@@ -49,21 +45,8 @@ export const useUserStore = defineStore('userSet', {
             return { ...this.user };
         },
         async fetchUserSettings() {
-            const jwtStore = useJWTStore();
-            const token = jwtStore.getToken();
-            if (!token) {
-                console.log("No token found for fetchUserSettings. User is not logged in.");
-                return;
-            } else {
-                console.log("fetchUserSettings function. User is logged in.", token);
-            }
-
             try {
-                const response = await axios.get(`${apiUrl}:${apiPORT}/api/users/settings`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                });
+                const response = await useServerRequest('get', '/api/users/settings');
 
                 if (response.data && response.data.settings) {
                     this.settings = response.data.settings;
@@ -82,37 +65,6 @@ export const useUserStore = defineStore('userSet', {
             return { ... this.settings }
         },
         async saveLanguage(languageId: string, styleId: string) {
-            /* 
-              const jwtStore = useJWTStore();
-              const token = jwtStore.getToken();
-  
-              try {
-                   const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/settings`, {
-                       settings: {
-                           language_id: languageId,
-                           style_id: styleId,
-                       }
-                   }, {
-                       headers: {
-                           Authorization: `Bearer ${token}`,
-                       }
-                   }); 
-                 
-  
-  
-                  if (response.status === 200) {
-                      console.log('Language updated successfully:', response.data);
-                      this.settings.language_id = languageId; // Update language in store
-                      this.settings.style_id = styleId;
-                  } else {
-                      console.log('Error updating language:', response);
-                  }
-              } catch (error) {
-                  console.error('Error updating language:', error);
-              }
-  
-              */
-
             try {
                 const response = await useServerRequest('patch', '/api/users/settings', {
                     settings: {
@@ -132,16 +84,9 @@ export const useUserStore = defineStore('userSet', {
         },
         async toggleFavorite(topicId: string, isFavorite: boolean) {
 
-            const jwtStore = useJWTStore();
-            const token = jwtStore.getToken();
-
             try {
-                await axios.patch(`${apiUrl}:${apiPORT}/api/users/favorites`, {
+                await useServerRequest('patch', '/api/users/favorites', {
                     favorites: { [topicId]: isFavorite }
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
                 });
 
                 // Save to user
@@ -162,22 +107,16 @@ export const useUserStore = defineStore('userSet', {
         async saveLexiSettings(voiceName: VoiceName, apiKey: string) {
 
             // Save to server
-            const jwtStore = useJWTStore();
-            const token = jwtStore.getToken();
+
 
             try {
                 // Send API request to update settings
-                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/settings`, {
+                const response = await useServerRequest('patch', '/api/users/settings', {
                     settings: {
                         voiceName: voiceName,
                         apiKey: apiKey,
                     }
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
                 });
-
                 if (response.status === 200 && response.data.settings) {
                     console.log("Lexi settings successfully updated on the server:", response.data.settings);
 
@@ -197,18 +136,12 @@ export const useUserStore = defineStore('userSet', {
         async saveProfileSettings(username: string, email: string) {
 
             // Save to server
-            const jwtStore = useJWTStore();
-            const token = jwtStore.getToken();
 
             try {
                 // Send API request to update settings
-                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/update`, {
+                const response = await useServerRequest('patch', '/api/users/update', {
                     username: username,
                     email: email,
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
                 });
 
                 console.log("User profile successfully updated on the server:", response.data);
@@ -228,17 +161,10 @@ export const useUserStore = defineStore('userSet', {
         async saveSecuritySettings(password: string) {
 
             // Save to server 
-            const jwtStore = useJWTStore();
-            const token = jwtStore.getToken();
-
             try {
                 // Send API request to update settings
-                const response = await axios.patch(`${apiUrl}:${apiPORT}/api/users/security`, {
+                const response = await useServerRequest('patch', '/api/users/security', {
                     password: password,
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
                 });
 
                 if (response.status === 200 && response.data.user) {

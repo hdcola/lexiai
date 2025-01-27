@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import axios from 'axios'
 import { onMounted, ref } from 'vue'
 import ButtonFavorite from '../ButtonFavorite.vue'
 import IconPlay from '../images/icons/IconPlay.vue'
@@ -20,17 +19,7 @@ const selectedLevel = ref<string>('Beginner')
 const selectedTopic = ref<ITopic | null>(null)
 
 async function fetchTopics() {
-    /* const jwtStore = useJWTStore()
-    const token = jwtStore.getToken() */
     try {
-        /*  const topicsResponse = await axios.get(
-            `${apiUrl}:${apiPort}/api/topics?level=${selectedLevel.value}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
-        ) */
 
         const topicsResponse = await useServerRequest(
             'get',
