@@ -69,14 +69,14 @@ async function fetchOptions() {
             useServerRequest('get', '/api/styles'),
         ])
 
-        languages.value = languagesResponse.data.map(
+        languages.value = languagesResponse?.data.map(
             (lang: { _id: { $oid: string }; name: string }) => ({
                 _id: lang._id.$oid, //extract $oid as _id
                 name: lang.name,
             }),
         )
 
-        styles.value = stylesResponse.data.map(
+        styles.value = stylesResponse?.data.map(
             (st: { _id: { $oid: string }; name: string; description: string }) => ({
                 _id: st._id.$oid, // extract $oid as _id
                 name: st.name,
