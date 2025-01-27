@@ -7,7 +7,6 @@ import { initTabs, Tabs } from 'flowbite'
 import type { TabsOptions, TabsInterface, TabItem, InstanceOptions } from 'flowbite'
 import { useServerRequest } from '@/assets/composables/useServerRequest'
 
-
 const userStore = useUserStore()
 
 // types needed to convert string id to ObjectId(id)
@@ -23,18 +22,22 @@ export type IStyle = {
 }
 
 export type ITopic = {
-    _id: string
+    id: string
+    _id: { $oid: string }
     title: string
-    description?: string
+    description: string
     level: string
-    systemPrompt?: string
-    start?: string
-    createdAt?: string
+    systemPrompt: string
+    start: string
+    createdAt: string
+    user_id: { $oid: string }
     isSelected?: boolean
     isFavorite?: boolean
+    canEdit?: boolean
 }
 const emit = defineEmits(['selection'])
 
+let tabs: TabsInterface
 const selectedTab = ref<TabItem>()
 const refs: Record<string, any> = {
     topics: useTemplateRef('topics'),
@@ -60,6 +63,11 @@ const selectedStyle = ref<string>('6785601479bc79eeab784ffe')
 
 function handleLanguageChange() {
     userStore.saveLanguage(selectedLanguage.value, selectedStyle.value)
+}
+
+function handleEdit(topic: ITopic) {
+    refs.custom.value.edit(topic)
+    tabs.show('custom')
 }
 
 async function fetchOptions() {
@@ -119,6 +127,10 @@ onMounted(async () => {
     // options with default values
     const options: TabsOptions = {
         defaultTabId: 'topics',
+        activeClasses:
+            'text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-500 border-purple-600 dark:border-purple-500',
+        inactiveClasses:
+            'dark:border-transparent text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300',
         onShow: (tabs: TabsInterface, tab: TabItem) => {
             selectedTab.value = tab
         },
@@ -136,7 +148,9 @@ onMounted(async () => {
      * options (optional)
      * instanceOptions (optional)
      */
-    const tabs = new Tabs(tabsElement, tabElements, options, instanceOptions)
+    tabs = new Tabs(tabsElement, tabElements, options, instanceOptions)
+
+    tabs.show('topics')
 })
 
 function handlePlay(selection: { topic: ITopic; level: string }) {
@@ -156,28 +170,47 @@ function handlePlay(selection: { topic: ITopic; level: string }) {
     <div class="flex flex-col flex-1">
         <div class="flex flex-col h-full">
             <div class="border-b flex justify-center">
-                <ul class="flex flex-wrap -mb-px pt-4 text-sm font-medium text-center gap-2" id="default-styled-tab"
+                <ul
+                    class="flex flex-wrap -mb-px pt-4 text-sm font-medium text-center gap-2"
+                    id="default-styled-tab"
                     data-tabs-toggle="#default-styled-tab-content"
-                    data-tabs-active-classes="text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-500 border-purple-600 dark:border-purple-500"
-                    data-tabs-inactive-classes="dark:border-transparent text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300"
-                    role="tablist">
+                    role="tablist"
+                >
                     <li role="presentation">
-                        <button id="topics-styled-tab" data-tabs-target="#styled-topics" type="button" role="tab"
-                            aria-controls="topics" aria-selected="false">
+                        <button
+                            id="topics-styled-tab"
+                            data-tabs-target="#styled-topics"
+                            type="button"
+                            role="tab"
+                            aria-controls="topics"
+                            aria-selected="false"
+                        >
                             <IconSwatchbook class="icon" />
                             Topics
                         </button>
                     </li>
                     <li role="presentation">
-                        <button id="favorites-styled-tab" data-tabs-target="#styled-favorites" type="button" role="tab"
-                            aria-controls="favorites" aria-selected="false">
+                        <button
+                            id="favorites-styled-tab"
+                            data-tabs-target="#styled-favorites"
+                            type="button"
+                            role="tab"
+                            aria-controls="favorites"
+                            aria-selected="false"
+                        >
                             <IconHeartFull class="icon" />
                             Favorites
                         </button>
                     </li>
                     <li role="presentation">
-                        <button id="custom-styled-tab" data-tabs-target="#styled-custom" type="button" role="tab"
-                            aria-controls="custom" aria-selected="false">
+                        <button
+                            id="custom-styled-tab"
+                            data-tabs-target="#styled-custom"
+                            type="button"
+                            role="tab"
+                            aria-controls="custom"
+                            aria-selected="false"
+                        >
                             <IconEdit class="icon" />
                             Custom
                         </button>
@@ -185,16 +218,28 @@ function handlePlay(selection: { topic: ITopic; level: string }) {
                 </ul>
             </div>
             <div id="default-styled-tab-content" class="flex flex-col flex-1 min-h-0">
-                <div class="rounded-lg flex flex-col h-full py-3" id="styled-topics" role="tabpanel"
-                    aria-labelledby="topics-tab">
-                    <SelectionTopics @selection="handlePlay" ref="topics" />
+                <div
+                    class="rounded-lg flex flex-col h-full py-3"
+                    id="styled-topics"
+                    role="tabpanel"
+                    aria-labelledby="topics-tab"
+                >
+                    <SelectionTopics @selection="handlePlay" @edit="handleEdit" ref="topics" />
                 </div>
-                <div class="rounded-lg flex flex-col h-full py-3" id="styled-favorites" role="tabpanel"
-                    aria-labelledby="favorites-tab">
+                <div
+                    class="rounded-lg flex flex-col h-full py-3"
+                    id="styled-favorites"
+                    role="tabpanel"
+                    aria-labelledby="favorites-tab"
+                >
                     <SelectionFavorites @selection="handlePlay" ref="favorites" />
                 </div>
-                <div class="rounded-lg flex flex-col h-full py-3" id="styled-custom" role="tabpanel"
-                    aria-labelledby="custom-tab">
+                <div
+                    class="rounded-lg flex flex-col h-full py-3"
+                    id="styled-custom"
+                    role="tabpanel"
+                    aria-labelledby="custom-tab"
+                >
                     <SelectionCustom @selection="handlePlay" ref="custom" />
                 </div>
             </div>
