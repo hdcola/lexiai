@@ -21,9 +21,7 @@ const schema = Yup.object().shape({
 })
 
 function onActivated() {
-    errors.value = {}
-    errorMessage.value = ''
-    successMessage.value = ''
+    resetState()
 }
 
 function edit(currentTopic: ITopic) {
@@ -58,10 +56,22 @@ function handleChange(event: Event) {
     errors.value[el.name] = ''
 }
 
-const onSubmit = async () => {
-    errors.value = {}
+function handleReset() {
+    if (MODE === 'edit') {
+        MODE = 'add'
+        topic.value = {} as ITopic
+        resetState()
+    }
+}
+
+function resetState() {
     errorMessage.value = ''
     successMessage.value = ''
+    errors.value = {}
+}
+
+const onSubmit = async () => {
+    resetState()
 
     try {
         await schema.validate(
@@ -168,8 +178,8 @@ defineExpose({
                         <IconPlay class="-ms-2 me-2" />Try it
                     </button>
                     <button
-                        v-if="MODE === 'add'"
                         type="reset"
+                        @click="handleReset"
                         class="inline-flex items-center purple-btn text-white !px-3"
                     >
                         <IconClose />

@@ -232,7 +232,11 @@ function handlePlay(selection: { topic: ITopic; level: string }) {
                     role="tabpanel"
                     aria-labelledby="favorites-tab"
                 >
-                    <SelectionFavorites @selection="handlePlay" ref="favorites" />
+                    <SelectionFavorites
+                        @selection="handlePlay"
+                        @edit="handleEdit"
+                        ref="favorites"
+                    />
                 </div>
                 <div
                     class="rounded-lg flex flex-col h-full py-3"
