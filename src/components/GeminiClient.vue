@@ -15,6 +15,7 @@ import { useUserStore } from '@/stores/user'
 import GeminiGuidelines from './GeminiGuidelines.vue'
 import GeminiHint from './GeminiHint.vue'
 import type { ITopic } from './GeminiSelection.vue'
+import { IconPlay } from './images/icons'
 
 const GOOGLE_AI_STUDIO_API_KEY = ref<string>(import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY)
 
@@ -265,14 +266,20 @@ defineExpose({
             <div class="w-full mb-5 mt-14">
                 <h2 class="text-2xl font-bold">Select a topic</h2>
                 <hr class="my-3 border-black opacity-40 w-3/4 mx-auto" />
-                <p>Start practicing your speaking skills</p>
+                <div class="inline-flex items-center">
+                    <p>Press</p>
+                    <div
+                        class="flex justify-center items-center rounded-full p-1 bg-orange-100 mx-2"
+                    >
+                        <IconPlay class="text-orange-500" />
+                    </div>
+                    <p>to start practicing your speaking skills.</p>
+                </div>
             </div>
             <ImgLearningBooks class="scale-90" />
         </div>
-        <div v-else class="flex flex-col flex-1">
-            <div class="flex-1 flex flex-col text-center p-5">
-                <h1></h1>
-                <h3></h3>
+        <div v-else class="flex flex-col h-full">
+            <div class="flex-1 p-5 pt-10 text-center overflow-hidden">
                 <GeminiGuidelines :topic="topic" :language="language" />
                 <GeminiHint />
             </div>
