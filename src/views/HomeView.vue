@@ -6,7 +6,6 @@ import ImgConvoAudio from '@/components/images/ImgConvoAudio.vue'
 import ImgLexiLogo from '@/components/images/ImgLexiLogoImage.vue'
 import ImgLexiLogoText from '@/components/images/ImgLexiLogoText.vue'
 import { onMounted, onUnmounted } from 'vue'
-import { useAuthStore } from '@/stores/auth'
 
 const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -17,7 +16,6 @@ const observer = new IntersectionObserver((entries) => {
         entry.target.classList.remove('in-view')
     })
 })
-const authStore = useAuthStore()
 
 onMounted(() => {
     const allAnimatedElements = document.querySelectorAll('.animate')
