@@ -14,6 +14,7 @@ import ImgLearningBooks from './images/ImgLearningBooks.vue'
 import { useUserStore } from '@/stores/user'
 import GeminiGuidelines from './GeminiGuidelines.vue'
 import GeminiHint from './GeminiHint.vue'
+import type { ITopic } from './GeminiSelection.vue'
 
 const GOOGLE_AI_STUDIO_API_KEY = ref<string>(import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY)
 
@@ -35,7 +36,7 @@ const systemInstruction = ref<string>(CONFIG.SYSTEM_INSTRUCTION.TEXT)
 
 const props = defineProps<{
     responseModalities: ResponseModalities
-    topic?: string
+    topic?: ITopic
     language?: string
 }>()
 const responseModalities = ref<ResponseModalities>(props.responseModalities)
@@ -269,7 +270,7 @@ defineExpose({
             <div class="flex-1 flex flex-col text-center p-5">
                 <h1></h1>
                 <h3></h3>
-                <GeminiGuidelines :topic="topic"/>
+                <GeminiGuidelines :topic="topic" :language="language"/>
                 <GeminiHint />
             </div>
             <div class="flex justify-center items-center gap-10 py-10 px-4">

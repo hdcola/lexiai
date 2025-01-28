@@ -7,7 +7,7 @@ import GeminiSelection, { type ITopic } from '@/components/GeminiSelection.vue'
 // State variables
 const responseType = ref<ResponseModalities>('audio')
 const geminiref = useTemplateRef('gemini')
-const selectedTopic = ref<string>('')
+const selectedTopic = ref<ITopic>()
 const selectedLanguage = ref<string>('')
 
 function replaceTemplate(str: string, variables: Record<string, string>) {
@@ -25,7 +25,8 @@ async function handleSelection(selection: {
         style: selection.style,
         level: selection.level,
     }
-
+    selectedTopic.value = selection.topic;
+    selectedLanguage.value = selection.language;
     const systemPrompt = replaceTemplate(selection.topic.systemPrompt || '', data)
 
     const gemini = geminiref.value
@@ -42,7 +43,7 @@ async function handleSelection(selection: {
             <GeminiSelection @selection="handleSelection" />
         </div>
         <div class="flex w-full md:w-3/5 rounded-lg shadow-lg bg-gray-100 min-h-96 h-[calc(100vh-10.5rem)]">
-            <GeminiClient ref="gemini" :responseModalities="responseType" :topic="selectedTopic"
+            <GeminiClient ref="gemini" :responseModalities="responseType" :topic="selectedTopic" :selectedTopic="selectedTopic"
                 :language="selectedLanguage" />
         </div>
     </div>
