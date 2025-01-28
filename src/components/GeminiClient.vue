@@ -16,6 +16,7 @@ import GeminiGuidelines from './GeminiGuidelines.vue'
 import GeminiHint from './GeminiHint.vue'
 import type { ITopic } from './GeminiSelection.vue'
 import { IconPlay } from './images/icons'
+import GeminiHintPopover from './GeminiHintPopover.vue'
 
 const GOOGLE_AI_STUDIO_API_KEY = ref<string>(import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY)
 
@@ -296,6 +297,8 @@ defineExpose({
                     :isAudio="true"
                     @interrupt="handleInterrupt"
                 />
+
+                <GeminiHintPopover />
             </div>
         </div>
     </div>
