@@ -2,6 +2,7 @@ export { default as IconAnnotation } from './IconAnnotation.vue';
 export { default as IconClose } from './IconClose.vue';
 export { default as IconConfig } from './IconConfig.vue';
 export { default as IconEdit } from './IconEdit.vue';
+export { default as IconEditPencil } from './IconEditPencil.vue'
 export { default as IconHeartEmpty } from './IconHeartEmpty.vue';
 export { default as IconHeartFull } from './IconHeartFull.vue';
 export { default as IconMicrophoneEmpty } from './IconMicrophoneEmpty.vue';

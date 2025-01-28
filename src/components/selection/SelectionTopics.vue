@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import ButtonFavorite from '../ButtonFavorite.vue'
-import IconPlay from '../images/icons/IconPlay.vue'
+import { IconPlay, IconEditPencil } from '../images/icons'
 import type { ITopic } from '../GeminiSelection.vue'
 import { useUserStore } from '@/stores/user'
 import { useServerRequest } from '../../assets/composables/useServerRequest'
 
-const emit = defineEmits(['selection'])
+const emit = defineEmits(['selection', 'edit'])
 const userStore = useUserStore()
+const user = userStore.getUser()
 let favorites = userStore.getFavorites()
-
 
 const topics = ref<ITopic[]>([])
 const levels = ref(['Beginner', 'Advanced', 'Custom'])
@@ -20,28 +20,17 @@ const selectedTopic = ref<ITopic | null>(null)
 
 async function fetchTopics() {
     try {
-
         const topicsResponse = await useServerRequest(
             'get',
             `/api/topics?level=${selectedLevel.value}`,
         )
 
-        topics.value = topicsResponse?.data.map(
-            (topic: {
-                _id: { $oid: string }
-                title: string
-                level: string
-                systemPrompt: string
-                start: string
-            }) => ({
-                _id: topic._id.$oid,
-                title: topic.title,
-                level: topic.level,
-                systemPrompt: topic.systemPrompt,
-                start: topic.start,
-                isFavorite: topic._id.$oid in favorites,
-            }),
-        )
+        topics.value = topicsResponse?.data.map((topic: ITopic) => ({
+            ...topic,
+            id: topic._id.$oid,
+            isFavorite: topic._id.$oid in favorites,
+            canEdit: selectedLevel.value === 'Custom' && topic.user_id.$oid === user._id,
+        }))
     } catch (error) {
         console.error('Error fetching options:', error)
     }
@@ -71,7 +60,11 @@ function handleFavorite(topic: ITopic) {
     // Add to favorites
     topic.isFavorite = !topic.isFavorite
     // Update in store & MongoDB
-    userStore.toggleFavorite(topic._id, topic.isFavorite)
+    userStore.toggleFavorite(topic.id, topic.isFavorite)
+}
+
+function handleEdit(topic: ITopic) {
+    emit('edit', topic)
 }
 
 async function onActivated() {
@@ -101,13 +94,17 @@ defineExpose({
     <ul class="flex-1 overflow-y-auto px-4">
         <li
             v-for="topic in topics"
-            :key="topic._id"
+            :key="topic.id"
             class="bg-white p-3 px-4 rounded-lg shadow-md mx-auto mb-4"
         >
             <div class="flex flex-row gap-4 items-center">
                 <div class="flex-grow">
                     {{ topic.title }}
                 </div>
+
+                <button v-if="topic.canEdit" class="btn-toggle" @click="handleEdit(topic)">
+                    <IconEditPencil />
+                </button>
 
                 <ButtonFavorite
                     :class="{ 'btn-toggle': !topic.isFavorite }"
