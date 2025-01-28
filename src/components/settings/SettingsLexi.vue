@@ -53,11 +53,11 @@ const onSubmit = async () => {
 
 onMounted(() => {
     const settings = userStore.getLexiSettings()
-    if (settings.apiKey) {
-        apiKey.value = settings.apiKey
+    if (settings.api_key) {
+        apiKey.value = settings.api_key
     }
-    if (settings.voiceName) {
-        voiceName.value = settings.voiceName
+    if (settings.voice_name) {
+        voiceName.value = settings.voice_name
     }
 })
 

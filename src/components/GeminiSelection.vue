@@ -27,9 +27,9 @@ export type ITopic = {
     title: string
     description: string
     level: string
-    systemPrompt: string
+    system_prompt: string
     start: string
-    createdAt: string
+    created_at: string
     user_id: { $oid: string }
     isSelected?: boolean
     isFavorite?: boolean
