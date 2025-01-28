@@ -31,8 +31,12 @@ async function handleSelection(selection: {
 
     const gemini = geminiref.value
     if (gemini) {
-        await gemini.updateSystemInstructions(systemPrompt)
-        await gemini.updatePrompt(selection.topic.start || '')
+        //await gemini.updateSystemInstructions(systemPrompt)
+        //await gemini.updatePrompt(selection.topic.start || '')
+        await gemini.resetClient() // Reset the context fully between topics
+        await gemini.updatePrompt(
+            `In ${selection.language}, with topic of ${systemPrompt}. Do not change the topic. ${selection.style}.`,
+        )
     }
 }
 </script>
