@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import IconMicrophoneEmpty from './images/icons/IconMicrophoneEmpty.vue'
 import IconMicrophoneFull from './images/icons/IconMicrophoneFull.vue'
+import IconMicrophoneBar from './images/icons/IconMicrophoneBar.vue';
 
 const props = defineProps<{ isRecording: boolean; inputVolume: number }>()
 const scale = ref<number>(1.5)
@@ -22,7 +22,7 @@ function updateSize() {
             type="button"
         >
             <IconMicrophoneFull v-if="props.isRecording" class="size-10" />
-            <IconMicrophoneEmpty v-else class="size-10" />
+            <IconMicrophoneBar v-else class="size-10" />
         </button>
     </div>
 </template>

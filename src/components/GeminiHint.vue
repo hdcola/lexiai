@@ -1,20 +1,20 @@
 <script setup lang="ts">
+import IconBulb from './images/icons/IconBulb.vue';
 import IconCloseFill from './images/icons/IconCloseFill.vue'
-import IconHeadset from './images/icons/IconHeadset.vue'
 </script>
 <template>
     <!-- "hint" section -->
     <div
-        class="fixed bottom-4 right-4 w-64 p-4 bg-white shadow-lg rounded-2xl border border-gray-200"
+        class="fixed bottom-4 right-4 w-64 p-4 bg-gray-50 rounded-lg shadow-lg text-gray-600"
     >
         <div class="flex items-center">
-            <IconHeadset />
+            <IconBulb />
 
-            <h3 class="text-lg font-semibold text-gray-800 flex items-center ms-3">Hint</h3>
+            <h3 class="text-lg font-semibold flex items-center ms-3">Hint</h3>
         </div>
-        <p class="text-sm text-gray-600 mt-2"></p>
+        <p class="text-sm mt-2"></p>
         <h4 class="font-bold">Need a break?</h4>
-        <div class="flex flex-col ...">
+        <div class="flex flex-col">
             <p>To stop Gemini anytime, click the red stop button</p>
 
             <p class="flex justify-center">
