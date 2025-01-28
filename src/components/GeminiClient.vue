@@ -278,10 +278,8 @@ defineExpose({
             </div>
             <ImgLearningBooks class="scale-90" />
         </div>
-        <div v-else class="flex flex-col flex-1">
-            <div class="flex-1 flex flex-col text-center p-5">
-                <h1></h1>
-                <h3></h3>
+        <div v-else class="flex flex-col h-full">
+            <div class="flex-1 p-5 pt-10 text-center overflow-hidden">
                 <GeminiGuidelines :topic="topic" :language="language" />
                 <GeminiHint />
             </div>
