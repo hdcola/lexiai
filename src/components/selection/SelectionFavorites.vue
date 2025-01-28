@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import ButtonFavorite from '../ButtonFavorite.vue'
-import { IconPlay, IconEditPencil } from '../images/icons'
 import type { ITopic } from '../GeminiSelection.vue'
 import { useUserStore } from '@/stores/user'
 import { useServerRequest } from '@/assets/composables/useServerRequest'
+import TopicListItem from './TopicListItem.vue'
 
 const emit = defineEmits(['selection', 'edit'])
 const userStore = useUserStore()
@@ -73,38 +72,13 @@ defineExpose({
 
 <template>
     <ul class="flex-1 overflow-y-auto px-4">
-        <li
+        <TopicListItem
             v-for="topic in topics"
-            :key="topic._id.$oid"
-            class="bg-white p-3 px-4 rounded-lg shadow-md mx-auto mb-4"
-        >
-            <div class="flex flex-row gap-4 items-center">
-                <div class="flex-grow">
-                    {{ topic.title }}
-                </div>
-
-                <button v-if="topic.canEdit" class="btn-toggle" @click="handleEdit(topic)">
-                    <IconEditPencil />
-                </button>
-
-                <ButtonFavorite
-                    :class="{ 'btn-toggle': !topic.isFavorite }"
-                    :isFavorite="topic.isFavorite"
-                    @favorite="handleFavorite(topic)"
-                />
-
-                <button type="button" class="topic-play" @click="handlePlay(topic)">
-                    <div
-                        class="flex justify-center items-center rounded-full p-1"
-                        :class="[topic.isSelected ? 'bg-green-100 selected' : 'bg-orange-100']"
-                    >
-                        <IconPlay
-                            :class="[topic.isSelected ? 'text-green-500' : 'text-orange-500']"
-                        />
-                    </div>
-                </button>
-            </div>
-        </li>
+            :key="topic.id"
+            :topic="topic"
+            @edit="handleEdit"
+            @selection="handlePlay"
+        />
     </ul>
 </template>
 

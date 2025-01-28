@@ -5,15 +5,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        blue: {
-          100: "#dbeafe"
-        },
-        orange: {
-          100: "#ffedd5"
-        },
         purple: {
-          100: "#f3e8ff",
-          400: "#c084fc"
+          75: "#F1EAF8",
         }
       }
     },

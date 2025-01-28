@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import ButtonFavorite from '../ButtonFavorite.vue'
-import { IconPlay, IconEditPencil } from '../images/icons'
 import type { ITopic } from '../GeminiSelection.vue'
 import { useUserStore } from '@/stores/user'
 import { useServerRequest } from '../../assets/composables/useServerRequest'
+import TopicListItem from './TopicListItem.vue'
 
 interface Level {
     level: 'beginner' | 'advanced' | 'custom'
@@ -110,66 +109,19 @@ defineExpose({
         </select>
     </div>
     <ul class="flex-1 overflow-y-auto px-4">
-        <li
+        <TopicListItem
             v-for="topic in topics"
             :key="topic.id"
-            class="bg-white p-3 px-4 rounded-lg shadow-md mx-auto mb-4"
-        >
-            <div class="flex flex-row gap-4 items-center">
-                <div class="flex-grow">
-                    {{ topic.title }}
-                </div>
-
-                <button v-if="topic.canEdit" class="btn-toggle" @click="handleEdit(topic)">
-                    <IconEditPencil />
-                </button>
-
-                <ButtonFavorite
-                    :class="{ 'btn-toggle': !topic.isFavorite }"
-                    :isFavorite="topic.isFavorite"
-                    @favorite="handleFavorite(topic)"
-                />
-
-                <button type="button" class="topic-play" @click="handlePlay(topic)">
-                    <div
-                        class="flex justify-center items-center rounded-full p-1"
-                        :class="[topic.isSelected ? 'bg-green-100 selected' : 'bg-orange-100']"
-                    >
-                        <IconPlay
-                            :class="[topic.isSelected ? 'text-green-500' : 'text-orange-500']"
-                        />
-                    </div>
-                </button>
-            </div>
-        </li>
+            :topic="topic"
+            @edit="handleEdit"
+            @selection="handlePlay"
+            class="!bg-white"
+        />
     </ul>
 </template>
 
 <style scoped>
 ul {
     scrollbar-color: #c3ddfd transparent;
-}
-
-.btn-toggle {
-    opacity: 0;
-}
-
-li:hover .btn-toggle {
-    opacity: 1;
-    transition: opacity 0.3s ease;
-}
-
-.topic-play .selected {
-    animation: scaleup 0.3s linear;
-}
-
-@keyframes scaleup {
-    from {
-        scale: 1.1;
-    }
-
-    to {
-        scale: 1;
-    }
 }
 </style>
