@@ -21,8 +21,9 @@ const schema = Yup.object().shape({
 })
 
 function onActivated() {
-    // Nothing to do yet...
-    console.log('activated custom')
+    errors.value = {}
+    errorMessage.value = ''
+    successMessage.value = ''
 }
 
 function edit(currentTopic: ITopic) {
