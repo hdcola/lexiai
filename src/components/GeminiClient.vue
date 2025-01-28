@@ -12,6 +12,8 @@ import ButtonMicrophone from './ButtonMicrophone.vue'
 import ButtonGeminiSpeaker from './ButtonGeminiSpeaker.vue'
 import ImgLearningBooks from './images/ImgLearningBooks.vue'
 import { useUserStore } from '@/stores/user'
+import GeminiGuidelines from './GeminiGuidelines.vue'
+import GeminiHint from './GeminiHint.vue'
 
 const GOOGLE_AI_STUDIO_API_KEY = ref<string>(import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY)
 
@@ -249,7 +251,7 @@ defineExpose({
     disconnect,
     updateVoiceName,
     updatePrompt,
-    updateSystemInstructions,
+    updateSystemInstructions
 })
 </script>
 
@@ -264,9 +266,11 @@ defineExpose({
             <ImgLearningBooks class="scale-90" />
         </div>
         <div v-else class="flex flex-col flex-1">
-            <div class="flex-1 flex flex-col text-center">
+            <div class="flex-1 flex flex-col text-center p-5">
                 <h1></h1>
                 <h3></h3>
+                <GeminiGuidelines :topic="topic"/>
+                <GeminiHint />
             </div>
             <div class="flex justify-center items-center gap-10 py-10 px-4">
                 <ButtonMicrophone class="z-[2]" :isRecording="isRecording" :inputVolume="inputVolume"
