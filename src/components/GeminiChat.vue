@@ -51,9 +51,9 @@ type ITopic = {
     languageId?: string
     description?: string
     level: string
-    systemPrompt?: string
+    system_prompt?: string
     start?: string
-    createdAt?: string
+    created_at?: string
 }
 
 const languages = ref<ILanguage[]>([])
@@ -113,7 +113,10 @@ async function fetchOptions() {
 async function fetchNewTopics() {
     try {
         if (selectedLanguage.value && selectedLevel.value) {
-            const response = await useServerRequest('get', `/api/topics?level=${selectedLevel.value}`);
+            const response = await useServerRequest(
+                'get',
+                `/api/topics?level=${selectedLevel.value}`,
+            )
             topics.value = response?.data.map(
                 (topic: { _id: string; title: string; level: string }) => ({
                     _id: topic._id,

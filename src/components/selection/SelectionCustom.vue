@@ -34,7 +34,7 @@ async function handlePlay() {
     // Emit to Gemini the full selection
     try {
         await schema.validate(
-            { topic: topic.value.title, role: topic.value.systemPrompt },
+            { topic: topic.value.title, role: topic.value.system_prompt },
             { abortEarly: false },
         )
         emit('selection', {
@@ -75,7 +75,7 @@ const onSubmit = async () => {
 
     try {
         await schema.validate(
-            { topic: topic.value.title, role: topic.value.systemPrompt },
+            { topic: topic.value.title, role: topic.value.system_prompt },
             { abortEarly: false },
         )
         // Save to server
@@ -85,7 +85,7 @@ const onSubmit = async () => {
             title: topic.value.title,
             description: topic.value.description,
             level: MODE === 'add' ? 'Custom' : topic.value.level,
-            systemPrompt: topic.value.systemPrompt,
+            system_prompt: topic.value.system_prompt,
             start: topic.value.start,
         })
         successMessage.value = `Successfully ${MODE === 'add' ? 'added' : 'edited'}`
@@ -145,7 +145,7 @@ defineExpose({
                         name="role"
                         id="role"
                         class="w-full rounded-lg min-h-11 max-h-28"
-                        v-model="topic.systemPrompt"
+                        v-model="topic.system_prompt"
                         placeholder="You are a bank teller that will assist with bank counter operations."
                         :class="{ error: errors.role }"
                     ></textarea>

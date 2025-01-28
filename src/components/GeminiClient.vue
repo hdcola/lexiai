@@ -43,11 +43,11 @@ const responseModalities = ref<ResponseModalities>(props.responseModalities)
 
 onMounted(async () => {
     const settings = userStore.getLexiSettings()
-    if (settings.apiKey) {
-        GOOGLE_AI_STUDIO_API_KEY.value = settings.apiKey
+    if (settings.api_key) {
+        GOOGLE_AI_STUDIO_API_KEY.value = settings.api_key
     }
-    if (settings.voiceName) {
-        voiceName.value = settings.voiceName
+    if (settings.voice_name) {
+        voiceName.value = settings.voice_name
     }
     await connect()
 })
@@ -252,13 +252,16 @@ defineExpose({
     disconnect,
     updateVoiceName,
     updatePrompt,
-    updateSystemInstructions
+    updateSystemInstructions,
 })
 </script>
 
 <template>
     <div class="flex flex-col flex-1">
-        <div v-if="!isPromptInitialized" class="flex flex-col justify-center items-center size-full px-10 text-center">
+        <div
+            v-if="!isPromptInitialized"
+            class="flex flex-col justify-center items-center size-full px-10 text-center"
+        >
             <div class="w-full mb-5 mt-14">
                 <h2 class="text-2xl font-bold">Select a topic</h2>
                 <hr class="my-3 border-black opacity-40 w-3/4 mx-auto" />
@@ -270,14 +273,22 @@ defineExpose({
             <div class="flex-1 flex flex-col text-center p-5">
                 <h1></h1>
                 <h3></h3>
-                <GeminiGuidelines :topic="topic" :language="language"/>
+                <GeminiGuidelines :topic="topic" :language="language" />
                 <GeminiHint />
             </div>
             <div class="flex justify-center items-center gap-10 py-10 px-4">
-                <ButtonMicrophone class="z-[2]" :isRecording="isRecording" :inputVolume="inputVolume"
-                    @click="toggleRecording" />
-                <ButtonGeminiSpeaker :volume="volume" :isResponding="isResponding" :isAudio="true"
-                    @interrupt="handleInterrupt" />
+                <ButtonMicrophone
+                    class="z-[2]"
+                    :isRecording="isRecording"
+                    :inputVolume="inputVolume"
+                    @click="toggleRecording"
+                />
+                <ButtonGeminiSpeaker
+                    :volume="volume"
+                    :isResponding="isResponding"
+                    :isAudio="true"
+                    @interrupt="handleInterrupt"
+                />
             </div>
         </div>
     </div>

@@ -62,7 +62,7 @@ export const useAuthStore = defineStore('auth', {
                     password: password
                 })
 
-                const newToken = response?.data.accessToken
+                const newToken = response?.data.access_token
                 const jwtStore = useJWTStore()
 
                 // Save token

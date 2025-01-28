@@ -8,7 +8,7 @@ type User = {
     email: string;
     username: string;
     password?: string;
-    createdAt: string;
+    created_at: string;
     settings: UserSettings;
 }
 
@@ -19,8 +19,8 @@ export type UserSettings = {
     topic_id: string;
     style_id: string;
     favorites: Record<string, boolean>;
-    apiKey: string;
-    voiceName: VoiceName;
+    api_key: string;
+    voice_name: VoiceName;
 };
 
 
@@ -114,16 +114,16 @@ export const useUserStore = defineStore('userSet', {
                 // Send API request to update settings
                 const response = await useServerRequest('patch', '/api/users/settings', {
                     settings: {
-                        voiceName: voiceName,
-                        apiKey: apiKey,
+                        voice_name: voiceName,
+                        api_key: apiKey,
                     }
                 });
                 if (response?.status === 200 && response.data.settings) {
                     console.log("Lexi settings successfully updated on the server:", response.data.settings);
 
                     // Save to user
-                    this.settings.voiceName = response.data.settings.voiceName;
-                    this.settings.apiKey = response.data.settings.apiKey;
+                    this.settings.voice_name = response.data.settings.voice_name;
+                    this.settings.api_key = response.data.settings.api_key;
                 } else {
                     console.log("Unexpected response when updating Lexi settings:", response);
                 }
