@@ -84,7 +84,7 @@ const onSubmit = async () => {
         const response = await useServerRequest(method, url, {
             title: topic.value.title,
             description: topic.value.description,
-            level: MODE === 'add' ? 'Custom' : topic.value.level,
+            level: MODE === 'add' ? 'custom' : topic.value.level,
             system_prompt: topic.value.system_prompt,
             start: topic.value.start,
         })

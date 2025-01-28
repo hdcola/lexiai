@@ -6,16 +6,34 @@ import type { ITopic } from '../GeminiSelection.vue'
 import { useUserStore } from '@/stores/user'
 import { useServerRequest } from '../../assets/composables/useServerRequest'
 
+interface Level {
+    level: 'beginner' | 'advanced' | 'custom'
+    label: string
+}
+
 const emit = defineEmits(['selection', 'edit'])
 const userStore = useUserStore()
 const user = userStore.getUser()
 let favorites = userStore.getFavorites()
 
 const topics = ref<ITopic[]>([])
-const levels = ref(['Beginner', 'Advanced', 'Custom'])
+const levels = ref<Level[]>([
+    {
+        level: 'beginner',
+        label: 'Beginner',
+    },
+    {
+        level: 'advanced',
+        label: 'Advanced',
+    },
+    {
+        level: 'custom',
+        label: 'Custom',
+    },
+])
 
 // to read from MongoDb for logged user
-const selectedLevel = ref<string>('Beginner')
+const selectedLevel = ref<string>('beginner')
 const selectedTopic = ref<ITopic | null>(null)
 
 async function fetchTopics() {
@@ -86,8 +104,8 @@ defineExpose({
     <div class="py-3 px-4 mb-4">
         <select v-model="selectedLevel" class="w-full" @change="fetchTopics">
             <option disabled>Select a section</option>
-            <option v-for="level in levels" :key="level">
-                {{ level }}
+            <option v-for="level in levels" :key="level.level" :value="level.level">
+                {{ level.label }}
             </option>
         </select>
     </div>
