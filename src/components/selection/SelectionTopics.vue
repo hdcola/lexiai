@@ -29,7 +29,7 @@ async function fetchTopics() {
             ...topic,
             id: topic._id.$oid,
             isFavorite: topic._id.$oid in favorites,
-            canEdit: selectedLevel.value === 'Custom' && topic.user_id.$oid === user._id,
+            canEdit: topic.user_id.$oid === user._id,
         }))
     } catch (error) {
         console.error('Error fetching options:', error)
