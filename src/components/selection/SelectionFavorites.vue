@@ -41,7 +41,7 @@ function handlePlay(topic: ITopic) {
 
     // Emit to Gemini the full selection
     emit('selection', {
-        topic: selectedTopic.value.title,
+        topic: selectedTopic.value,
     })
 }
 
