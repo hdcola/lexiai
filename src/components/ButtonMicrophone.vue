@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import IconMicrophoneFull from './images/icons/IconMicrophoneFull.vue'
-import IconMicrophoneBar from './images/icons/IconMicrophoneBar.vue';
+import IconMicrophoneBar from './images/icons/IconMicrophoneBar.vue'
 
 const props = defineProps<{ isRecording: boolean; inputVolume: number }>()
 const scale = ref<number>(1.5)
@@ -33,7 +33,8 @@ button.active {
 }
 .pulse:before,
 .pulse:after {
-    @apply rounded-full bg-purple-600;
+    @apply rounded-full;
+    background: var(--gradient-purple);
     content: '';
     position: absolute;
     inset: 0;
