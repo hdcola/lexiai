@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import ButtonFavorite from '../ButtonFavorite.vue'
-import IconPlay from '../images/icons/IconPlay.vue'
+import { IconPlay, IconEditPencil } from '../images/icons'
 import type { ITopic } from '../GeminiSelection.vue'
 import { useUserStore } from '@/stores/user'
 import { useServerRequest } from '@/assets/composables/useServerRequest'
 
-const emit = defineEmits(['selection'])
+const emit = defineEmits(['selection', 'edit'])
 const userStore = useUserStore()
+const user = userStore.getUser()
 const favorites = userStore.getFavorites()
 
 const topics = ref<ITopic[]>([])
@@ -17,14 +18,12 @@ async function fetchTopics() {
     try {
         const topicsResponse = await useServerRequest('get', '/api/users/favorites')
 
-        topics.value = topicsResponse?.data.map(
-            (topic: { _id: { $oid: string }; title: string; level: string }) => ({
-                _id: topic._id.$oid,
-                title: topic.title,
-                level: topic.level,
-                isFavorite: true,
-            }),
-        )
+        topics.value = topicsResponse?.data.map((topic: ITopic) => ({
+            ...topic,
+            id: topic._id.$oid,
+            isFavorite: topic._id.$oid in favorites,
+            canEdit: topic.level === 'Custom' && topic.user_id.$oid === user._id,
+        }))
     } catch (error) {
         console.error('Error fetching options:', error)
     }
@@ -54,6 +53,10 @@ function handleFavorite(topic: ITopic) {
     userStore.toggleFavorite(topic._id.$oid, topic.isFavorite)
 }
 
+function handleEdit(topic: ITopic) {
+    emit('edit', topic)
+}
+
 async function onActivated() {
     // TODO More elegant solution
     await fetchTopics()
@@ -79,6 +82,10 @@ defineExpose({
                 <div class="flex-grow">
                     {{ topic.title }}
                 </div>
+
+                <button v-if="topic.canEdit" class="btn-toggle" @click="handleEdit(topic)">
+                    <IconEditPencil />
+                </button>
 
                 <ButtonFavorite
                     :class="{ 'btn-toggle': !topic.isFavorite }"
