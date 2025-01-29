@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import * as Yup from 'yup'
-import { IconPlay, IconClose } from '@/components/images/icons'
+import { IconPlay, IconClose, IconUndo } from '@/components/images/icons'
 import type { ITopic } from '../GeminiSelection.vue'
 import { useServerRequest } from '@/assets/composables/useServerRequest'
 
@@ -13,6 +13,7 @@ const successMessage = ref<string>('')
 // validation errors
 const errors = ref<Record<string, string>>({})
 
+const selectedTopic = ref<ITopic>({} as ITopic)
 const topic = ref<ITopic>({} as ITopic)
 
 const schema = Yup.object().shape({
@@ -27,7 +28,8 @@ function onActivated() {
 function edit(currentTopic: ITopic) {
     // populate the form so it can be edited
     MODE = 'edit'
-    topic.value = currentTopic
+    topic.value = { ...currentTopic }
+    selectedTopic.value = currentTopic
 }
 
 async function handlePlay() {
@@ -58,10 +60,16 @@ function handleChange(event: Event) {
 
 function handleReset() {
     if (MODE === 'edit') {
-        MODE = 'add'
-        topic.value = {} as ITopic
         resetState()
+        topic.value = { ...selectedTopic.value }
     }
+}
+
+function handleExitEdit() {
+    MODE = 'add'
+    resetState()
+    topic.value = {} as ITopic
+    selectedTopic.value = {} as ITopic
 }
 
 function resetState() {
@@ -111,6 +119,23 @@ defineExpose({
 <template>
     <div class="h-full">
         <form @submit.prevent="onSubmit" class="flex flex-col h-full space-y-4">
+            <div
+                v-if="MODE === 'edit'"
+                class="flex relative text-center justify-center items-center border-2 border-orange-400 rounded-full py-3 mx-4"
+            >
+                <h1 class="text-md text-orange-400">Edit mode</h1>
+                <div class="flex items-center gap-2 absolute right-1">
+                    <button
+                        role="button"
+                        type="button"
+                        title="Exit edit mode"
+                        class="flex justify-center items-center !rounded-full !p-2 orange-btn"
+                        @click="handleExitEdit"
+                    >
+                        <IconClose />
+                    </button>
+                </div>
+            </div>
             <div class="overflow-y-auto space-y-4 px-4">
                 <div class="form-group">
                     <label for="topic">Topic name</label>
@@ -140,13 +165,13 @@ defineExpose({
                 </div>
 
                 <div class="form-group">
-                    <label for="description">AI Role</label>
+                    <label for="description">AI role</label>
                     <textarea
                         name="role"
                         id="role"
                         class="w-full rounded-lg min-h-11 max-h-28"
                         v-model="topic.system_prompt"
-                        placeholder="You are a bank teller that will assist with bank counter operations."
+                        placeholder="Reply as a bank teller while I practice opening a bank account."
                         :class="{ error: errors.role }"
                     ></textarea>
                     <p>{{ errors.role }}</p>
@@ -167,9 +192,7 @@ defineExpose({
 
             <div class="px-4 space-y-4">
                 <div class="flex gap-2">
-                    <button type="submit" class="flex-grow lexi-btn">
-                        {{ MODE === 'add' ? 'Save' : 'Edit' }}
-                    </button>
+                    <button type="submit" class="flex-grow lexi-btn">Save</button>
                     <button
                         type="button"
                         class="inline-flex items-center orange-btn"
@@ -178,11 +201,20 @@ defineExpose({
                         <IconPlay class="-ms-2 me-2" />Try it
                     </button>
                     <button
+                        v-if="MODE === 'add'"
                         type="reset"
-                        @click="handleReset"
                         class="inline-flex items-center purple-btn text-white !px-3"
                     >
                         <IconClose />
+                    </button>
+                    <button
+                        v-else
+                        type="button"
+                        title="Undo changes"
+                        @click="handleReset"
+                        class="inline-flex items-center purple-btn text-white !px-3"
+                    >
+                        <IconUndo class="text-white" />
                     </button>
                 </div>
                 <div v-if="errorMessage" role="alert" aria-live="polite" class="error-msg">
