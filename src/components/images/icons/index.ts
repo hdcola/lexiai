@@ -12,4 +12,5 @@ export { default as IconProfileEdit } from './IconProfileEdit.vue';
 export { default as IconSecurity } from './IconSecurity.vue';
 export { default as IconSwatchbook } from './IconSwatchbook.vue';
 export { default as IconTools } from './IconTools.vue';
-export { default as IconUndo } from './IconUndo.vue'
+export { default as IconTrash } from './IconTrash.vue';
+export { default as IconUndo } from './IconUndo.vue';

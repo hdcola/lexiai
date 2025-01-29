@@ -48,10 +48,7 @@ onUnmounted(() => {
                         <p class="my-2 text-lg">
                             Boost your confidence in any language with personalized content.
                         </p>
-                        <RouterLink
-                            to="/register"
-                            v-slot="{ href, navigate }"
-                        >
+                        <RouterLink to="/register" v-slot="{ href, navigate }">
                             <button
                                 :href="href"
                                 @click="navigate"
@@ -91,7 +88,7 @@ onUnmounted(() => {
                 </div>
             </div>
             <div class="flex flex-col justify-center desc fade-in my-7">
-                <h1 class="text-4xl font-semibold">Audio and text interactions</h1>
+                <h1 class="text-4xl font-semibold">Audio interactions</h1>
                 <p class="my-2 text-lg">
                     Get real-time feedback on pronunciation, intonation and fluency.
                 </p>
