@@ -137,6 +137,13 @@ section {
 
 }
 
+.one-line-truncated{
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+}
+
 /* Used for bouncing elements */
 @keyframes bounce {
     0% {

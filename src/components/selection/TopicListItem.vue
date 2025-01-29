@@ -35,8 +35,8 @@ function handleEdit() {
         <div class="flex flex-row gap-4 items-center">
             <div class="flex-grow">
                 <div class="flex flex-col">
-                    <h1>{{ topic.title }}</h1>
-                    <p v-if="topic.description" class="text-xs text-ellipsis">
+                    <h1 class="one-line-truncated">{{ topic.title }}</h1>
+                    <p v-if="topic.description" class="text-xs text-gray-600 one-line-truncated">
                         {{ topic.description }}
                     </p>
                 </div>
