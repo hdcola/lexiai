@@ -110,8 +110,15 @@ export const useAuthStore = defineStore('auth', {
             }
         },
         logout() {
+            // Reset user store
+            const userStore = useUserStore();
+            userStore.$reset();
+
+            // Reset token
             const jwtStore = useJWTStore();
             jwtStore.deleteToken();
+
+            // Reset auth state
             this.isLoggedIn = false;
             console.log("User is logged out");
             router.push("/login");
