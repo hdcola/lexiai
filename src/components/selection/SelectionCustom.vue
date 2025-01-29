@@ -102,7 +102,9 @@ const onSubmit = async () => {
             start: topic.value.start,
         })
         successMessage.value = `Successfully ${MODE === 'add' ? 'added' : 'edited'}`
-        //console.log(response)
+        if (MODE === 'edit') {
+            selectedTopic.value = { ...topic.value } // Remember new edited version
+        }
     } catch (error) {
         if (error instanceof Yup.ValidationError) {
             error.inner.forEach((err) => {
