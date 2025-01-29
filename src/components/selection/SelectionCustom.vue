@@ -129,7 +129,7 @@ defineExpose({
                         role="button"
                         type="button"
                         title="Exit edit mode"
-                        class="flex justify-center items-center !rounded-full !p-2 orange-btn"
+                        class="flex justify-center items-center btn-rounded orange-btn"
                         @click="handleExitEdit"
                     >
                         <IconClose />
@@ -192,10 +192,10 @@ defineExpose({
 
             <div class="px-4 space-y-4">
                 <div class="flex gap-2">
-                    <button type="submit" class="flex-grow lexi-btn">Save</button>
+                    <button type="submit" class="flex-grow btn lexi-btn">Save</button>
                     <button
                         type="button"
-                        class="inline-flex items-center orange-btn"
+                        class="inline-flex items-center btn orange-btn"
                         @click="handlePlay()"
                     >
                         <IconPlay class="-ms-2 me-2" />Try it
@@ -203,7 +203,7 @@ defineExpose({
                     <button
                         v-if="MODE === 'add'"
                         type="reset"
-                        class="inline-flex items-center purple-btn text-white !px-3"
+                        class="inline-flex items-center btn purple-btn text-white !px-3"
                     >
                         <IconClose />
                     </button>
@@ -212,7 +212,7 @@ defineExpose({
                         type="button"
                         title="Undo changes"
                         @click="handleReset"
-                        class="inline-flex items-center purple-btn text-white !px-3"
+                        class="inline-flex items-center btn purple-btn text-white !px-3"
                     >
                         <IconUndo class="text-white" />
                     </button>

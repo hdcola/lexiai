@@ -101,7 +101,7 @@ defineExpose({
             <p>{{ errors.apiKey }}</p>
         </div>
 
-        <button type="submit" class="w-full lexi-btn">Save</button>
+        <button type="submit" class="w-full btn lexi-btn">Save</button>
     </form>
 </template>
 
