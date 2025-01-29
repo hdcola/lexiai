@@ -30,7 +30,7 @@ function handleEdit() {
 <template>
     <li
         class="p-3 px-4 rounded-lg shadow-md mx-auto mb-4"
-        :class="topic.level === 'custom' ? 'bg-purple-75' : 'bg-white'"
+        :class="topic.level === 'custom' ? 'bg-yellow-50' : 'bg-white'"
     >
         <div class="flex flex-row gap-4 items-center">
             <div class="flex-grow">

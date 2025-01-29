@@ -55,7 +55,7 @@ onMounted(async () => {
                     <RouterLink
                         v-if="authStore.isLoggedIn"
                         to="/lexiai"
-                        class="orange-btn"
+                        class="btn orange-btn"
                         active-class="active highlight"
                         >Practice</RouterLink
                     >
@@ -77,7 +77,7 @@ onMounted(async () => {
                     <RouterLink
                         to="/register"
                         v-if="!authStore.isLoggedIn"
-                        class="orange-btn"
+                        class="btn orange-btn"
                         active-class="active highlight"
                         >Sign Up</RouterLink
                     >

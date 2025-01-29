@@ -4,6 +4,8 @@ import * as Yup from 'yup'
 import { IconPlay, IconClose, IconUndo } from '@/components/images/icons'
 import type { ITopic } from '../GeminiSelection.vue'
 import { useServerRequest } from '@/assets/composables/useServerRequest'
+import ButtonPopover from '../ButtonPopover.vue'
+import ButtonHelp from '../ButtonHelp.vue'
 
 let MODE: 'add' | 'edit' = 'add'
 const emit = defineEmits(['selection'])
@@ -129,7 +131,7 @@ defineExpose({
                         role="button"
                         type="button"
                         title="Exit edit mode"
-                        class="flex justify-center items-center !rounded-full !p-2 orange-btn"
+                        class="flex justify-center items-center btn-rounded orange-btn"
                         @click="handleExitEdit"
                     >
                         <IconClose />
@@ -165,7 +167,29 @@ defineExpose({
                 </div>
 
                 <div class="form-group">
-                    <label for="description">AI role</label>
+                    <ButtonPopover id="role" placement="top-start">
+                        <template #display>
+                            <div class="inline-flex gap-2">
+                                <label for="description">AI role</label>
+                                <ButtonHelp />
+                            </div>
+                        </template>
+                        <div class="flex flex-col gap-2">
+                            <p>
+                                If you want AI to take a specific role, start with:
+                                <span class="font-bold">Reply as a {role}</span>
+                            </p>
+                            <p>Enter what you'd like the conversation to be about.</p>
+                            <p>
+                                You can specify the difficulty of the conversation with keywords
+                                like:
+                            </p>
+                            <ul class="ms-5 list-disc">
+                                <li>Take it slowly.</li>
+                                <li>Don't tell me what to say.</li>
+                            </ul>
+                        </div>
+                    </ButtonPopover>
                     <textarea
                         name="role"
                         id="role"
@@ -178,7 +202,15 @@ defineExpose({
                 </div>
 
                 <div class="form-group">
-                    <label for="start">Starting phrase <em>-optional</em></label>
+                    <ButtonPopover id="start" placement="top-start">
+                        <template #display>
+                            <div class="inline-flex gap-2">
+                                <label for="start">Starting phrase <em>-optional</em></label>
+                                <ButtonHelp />
+                            </div>
+                        </template>
+                        <p>Make AI start the conversation by saying something specific.</p>
+                    </ButtonPopover>
                     <input
                         type="text"
                         name="start"
@@ -192,10 +224,10 @@ defineExpose({
 
             <div class="px-4 space-y-4">
                 <div class="flex gap-2">
-                    <button type="submit" class="flex-grow lexi-btn">Save</button>
+                    <button type="submit" class="flex-grow btn lexi-btn">Save</button>
                     <button
                         type="button"
-                        class="inline-flex items-center orange-btn"
+                        class="inline-flex items-center btn orange-btn"
                         @click="handlePlay()"
                     >
                         <IconPlay class="-ms-2 me-2" />Try it
@@ -203,7 +235,7 @@ defineExpose({
                     <button
                         v-if="MODE === 'add'"
                         type="reset"
-                        class="inline-flex items-center purple-btn text-white !px-3"
+                        class="inline-flex items-center btn purple-btn text-white !px-3"
                     >
                         <IconClose />
                     </button>
@@ -212,7 +244,7 @@ defineExpose({
                         type="button"
                         title="Undo changes"
                         @click="handleReset"
-                        class="inline-flex items-center purple-btn text-white !px-3"
+                        class="inline-flex items-center btn purple-btn text-white !px-3"
                     >
                         <IconUndo class="text-white" />
                     </button>

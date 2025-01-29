@@ -3,6 +3,8 @@ import { onMounted, ref } from 'vue'
 import { Voices, type VoiceName } from '@/lib/gemini/config/config-types'
 import { useUserStore } from '@/stores/user'
 import * as Yup from 'yup'
+import ButtonPopover from '../ButtonPopover.vue'
+import ButtonHelp from '../ButtonHelp.vue'
 
 const userStore = useUserStore()
 
@@ -89,7 +91,23 @@ defineExpose({
         </div>
 
         <div class="form-group">
-            <label for="apiKey">Gemini API key <em>-optional</em></label>
+            <ButtonPopover id="api" placement="top-start">
+                <template #display>
+                    <div class="inline-flex gap-2">
+                        <label for="apiKey">Gemini API key <em>-optional</em></label>
+                        <ButtonHelp />
+                    </div>
+                </template>
+                <div class="flex flex-col">
+                    <p>You can generate an API key by visiting</p>
+                    <a
+                        href="https://ai.google.dev/gemini-api/docs"
+                        target="_blank"
+                        class="font-medium text-blue-600 hover:text-blue-700 hover:underline"
+                        >Google AI Studio</a
+                    >
+                </div>
+            </ButtonPopover>
             <input
                 type="text"
                 name="apiKey"
@@ -101,7 +119,7 @@ defineExpose({
             <p>{{ errors.apiKey }}</p>
         </div>
 
-        <button type="submit" class="w-full lexi-btn">Save</button>
+        <button type="submit" class="w-full btn lexi-btn">Save</button>
     </form>
 </template>
 

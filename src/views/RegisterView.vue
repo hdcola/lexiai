@@ -151,7 +151,7 @@ const onSubmit = async () => {
                         <p>{{ errors.confirmPassword }}</p>
                     </div>
 
-                    <button :disabled="isLoading" class="w-full lexi-btn">
+                    <button :disabled="isLoading" class="w-full btn lexi-btn">
                         <span v-if="isLoading">Loading...</span>
                         <span v-else>Register</span>
                     </button>
