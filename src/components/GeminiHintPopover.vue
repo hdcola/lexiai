@@ -29,9 +29,9 @@ onMounted(() => {initPopovers();})
         </div> -->
         <div class="p-3">
             
-            <div class="inline-flex items-center justify-center text-gray-600 gap-3">
-                <IconCloseFill />
-                <span>To stop Gemini anytime, click the stop button</span>
+            <div class="inline-flex items-center justify-center text-gray-600 gap-2">
+                <IconCloseFill class="w-14"/>
+                <span>To interrupt Gemini, you can speak over it or simply click the red x button</span>
             </div>
             
 
