@@ -121,9 +121,9 @@ defineExpose({
         <form @submit.prevent="onSubmit" class="flex flex-col h-full space-y-4">
             <div
                 v-if="MODE === 'edit'"
-                class="flex relative text-center justify-center items-center border-2 border-orange-400 rounded-full py-2 mx-4"
+                class="flex relative text-center justify-center items-center border-2 border-orange-400 rounded-full py-3 mx-4"
             >
-                <h1 class="text-lg text-orange-400">Edit mode</h1>
+                <h1 class="text-md text-orange-400">Edit mode</h1>
                 <div class="flex items-center gap-2 absolute right-1">
                     <button
                         role="button"
