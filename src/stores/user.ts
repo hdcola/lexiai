@@ -176,7 +176,12 @@ export const useUserStore = defineStore('userSet', {
             } catch (error) {
                 console.error("Error saving a new password:", error);
             }
-        }
+        },
+        $reset() {
+            this.user = {} as User
+            this.settings = {} as UserSettings
+            this.favorites = {} as UserSettings["favorites"]
+        },
     },
     persist: false
 })
