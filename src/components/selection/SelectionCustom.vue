@@ -64,6 +64,9 @@ function handleReset() {
     if (MODE === 'edit') {
         resetState()
         topic.value = { ...selectedTopic.value }
+    } else {
+        resetState()
+        topic.value = {} as ITopic
     }
 }
 
@@ -179,7 +182,10 @@ defineExpose({
                                 If you want AI to take a specific role, start with:
                                 <span class="font-bold">Reply as a {role}</span>
                             </p>
-                            <p>Enter what you'd like the conversation to be about.</p>
+                            <p>
+                                Enter what you'd like the conversation to be about. A good starter
+                                can be: <span class="font-bold">Teach me {topic}</span>
+                            </p>
                             <p>
                                 You can specify the difficulty of the conversation with keywords
                                 like:
@@ -235,6 +241,7 @@ defineExpose({
                     <button
                         v-if="MODE === 'add'"
                         type="reset"
+                        @click="handleReset"
                         class="inline-flex items-center btn purple-btn text-white !px-3"
                     >
                         <IconClose />
