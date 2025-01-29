@@ -28,8 +28,8 @@ function onActivated() {
 function edit(currentTopic: ITopic) {
     // populate the form so it can be edited
     MODE = 'edit'
-    topic.value = { ...currentTopic }
-    selectedTopic.value = currentTopic
+    topic.value = currentTopic
+    selectedTopic.value = { ...currentTopic }
 }
 
 async function handlePlay() {
