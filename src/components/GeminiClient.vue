@@ -276,7 +276,6 @@ defineExpose({
         <div v-else class="flex flex-col h-full">
             <div class="flex-1 p-5 pt-10 text-center overflow-hidden">
                 <GeminiGuidelines :topic="topic" :language="language" />
-                <GeminiHint />
             </div>
             <div class="flex justify-center items-center gap-10 py-10 px-4">
                 <ButtonMicrophone
