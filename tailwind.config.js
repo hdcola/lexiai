@@ -7,6 +7,9 @@ export default {
       colors: {
         purple: {
           75: "#F1EAF8",
+        },
+        yellow: {
+          50: "#fff9e7"
         }
       }
     },
