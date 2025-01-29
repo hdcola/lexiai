@@ -146,7 +146,7 @@ async function toggleRecording() {
     }
 }
 
-async function updateConfig() {
+async function resetClient() {
     disconnect()
     await connect()
 }
@@ -154,20 +154,13 @@ async function updateConfig() {
 async function updateVoiceName(newVoiceName: VoiceName) {
     console.log(`Update voice to ${newVoiceName}`)
     voiceName.value = newVoiceName
-    await updateConfig()
+    await resetClient()
 }
-
-/*
-function updateResponseModalities(newResponseModalities: ResponseModalities) {
-    console.log(`Update responseModalities to ${newResponseModalities}`)
-    responseModalities.value = newResponseModalities;
-    updateConfig()
-}*/
 
 async function updateSystemInstructions(newSystemInstruction: string) {
     console.log(`Update system instructions to ${newSystemInstruction}`)
     systemInstruction.value = newSystemInstruction
-    await updateConfig()
+    await resetClient()
 }
 
 async function updatePrompt(newPrompt: string) {
@@ -252,6 +245,7 @@ defineExpose({
     inputVolume,
     connect,
     disconnect,
+    resetClient,
     updateVoiceName,
     updatePrompt,
     updateSystemInstructions,
