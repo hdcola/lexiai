@@ -7,7 +7,7 @@ import ButtonPopover from './ButtonPopover.vue'
     <ButtonPopover id="hint" placement="top">
         <template #display>
             <button type="button" class="btn-rounded orange-btn">
-                <IconBulb class="text-gray-600" />
+                <IconBulb/>
             </button>
         </template>
         <span
