@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import * as Yup from 'yup'
-import { IconPlay, IconClose, IconUndo } from '@/components/images/icons'
+import { IconPlay, IconClose, IconUndo, IconTrash } from '@/components/images/icons'
 import type { ITopic } from '../GeminiSelection.vue'
 import { useServerRequest } from '@/assets/composables/useServerRequest'
 import ButtonPopover from '../ButtonPopover.vue'
@@ -67,6 +67,17 @@ function handleReset() {
     } else {
         resetState()
         topic.value = {} as ITopic
+    }
+}
+
+async function handleDelete() {
+    try {
+        await useServerRequest('delete', `/api/topics/${topic.value.id}`)
+        handleExitEdit()
+        successMessage.value = `Successfully deleted`
+    } catch (error) {
+        errorMessage.value = 'Something went wrong'
+        console.error(error)
     }
 }
 
@@ -235,10 +246,10 @@ defineExpose({
                     <button type="submit" class="flex-grow btn lexi-btn">Save</button>
                     <button
                         type="button"
-                        class="inline-flex items-center btn orange-btn"
+                        class="inline-flex items-center btn orange-btn !px-5"
                         @click="handlePlay()"
                     >
-                        <IconPlay class="-ms-2 me-2" />Try it
+                        <IconPlay class="lg:-ms-2" /><span class="md:hidden lg:block">Try it</span>
                     </button>
                     <button
                         v-if="MODE === 'add'"
@@ -248,15 +259,24 @@ defineExpose({
                     >
                         <IconClose />
                     </button>
-                    <button
-                        v-else
-                        type="button"
-                        title="Undo changes"
-                        @click="handleReset"
-                        class="inline-flex items-center btn purple-btn text-white !px-3"
-                    >
-                        <IconUndo class="text-white" />
-                    </button>
+                    <div v-else class="flex gap-2">
+                        <button
+                            type="button"
+                            title="Undo changes"
+                            @click="handleReset"
+                            class="inline-flex items-center btn purple-btn text-white !px-3"
+                        >
+                            <IconUndo class="text-white" />
+                        </button>
+                        <button
+                            type="button"
+                            title="Delete topic"
+                            @click="handleDelete"
+                            class="inline-flex items-center btn bg-red-500 text-white !px-3"
+                        >
+                            <IconTrash />
+                        </button>
+                    </div>
                 </div>
                 <div v-if="errorMessage" role="alert" aria-live="polite" class="error-msg">
                     {{ errorMessage }}
