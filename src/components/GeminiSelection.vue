@@ -100,8 +100,12 @@ onMounted(async () => {
     initTabs()
     await fetchOptions()
     const languageSettings = userStore.getLanguageSettings()
-    selectedLanguage.value = languageSettings.language_id
-    selectedStyle.value = languageSettings.style_id
+    if (languageSettings.language_id) {
+        selectedLanguage.value = languageSettings.language_id
+    }
+    if (languageSettings.style_id) {
+        selectedStyle.value = languageSettings.style_id
+    }
 
     const tabsElement: HTMLElement = document.getElementById('default-styled-tab')!
 
