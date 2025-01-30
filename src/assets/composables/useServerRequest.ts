@@ -46,7 +46,7 @@ export async function useServerRequest(
                         console.error('Invalid token. Redirecting to login...');
                         const authStore = useAuthStore();
                         authStore.logout();
-                        return; 
+                        throw 'Invalid token in server request'; 
                     }  
             }
             }  /*   else if (typeof error === 'string') {

@@ -12,7 +12,7 @@ onMounted(() => {
     <div id="alert-dismissible" class="flex p-4 mb-4 bg-orange-100 rounded-lg" role="alert">
         <span class="sr-only">Info</span>
         <div class="ms-3 text-sm font-medium">
-            <div class="inline-flex items-center justify-center text-gray-600">
+            <div class="inline-flex items-center justify-center">
                 <IconMessage class="w-10" />
                 <span class="font-bold ms-2">Want to try something new?</span>
             </div>

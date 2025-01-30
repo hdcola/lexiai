@@ -1,16 +1,47 @@
 <script setup lang="ts">
 import GeminiAlertDismissible from './GeminiAlertDismissible.vue'
+import { ref, watch } from 'vue'
 import type { ITopic } from './GeminiSelection.vue'
 import IconBook from './images/icons/IconBook.vue'
 import IconLanguage from './images/icons/IconLanguage.vue'
-import IconMessage from './images/icons/IconMessage.vue'
 import IconPlay from './images/icons/IconPlay.vue'
 import ImgLearningLaptop from './images/ImgLearningLaptop.vue'
-
-defineProps<{
+import type { Animation } from './images/ImgLearningLaptop.vue'
+const props = defineProps<{
     topic?: ITopic
     language?: string
+    startNewPrompt?: boolean
+    isResponding?: boolean
+    isInterrupted?: boolean
 }>()
+
+const anim = ref<Animation>('normal')
+watch(
+    () => props.startNewPrompt,
+    () => {
+        if (props.isInterrupted) {
+            return
+        }
+        anim.value = props.startNewPrompt ? 'joy' : 'normal'
+    },
+)
+watch(
+    () => props.isResponding,
+    () => {
+        if (props.startNewPrompt || props.isInterrupted) {
+            return
+        }
+        console.log('Talk anim', props.isResponding)
+        anim.value = props.isResponding ? 'talk' : 'normal'
+    },
+)
+watch(
+    () => props.isInterrupted,
+    () => {
+        console.log('Interrupt anim', props.isInterrupted)
+        anim.value = props.isInterrupted ? 'squint' : 'normal'
+    },
+)
 </script>
 
 <template>
@@ -32,11 +63,11 @@ defineProps<{
         </div>
 
         <div class="flex justify-center min-h-0">
-            <ImgLearningLaptop class="fade-in" />
+            <ImgLearningLaptop class="fade-in" :animation="anim" />
         </div>
 
-        <div class="flex flex-col flex-1 ">
-            <GeminiAlertDismissible />            
+        <div class="flex flex-col flex-1">
+            <GeminiAlertDismissible />
         </div>
     </div>
 </template>

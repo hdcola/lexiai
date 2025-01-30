@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import ImgLexiLogoImage from './ImgLexiLogoImage.vue'
+import { ref, watch } from 'vue'
 
-const props = defineProps({
-    animate: {
-        type: Boolean,
-        default: true,
-    },
-})
-const isAnimated = ref<boolean>(props.animate)
+export type Animation = 'joy' | 'talk' | 'normal' | 'squint' | ''
+
+const props = defineProps<{ animate?: boolean; animation?: Animation }>()
+const isAnimated = ref<boolean>(props.animate || true)
 </script>
 
 <template>
@@ -550,18 +546,22 @@ const isAnimated = ref<boolean>(props.animate)
 				c66.114,4.867,122.599-47.391,124.794-117.218l1.457-46.344c1.407-44.78-32.774-82.293-75.775-83.607l-533.677-16.315
 				c-34.994-1.07-63.067,30.379-63.119,70.102l-0.054,41.13C2163.55,1302.452,2207.288,1355.691,2262.343,1359.744z"
                     />
-                    <path
-                        style="fill: #d8dee8"
-                        d="M2524.793,1319.642c-4.213-6.925-6.762-14.573-6.623-22.657
+                    <g id="eyes" :class="props.animation">
+                        <path
+                            id="right-eye"
+                            style="fill: #d8dee8"
+                            d="M2524.793,1319.642c-4.213-6.925-6.762-14.573-6.623-22.657
 				c0.452-26.207,26.715-46.19,58.991-44.56c32.65,1.649,58.907,24.732,58.305,51.482c-0.186,8.251-3.147,15.716-7.795,22.216
 				L2524.793,1319.642z"
-                    />
-                    <path
-                        style="fill: #d8dee8"
-                        d="M2249.33,1302.291c-3.881-6.576-6.274-13.846-6.236-21.537
+                        />
+                        <path
+                            id="left-eye"
+                            style="fill: #d8dee8"
+                            d="M2249.33,1302.291c-3.881-6.576-6.274-13.846-6.236-21.537
 				c0.122-24.933,23.619-44.006,52.773-42.533c29.469,1.488,53.397,23.36,53.152,48.784c-0.076,7.843-2.662,14.947-6.78,21.139
 				L2249.33,1302.291z"
-                    />
+                        />
+                    </g>
 
                     <linearGradient
                         id="SVGID_00000140711436576529000940000017662807635219534722_"
@@ -1092,5 +1092,82 @@ svg {
 #robot {
     --bounce-distance: -50px;
     animation: bounce 1.5s infinite;
+}
+#eyes {
+    /*fill: purple !important;*/
+    stroke: #323567;
+}
+#eyes.normal {
+    transition: all 1.5s;
+    animation: normal 1s ease-in-out infinite;
+}
+#eyes.talk {
+    animation:
+        side 0.3s 1 ease-in,
+        squint 0.5s 1 0.3s ease-in,
+        joy 0.5s 1 0.8s ease-in,
+        side 0.3s 1.3s ease-in,
+        joy 0.5s 1 1.6s ease-in;
+}
+#eyes.squint {
+    animation: squint 1.5s ease-in forwards;
+}
+#eyes.joy {
+    stroke: #d8dee8;
+    animation: joy 0.5s ease-in forwards;
+}
+
+@keyframes normal {
+    0% {
+        transform: translate(0px, 0px);
+        stroke-width: 0px;
+    }
+    50% {
+        transform: translate(0px, -10px);
+        stroke-width: 10px;
+    }
+    100% {
+        transform: translate(0px, 0px);
+        stroke-width: 0px;
+    }
+}
+
+@keyframes joy {
+    0% {
+        transform: translate(0px, 0px);
+        stroke-width: 0px;
+    }
+    50% {
+        transform: translate(20px, -60px);
+        stroke-width: 30px;
+    }
+    100% {
+        transform: translate(0px, 0px);
+        stroke-width: 0px;
+    }
+}
+
+@keyframes side {
+    0% {
+        transform: translateX(0px);
+    }
+    50% {
+        transform: translateX(40px);
+    }
+    100% {
+        transform: translateX(0px);
+    }
+}
+
+@keyframes squint {
+    0% {
+        stroke-width: 0px;
+    }
+    50% {
+        stroke-width: 50px;
+    }
+    100% {
+        stroke-width: 30px;
+    }
 }
 </style>
