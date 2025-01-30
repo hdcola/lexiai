@@ -35,8 +35,10 @@ onMounted(async () => {
                     </div>
                 </div>
 
-                <div class="flex items-center justify-center lg:col-span-2">
-                    <div class="text-left text-gray-400">
+                
+
+                <div class="flex items-center justify-center lg:col-span-2 sm:text-left">
+                    <div class="max-w-md mx-auto mt-6 leading-relaxed text-center text-purple-400 sm:max-w-xs sm:mx-0 sm:text-left">
                         
                         <a
                             href="https://www.freepik.com/free-vector/chatbot-voice-controlled-virtual-assistant-abstract-concept-illustration_12290856.htm#fromView=author&page=24&position=3&uuid=b894fe3f-3e7c-44d3-8ad5-08d0030dee17&new_detail=true"
