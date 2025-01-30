@@ -6,6 +6,7 @@ import ImgConvoAudio from '@/components/images/ImgConvoAudio.vue'
 import ImgLexiLogo from '@/components/images/ImgLexiLogoImage.vue'
 import ImgLexiLogoText from '@/components/images/ImgLexiLogoText.vue'
 import { onMounted, onUnmounted } from 'vue'
+import AppFooter from '@/components/AppFooter.vue'
 
 const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -112,16 +113,8 @@ onUnmounted(() => {
             </RouterLink>
         </section>
     </main>
-    <footer class="flex flex-col h-52 p-6 text-white bg-gray-700">
-        <div class="flex flex-col flex-grow justify-center text-center">
-            <a
-                href="https://www.freepik.com/free-vector/chatbot-voice-controlled-virtual-assistant-abstract-concept-illustration_12290856.htm#fromView=author&page=24&position=3&uuid=b894fe3f-3e7c-44d3-8ad5-08d0030dee17&new_detail=true"
-                >Images by vectorjuice on Freepik</a
-            >
-            <a href="http://www.freepik.com">Background by Freepik</a>
-        </div>
-        <small class="text-center">Copyright 2025 Lexi AI</small>
-    </footer>
+
+    <AppFooter />
 </template>
 
 <style scoped>

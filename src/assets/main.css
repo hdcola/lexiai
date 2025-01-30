@@ -10,6 +10,7 @@
     --light-purple: #d0f3fc;
     --light-orange: #d0f3fc;
     --dark-orange: #d23d02;
+    --dark-blue: #1f2937;
     --gradient-purple: linear-gradient(to right, #ae97f8, #8184f8);
     --gradient-blue: linear-gradient(to right, #72d2ff, #00b7ff);
     --gradient-orange: linear-gradient(to right, #fdc990, #f2a247);
@@ -139,6 +140,7 @@ section {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
 }
+
 
 /* Used for bouncing elements */
 @keyframes bounce {
