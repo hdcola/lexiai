@@ -4,7 +4,7 @@ import { ref, watch } from 'vue'
 export type Animation = 'joy' | 'talk' | 'normal' | 'squint' | ''
 
 const props = defineProps<{ animate?: boolean; animation?: Animation }>()
-const isAnimated = ref<boolean>(props.animate)
+const isAnimated = ref<boolean>(props.animate || true)
 </script>
 
 <template>
