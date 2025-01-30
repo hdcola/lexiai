@@ -28,6 +28,8 @@ const isResponding = ref<boolean>(false)
 const isPromptInitialized = ref<boolean>(false)
 const volume = ref<number>(0)
 const inputVolume = ref<number>(0)
+const isNewPrompt = ref<boolean>(false) // When initiating a new topic
+const isInterrupted = ref<boolean>(false) // When Gemini is interrupted
 
 const audioContext = ref<AudioContext | null>(null)
 const audioRecorder = ref<AudioRecorder | null>(null)
@@ -163,24 +165,29 @@ async function updateSystemInstructions(newSystemInstruction: string) {
     await resetClient()
 }
 
-async function updatePrompt(newPrompt: string) {
-    // Verify if the websocket is still running
-    console.log('Update Prompt', newPrompt)
+async function sendPrompt(prompt: string) {
     if (!isConnected.value) {
         await connect()
     }
 
-    isPromptInitialized.value = true
-
     client.send([
         {
-            text: newPrompt,
+            text: prompt,
         },
     ])
 }
 
+async function updatePrompt(newPrompt: string) {
+    // Verify if the websocket is still running
+    console.log('Update Prompt', newPrompt)
+    isPromptInitialized.value = true
+
+    sendPrompt(newPrompt)
+    isNewPrompt.value = true
+}
+
 async function handleInterrupt() {
-    await updatePrompt('Gemini, stop.')
+    await sendPrompt('Gemini, stop.')
 }
 
 client.on('open', () => {
@@ -224,15 +231,25 @@ client.on('content', () => {
     console.log('Text Received')
 })
 
+let timer: number // Interrupted timer
 client.on('interrupted', () => {
     console.log('Interrupted')
     audioStreamer.value?.stop()
     isResponding.value = false
+    isInterrupted.value = true
+
+    if (timer) {
+        clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
+        isInterrupted.value = false
+    }, 3000)
 })
 
 client.on('turncomplete', () => {
     console.log('Turn Completed')
     isResponding.value = false
+    isNewPrompt.value = false
 })
 
 // Allow access to parent
@@ -275,7 +292,13 @@ defineExpose({
         </div>
         <div v-else class="flex flex-col h-full">
             <div class="flex-1 p-5 pt-10 text-center overflow-hidden">
-                <GeminiGuidelines :topic="topic" :language="language" />
+                <GeminiGuidelines
+                    :topic="topic"
+                    :language="language"
+                    :startNewPrompt="isNewPrompt"
+                    :isResponding="isResponding"
+                    :isInterrupted="isInterrupted"
+                />
             </div>
             <div class="flex justify-center items-center gap-10 py-10 px-4">
                 <ButtonMicrophone
