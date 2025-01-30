@@ -27,16 +27,27 @@ async function handleSelection(selection: {
     }
     selectedTopic.value = selection.topic
     selectedLanguage.value = selection.language
-    const systemPrompt = replaceTemplate(selection.topic.system_prompt || '', data)
 
     const gemini = geminiref.value
     if (gemini) {
-        //await gemini.updateSystemInstructions(systemPrompt)
-        //await gemini.updatePrompt(selection.topic.start || '')
-        await gemini.resetClient() // Reset the context fully between topics
-        await gemini.updatePrompt(
-            `In ${selection.language}, with topic of ${systemPrompt}. Do not change the topic. ${selection.style}.`,
-        )
+        let systemPrompt = replaceTemplate(selection.topic.system_prompt || '', data)
+
+        // KISS approach, where the user provides only the topic with no tags
+        if (systemPrompt === selection.topic.system_prompt) {
+            systemPrompt = `In ${selection.language}, with topic of ${systemPrompt}. Do not change the topic. ${selection.style}`
+
+            if (selection.topic.start !== '') {
+                systemPrompt += `Integrate at the start of the topic ${selection.topic.start}.`
+            }
+
+            await gemini.resetClient() // Reset the context fully between topics
+            await gemini.updatePrompt(systemPrompt)
+        }
+        // More complex approach, which allow the ussage of tags {{ language }}, {{ style }} to gives full control. It overrites the teacher mode.
+        else {
+            await gemini.updateSystemInstructions(systemPrompt)
+            await gemini.updatePrompt(selection.topic.start || '')
+        }
     }
 }
 </script>

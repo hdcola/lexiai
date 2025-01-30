@@ -205,6 +205,7 @@ defineExpose({
                             </p>
                             <ul class="ms-5 list-disc">
                                 <li>Take it slowly.</li>
+                                <li>Start with phrases I can repeat.</li>
                                 <li>Don't tell me what to say.</li>
                             </ul>
                         </div>
