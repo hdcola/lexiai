@@ -19,15 +19,15 @@ const topics = ref<ITopic[]>([])
 const levels = ref<Level[]>([
     {
         level: 'beginner',
-        label: 'Beginner',
+        label: 'Learning basics',
     },
     {
         level: 'advanced',
-        label: 'Advanced',
+        label: 'Conversations',
     },
     {
         level: 'custom',
-        label: 'Custom',
+        label: 'Custom topics',
     },
 ])
 
