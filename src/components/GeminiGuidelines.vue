@@ -50,16 +50,16 @@ watch(
     <div class="flex flex-col h-full w-4/5 m-auto">
         <!-- Topic selected -->
         <div class="flex flex-col flex-1 gap-4">
-            <h3 class="inline-flex gap-2 justify-center items-center">
+            <div class="inline-flex gap-2 justify-center items-center">
                 <IconLanguage class="w-10" />
                 <span class="font-bold text-xl text-purple-500">{{ language }}</span>
                 <IconPlay class="w-10" />
                 <span class="font-bold text-xl text-green-500">{{ topic?.title }}</span>
-            </h3>
-            <h4 class="inline-flex gap-2 justify-center items-center my-3">
-                <IconBook class="w-10" />
-                <p class="px-2">{{ topic?.description }}</p>
-            </h4>
+            </div>
+            <div class="inline-flex gap-3 justify-center my-3">
+                <IconBook class="!w-11 !h-6" />
+                <p class="text-left text-sm">{{ topic?.description }}</p>
+            </div>
         </div>
 
         <div class="flex justify-center min-h-0">
