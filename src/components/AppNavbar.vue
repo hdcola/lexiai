@@ -9,22 +9,17 @@ import IconConfig from './images/icons/IconConfig.vue'
 
 const authStore = useAuthStore()
 
-const logout = () => {
-    authStore.logout()
-}
-
 const path = mdiMenu
 // Debugging to check mdiMenu path
-console.log('mdiMenu path:', path)
+//console.log('mdiMenu path:', path)
 
 // State for toggling the menu
 const isMenuOpen = ref<boolean>(false)
+function handleCloseMenu() {
+    isMenuOpen.value = false
+}
 
 const route = useRoute()
-onMounted(async () => {
-    //await authStore.isAuthenticated()
-    console.log('isLoggedIn', authStore.isLoggedIn)
-})
 </script>
 
 <template>
@@ -43,10 +38,10 @@ onMounted(async () => {
                 <!-- Hamburger menu button -->
                 <button
                     @click="isMenuOpen = !isMenuOpen"
-                    class="inline-flex items-center justify-center p-2 rounded-md text-blue-500 hover:bg-blue-600 focus:outline-none md:hidden overflow-hidden"
+                    class="inline-flex items-center justify-center p-2 rounded-md text-purple-600 focus:outline-none md:hidden overflow-hidden"
                 >
                     <span class="sr-only">Open main menu</span>
-                    <IconMD :path="mdiMenu" class="inline-block" width="28px" />
+                    <IconMD :path="mdiMenu" class="inline-block" width="32px" />
                 </button>
 
                 <!-- Desktop Menu -->
@@ -87,33 +82,51 @@ onMounted(async () => {
 
         <!-- Mobile Menu -->
         <div
+            id="mobile"
             v-show="isMenuOpen"
-            class="md:hidden bg-blue-500 px-4 space-y-2 pb-4 transition-all text-base"
+            class="md:hidden bg-blue-200 px-4 space-y-2 py-2 transition-all text-base text-center"
         >
-            <RouterLink
-                to="/"
-                class="block text-white px-3 py-2 rounded-md hover:bg-blue-700"
-                active-class="bg-blue-600"
+            <RouterLink to="/" @click="handleCloseMenu" active-class="purple-btn text-white"
                 >Home</RouterLink
             >
-
-            <span v-if="!authStore.isLoggedIn">
-                <RouterLink
-                    to="/login"
-                    class="block text-white px-3 py-2 rounded-md hover:bg-blue-700"
-                    active-class="bg-blue-600"
-                    >Login</RouterLink
-                >
-            </span>
-            <span v-else>
-                <button
-                    @click="logout"
-                    class="block text-white px-3 py-2 rounded-md hover:bg-blue-700"
-                    active-class="bg-blue-600"
-                >
-                    Logout
-                </button>
-            </span>
+            <RouterLink
+                v-if="!authStore.isLoggedIn"
+                @click="handleCloseMenu"
+                to="/login"
+                active-class="purple-btn text-white"
+                >Login</RouterLink
+            >
+            <RouterLink
+                v-if="authStore.isLoggedIn"
+                @click="handleCloseMenu"
+                to="/lexiai"
+                class="special"
+                active-class="orange-btn text-white"
+                >Practice</RouterLink
+            >
+            <RouterLink
+                v-if="authStore.isLoggedIn"
+                @click="handleCloseMenu"
+                to="/settings"
+                active-class="purple-btn text-white"
+                >Settings</RouterLink
+            >
+            <button
+                v-if="authStore.isLoggedIn"
+                @click="(authStore.logout(), handleCloseMenu())"
+                class="w-full"
+                active-class="purple-btn text-white"
+            >
+                Logout
+            </button>
+            <RouterLink
+                v-if="!authStore.isLoggedIn"
+                to="/register"
+                @click="handleCloseMenu"
+                class="special"
+                active-class="orange-btn text-white"
+                >Sign Up</RouterLink
+            >
         </div>
     </nav>
 </template>
@@ -122,6 +135,19 @@ onMounted(async () => {
 nav {
     @apply bg-blue-100 py-1 md:py-3;
     z-index: 20;
+}
+
+#mobile > * {
+    @apply block px-3 py-2 rounded-md font-medium;
+}
+
+#mobile > *:not(.orange-btn):hover {
+    background: var(--gradient-purple);
+    color: white;
+}
+#mobile > .special:hover {
+    background: var(--gradient-orange);
+    color: white;
 }
 
 .orange-btn.active {
