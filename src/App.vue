@@ -25,7 +25,7 @@ import { RouterView } from 'vue-router'
 /* Hide the patterned background until we are done smooth transition */
 .background.home:has(.fade-enter-active),
 .background.home:has(.fade-leave-active) {
-    background: theme(colors.blue.100);
+    background: #e1effe;
 }
 
 .fade-enter-from,
