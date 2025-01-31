@@ -34,7 +34,7 @@ function handleEdit() {
     >
         <div class="flex flex-row gap-4 items-center">
             <div class="flex-grow">
-                <div class="flex flex-col">
+                <div class="flex flex-col li-desc">
                     <h1 class="one-line-truncated">{{ topic.title }}</h1>
                     <p v-if="topic.description" class="text-xs text-gray-600 one-line-truncated">
                         {{ topic.description }}
@@ -72,6 +72,15 @@ function handleEdit() {
 li:hover .btn-toggle {
     opacity: 1;
     transition: opacity 0.3s ease;
+}
+
+/* Undo truncate on hover */
+.li-desc:hover .one-line-truncated {
+    overflow: unset;
+    display: unset;
+    -webkit-box-orient: unset;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
 }
 
 .topic-play .selected {
